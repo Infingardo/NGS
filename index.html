@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGS Panel — Decision Support v1.4</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: #F5F5F5; color: #1A1A1A; min-height: 100vh; }
+
+  #header { background: #fff; border-bottom: 2px solid #1565C0; padding: 14px 24px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  #header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  #logo { background: linear-gradient(135deg,#1565C0,#4527A0); border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  #header-info { flex: 1; }
+  #title { font-size: 17px; font-weight: 700; color: #0D1B2A; }
+  #subtitle-hdr { font-size: 12px; color: #455A64; font-style: italic; }
+  #version-badge { background: #E8F5E9; border: 1.5px solid #A5D6A7; color: #1B5E20; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; font-family: 'Courier New', monospace; white-space: nowrap; flex-shrink: 0; }
+  .hdr-btn { background: #E3F2FD; border: 1.5px solid #90CAF9; color: #0D47A1; font-size: 12px; font-weight: 700; padding: 7px 13px; border-radius: 7px; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+  .hdr-btn:hover { background: #BBDEFB; }
+  #search { width: 100%; padding: 8px 14px; background: #FAFAFA; border: 1.5px solid #90A4AE; border-radius: 6px; color: #1A1A1A; font-size: 14px; font-family: inherit; outline: none; }
+  #search:focus { border-color: #1565C0; }
+
+  #layout { display: flex; min-height: calc(100vh - 108px); }
+  #sidebar { width: 210px; flex-shrink: 0; background: #fff; border-right: 2px solid #E0E0E0; padding: 10px 0; overflow-y: auto; }
+  .sb-btn { display: block; width: 100%; text-align: left; padding: 10px 14px; background: transparent; border: none; border-left: 4px solid transparent; cursor: pointer; color: #37474F; font-family: inherit; font-size: 13px; font-weight: 500; transition: all 0.12s; }
+  .sb-btn:hover { background: #F5F5F5; }
+  .sb-btn.active { background: #E3F2FD; border-left-color: #1565C0; color: #0D47A1; font-weight: 700; }
+
+  #main { flex: 1; padding: 18px 22px; overflow-y: auto; }
+  #sc-note { background: #FFF8E1; border: 1.5px solid #FFD54F; border-left: 5px solid #F9A825; border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: #5D4037; line-height: 1.6; }
+  #filters { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .f-btn { padding: 5px 14px; border-radius: 20px; border: 2px solid #CFD8DC; background: #fff; color: #37474F; font-size: 12px; font-family: inherit; cursor: pointer; font-weight: 700; transition: all 0.12s; }
+  .f-btn.fa  { background: #1565C0; border-color: #1565C0; color: #fff; }
+  .f-btn.fU  { background: #D32F2F; border-color: #D32F2F; color: #fff; }
+  .f-btn.fAL { background: #E65100; border-color: #E65100; color: #fff; }
+  .f-btn.fM  { background: #2E7D32; border-color: #2E7D32; color: #fff; }
+
+  #cards { display: flex; flex-direction: column; gap: 9px; margin-top: 12px; }
+  .card { background: #fff; border: 1.5px solid #CFD8DC; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.15s; }
+  .card.open { border-color: #1565C0; box-shadow: 0 3px 14px rgba(0,0,0,0.1); }
+  .cU { border-left: 5px solid #D32F2F; }
+  .cA { border-left: 5px solid #E65100; }
+  .cM { border-left: 5px solid #2E7D32; }
+
+  .c-hdr { width: 100%; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: transparent; border: none; cursor: pointer; text-align: left; font-family: inherit; }
+  .c-hdr:hover { background: #FAFAFA; }
+  .bp { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; flex-shrink: 0; text-transform: uppercase; color: #fff; margin-top: 2px; }
+  .bpU { background: #D32F2F; } .bpA { background: #E65100; } .bpM { background: #2E7D32; }
+
+  .c-meta { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .c-tags { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .g-tag { background: #E3F2FD; border: 1.5px solid #90CAF9; color: #0D47A1; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; }
+  .dot { color: #B0BEC5; font-size: 11px; }
+  .t-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+  .t-snv     { color: #4527A0; background: #EDE7F6; border: 1.5px solid #4527A055; }
+  .t-cnv     { color: #37474F; background: #ECEFF1; border: 1.5px solid #37474F55; }
+  .t-fusions { color: #0D47A1; background: #E3F2FD; border: 1.5px solid #0D47A155; }
+  .t-msi     { color: #1B5E20; background: #E8F5E9; border: 1.5px solid #1B5E2055; }
+  .r-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+  .r-diagnostico { color: #6A1B9A; background: #F3E5F5; border: 1.5px solid #6A1B9A44; }
+  .r-predittivo  { color: #0D47A1; background: #E3F2FD; border: 1.5px solid #0D47A144; }
+  .r-prognostico { color: #37474F; background: #ECEFF1; border: 1.5px solid #37474F44; }
+  .r-misto       { color: #1B5E20; background: #E8F5E9; border: 1.5px solid #1B5E2044; }
+  .ev-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-family: 'Courier New', monospace; }
+  .ev-FDA  { color: #0D47A1; background: #DCEEFB; border: 1.5px solid #0D47A166; }
+  .ev-EMA  { color: #1A237E; background: #E8EAF6; border: 1.5px solid #1A237E66; }
+  .ev-NCCN { color: #BF360C; background: #FBE9E7; border: 1.5px solid #BF360C66; }
+  .ev-AIOM { color: #33691E; background: #F1F8E9; border: 1.5px solid #33691E66; }
+  .ev-Trial{ color: #4A148C; background: #EDE7F6; border: 1.5px solid #4A148C66; }
+  .ev-Prog { color: #37474F; background: #ECEFF1; border: 1.5px solid #37474F66; }
+  .ev-Diag { color: #5D4037; background: #EFEBE9; border: 1.5px solid #5D403766; }
+  .histotype { font-size: 12px; color: #546E7A; font-style: italic; line-height: 1.4; }
+  .chevron { color: #90A4AE; font-size: 13px; flex-shrink: 0; font-weight: 700; margin-top: 2px; }
+
+  .c-body { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .i-box { border-radius: 6px; padding: 9px 13px; }
+  .i-lbl { font-size: 10px; letter-spacing: 0.1em; margin-bottom: 3px; font-weight: 700; text-transform: uppercase; font-family: 'Courier New', monospace; }
+  .i-val { font-size: 14px; font-weight: 600; }
+  .ba-U { background: #FFEBEE; border: 1.5px solid #FFCDD2; border-left: 4px solid #D32F2F; }
+  .ba-U .i-lbl { color: #D32F2F; } .ba-U .i-val { font-size: 15px; font-weight: 700; color: #1A1A1A; }
+  .ba-A { background: #FFF3E0; border: 1.5px solid #FFCC80; border-left: 4px solid #E65100; }
+  .ba-A .i-lbl { color: #E65100; } .ba-A .i-val { font-size: 15px; font-weight: 700; color: #1A1A1A; }
+  .ba-M { background: #E8F5E9; border: 1.5px solid #A5D6A7; border-left: 4px solid #2E7D32; }
+  .ba-M .i-lbl { color: #2E7D32; } .ba-M .i-val { font-size: 15px; font-weight: 700; color: #1A1A1A; }
+  .b-drug { background: #E8F5E9; border: 1.5px solid #A5D6A7; border-left: 4px solid #2E7D32; }
+  .b-drug .i-lbl { color: #1B5E20; } .b-drug .i-val { color: #1B5E20; }
+  .b-note { background: #F9FAFB; border: 1.5px solid #CFD8DC; }
+  .b-note .i-lbl { color: #546E7A; } .b-note .i-val { font-size: 13px; font-weight: 400; color: #263238; line-height: 1.7; }
+  .b-ref { background: #F3E5F5; border: 1.5px solid #CE93D8; border-left: 4px solid #6A1B9A; border-radius: 6px; padding: 9px 13px; }
+  .b-ref .i-lbl { color: #6A1B9A; }
+  .ref-text { font-size: 12px; color: #1A1A1A; line-height: 1.7; background: #FAFAFA; border: 1px solid #CE93D8; border-radius: 4px; padding: 8px 10px; margin-top: 6px; white-space: pre-wrap; font-family: 'Courier New', monospace; }
+  .btn-copy { margin-top: 7px; background: #6A1B9A; color: #fff; border: none; border-radius: 5px; padding: 5px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-copy:hover { background: #4A148C; }
+  .btn-copy.copied { background: #2E7D32; }
+  /* Split referto — diagnostico section */
+  .b-ref-diag { background: #EDE7F6; border: 1.5px solid #CE93D8; border-left: 4px solid #6A1B9A; border-radius: 6px; padding: 9px 13px; }
+  .b-ref-diag .i-lbl { color: #6A1B9A; }
+  .ref-diag-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6A1B9A; font-family: 'Courier New', monospace; margin-bottom: 3px; }
+  /* Split referto — predittivo section */
+  .b-ref-pred { background: #E3F2FD; border: 1.5px solid #90CAF9; border-left: 4px solid #0D47A1; border-radius: 6px; padding: 9px 13px; }
+  .b-ref-pred .i-lbl { color: #0D47A1; }
+  .ref-split-wrapper { display: flex; flex-direction: column; gap: 8px; }
+  .p-check { font-size: 12px; color: #546E7A; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .p-lbl { font-weight: 700; color: #37474F; }
+  .g-ok { color: #1B5E20; font-weight: 700; font-size: 13px; background: #E8F5E9; border: 1px solid #A5D6A7; padding: 1px 7px; border-radius: 4px; font-family: 'Courier New', monospace; }
+  .g-ko { color: #B71C1C; font-weight: 700; font-size: 13px; background: #FFEBEE; border: 1px solid #EF9A9A; padding: 1px 7px; border-radius: 4px; font-family: 'Courier New', monospace; }
+
+  #ps { margin-top: 24px; background: #fff; border: 1.5px solid #CFD8DC; border-radius: 8px; padding: 13px 16px; }
+  #ps h3 { font-size: 12px; color: #546E7A; letter-spacing: 0.08em; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
+  #pg { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 9px; }
+  .pc { border-radius: 6px; padding: 9px 11px; }
+  .pc-l { font-size: 11px; margin-bottom: 3px; font-weight: 700; text-transform: uppercase; }
+  .pc-c { font-size: 12px; color: #37474F; font-weight: 600; }
+  #no-res { color: #90A4AE; font-size: 14px; padding: 28px; text-align: center; }
+
+  #mo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  #mo.open { display: flex; }
+  #m-box { background: #fff; border-radius: 12px; max-width: 640px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
+  #m-hdr { background: #1565C0; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; border-radius: 12px 12px 0 0; flex-shrink: 0; }
+  #m-title { font-size: 15px; font-weight: 700; color: #fff; }
+  #m-date  { font-size: 11px; color: #90CAF9; font-style: italic; margin-top: 2px; }
+  #m-close { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 16px; width: 28px; height: 28px; border-radius: 5px; cursor: pointer; font-weight: 700; }
+  #m-body  { padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 11px; }
+  .lg-sec  { font-size: 13px; font-weight: 700; color: #1A1A1A; border-bottom: 1px solid #ECEFF1; padding-bottom: 6px; }
+  .lg-box  { border-radius: 7px; padding: 10px 13px; }
+  .lg-ttl  { font-size: 12px; font-weight: 700; margin-bottom: 5px; }
+  .lg-desc { font-size: 12px; color: #1A1A1A; line-height: 1.7; }
+  .lg-ex   { font-size: 11px; font-style: italic; margin-top: 4px; }
+  .lg-role { border-radius: 7px; padding: 8px 12px; display: flex; gap: 9px; align-items: flex-start; }
+  .lg-rb   { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; white-space: nowrap; margin-top: 1px; color: #fff; }
+  .lg-rd   { font-size: 12px; color: #263238; line-height: 1.6; }
+  .lg-ev-r { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  #m-foot  { font-size: 11px; color: #78909C; text-align: center; border-top: 1px solid #ECEFF1; padding: 10px 20px; font-style: italic; flex-shrink: 0; }
+
+  @media (max-width: 640px) {
+    #layout { flex-direction: column; }
+    #sidebar { width: 100%; border-right: none; border-bottom: 2px solid #E0E0E0; display: flex; flex-wrap: wrap; padding: 6px; }
+    .sb-btn { width: auto; border-left: none; border-bottom: 3px solid transparent; padding: 6px 10px; font-size: 11px; }
+    .sb-btn.active { border-bottom-color: #1565C0; border-left-color: transparent; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div id="header-top">
+    <div id="logo">🧬</div>
+    <div id="header-info">
+      <div id="title">NGS Panel — Decision Support</div>
+      <div id="subtitle-hdr">Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI</div>
+    </div>
+    <span id="version-badge">v1.4 · Feb 2026</span>
+    <button class="hdr-btn" onclick="openModal()">ℹ️ Guida</button>
+  </div>
+  <input id="search" type="text" placeholder="Cerca gene, farmaco, istotipo, evidenza..." oninput="render()">
+</div>
+
+<div id="layout">
+  <div id="sidebar"></div>
+  <div id="main">
+    <div id="sc-hdr"></div>
+    <div id="filters"></div>
+    <div id="cards"></div>
+    <div id="ps"><h3>Copertura Pannello Diatech</h3><div id="pg"></div></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="mo" onclick="closeModalOuter(event)">
+  <div id="m-box">
+    <div id="m-hdr">
+      <div><div id="m-title">Guida — Priorità, Ruoli, Evidenze</div><div id="m-date">v1.4 · Febbraio 2026 · Uso interno di reparto</div></div>
+      <button id="m-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="m-body">
+      <div class="lg-sec">Priorità</div>
+      <div class="lg-box" style="background:#FFEBEE;border:1.5px solid #FFCDD2;border-left:5px solid #D32F2F">
+        <div class="lg-ttl" style="color:#D32F2F">⚡ URGENTE</div>
+        <div class="lg-desc">Approvazione regolatoria vigente (FDA/EMA/AIFA) come companion diagnostic o in I–II linea. Senza il test il paziente <strong>non accede alla terapia standard of care</strong>.</div>
+        <div class="lg-ex" style="color:#D32F2F">Es: KRAS/NRAS pre anti-EGFR in CRC, EGFR in ADC polmonare, MSI-H pre pembrolizumab.</div>
+      </div>
+      <div class="lg-box" style="background:#FFF3E0;border:1.5px solid #FFCC80;border-left:5px solid #E65100">
+        <div class="lg-ttl" style="color:#E65100">🔶 ALTO</div>
+        <div class="lg-desc">Approvazione in linee successive, off-label con evidenza robusta, o marker con forte impatto prognostico/predittivo che <strong>cambia la gestione clinica</strong>.</div>
+        <div class="lg-ex" style="color:#E65100">Es: NTRK fusioni non-polmonare, HER2 in CRC RAS/BRAF WT, IDH1/2 in CCA.</div>
+      </div>
+      <div class="lg-box" style="background:#E8F5E9;border:1.5px solid #A5D6A7;border-left:5px solid #2E7D32">
+        <div class="lg-ttl" style="color:#2E7D32">🟢 MEDIO</div>
+        <div class="lg-desc">Predittivo negativo (segnala resistenza), prognostico puro senza target approvato, o target in trial clinico.</div>
+        <div class="lg-ex" style="color:#2E7D32">Es: STK11/KEAP1 predittori negativi IO, SMAD4 in PDAC, POLE come TMB surrogate.</div>
+      </div>
+      <div class="lg-sec">Ruolo del Biomarcatore</div>
+      <div class="lg-role" style="background:#F3E5F5;border:1.5px solid #6A1B9A33;border-left:4px solid #6A1B9A"><span class="lg-rb" style="background:#6A1B9A">Diagnostico</span><div class="lg-rd">Necessario per la classificazione nosologica (es. WHO CNS5 2021). Senza questo dato non si può formulare la diagnosi.</div></div>
+      <div class="lg-role" style="background:#E3F2FD;border:1.5px solid #0D47A133;border-left:4px solid #0D47A1"><span class="lg-rb" style="background:#0D47A1">Predittivo</span><div class="lg-rd">Predice risposta o resistenza a un trattamento specifico. Guida la scelta terapeutica.</div></div>
+      <div class="lg-role" style="background:#ECEFF1;border:1.5px solid #37474F33;border-left:4px solid #37474F"><span class="lg-rb" style="background:#37474F">Prognostico</span><div class="lg-rd">Informa sull'andamento della malattia indipendentemente dal trattamento. Nessun target approvato correlato.</div></div>
+      <div class="lg-role" style="background:#E8F5E9;border:1.5px solid #1B5E2033;border-left:4px solid #1B5E20"><span class="lg-rb" style="background:#1B5E20">Diag+Pred</span><div class="lg-rd">Valenza sia diagnostica/nosologica che predittiva o prognostica. Interpretazione contestuale necessaria.</div></div>
+      <div class="lg-sec">Livello di Evidenza</div>
+      <div class="lg-ev-r"><span class="ev-tag ev-FDA">FDA I linea</span><span style="font-size:11px;color:#37474F">Approvazione FDA come prima linea</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-FDA">FDA</span><span style="font-size:11px;color:#37474F">Approvazione FDA (linee successive / agnostica)</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-EMA">EMA</span><span style="font-size:11px;color:#37474F">Approvazione EMA</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-NCCN">NCCN Cat 1</span><span style="font-size:11px;color:#37474F">NCCN Category 1 — evidenza di alta qualità uniforme</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-AIOM">AIOM</span><span style="font-size:11px;color:#37474F">Linee guida AIOM italiane</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-Trial">Trial F3</span><span style="font-size:11px;color:#37474F">Trial clinico fase III (risultati disponibili)</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-Prog">Prognostico</span><span style="font-size:11px;color:#37474F">Solo valore prognostico — nessun target approvato</span></div>
+      <div class="lg-ev-r"><span class="ev-tag ev-Diag">Diag WHO</span><span style="font-size:11px;color:#37474F">Criterio diagnostico classificazione WHO</span></div>
+    </div>
+    <div id="m-foot">Le priorità riflettono lo stato regolatorio FDA/EMA/AIFA a Febbraio 2026. Disponibilità in Italia soggetta a rimborso AIFA e contratti regionali.<br>Strumento ad uso interno — non sostituisce AIOM/ESMO/WHO né il giudizio clinico.</div>
+  </div>
+</div>
+
+<script>
+const PANEL = {
+  snv:["AKT1","ALK","AR","BRAF","CDK4","CDKN2A","CTNNB1","DDR2","EGFR","ERBB2","ERBB3","ERBB4","ESR1","FGFR1","FGFR2","FGFR3","FGFR4","GNA11","GNAQ","GNAS","HRAS","IDH1","IDH2","KEAP1","KIT","KRAS","MAP2K1","MET","MTOR","NF1","NRAS","NTRK1","NTRK2","NTRK3","PDGFRA","PIK3CA","POLE","PTEN","RAF1","RB1","RET","ROS1","SMAD4","SMO","STK11","TERT","TP53","TSC1"],
+  fusions:["ALK","FGFR1","FGFR2","FGFR3","MET","NRG1","NTRK1","NTRK2","NTRK3","PPARG","RET","ROS1"],
+  cnv:["EGFR","ERBB2","MET"],
+  msi:["BAT25","BAT26","CAT25","MONO27","NR21","NR22","NR24","NR27"]
+};
+const TL={snv:"SNV/InsDel",cnv:"CNV",fusions:"Fusioni",msi:"MSI"};
+const RL={diagnostico:"Diagnostico",predittivo:"Predittivo",prognostico:"Prognostico",misto:"Diag+Pred"};
+
+const SC=[
+  {id:"crc",label:"Carcinoma Colorettale",icon:"🔴",subtitle:"CRC metastatico / stadio II-III",notes:null,entries:[
+    {genes:["KRAS","NRAS"],histotype:"Adenocarcinoma colorettale (tutti i gradi)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · NCCN Cat 1 · AIOM",drug:"Anti-EGFR (cetuximab / panitumumab)",note:"Mutazione esoni 2,3,4 = resistenza a anti-EGFR. Wild-type necessario per accesso alla terapia. Testare NRAS anche in assenza di KRAS mut.",action:"BLOCCA anti-EGFR se mutato",referto:"Si esegue analisi mutazionale di {GENI} (esoni 2, 3, 4) su DNA estratto dal campione neoplastico. La presenza di mutazione esclude l'impiego di anticorpi anti-EGFR (cetuximab, panitumumab) per resistenza primaria."},
+    {genes:["BRAF"],histotype:"Adenocarcinoma colorettale (spesso MSI-H / fenotipo serrated)",type:["snv"],role:"misto",priority:"URGENTE",evidence:"FDA · EMA · NCCN Cat 1",drug:"Encorafenib + binimetinib",note:"V600E: prognosi sfavorevole; arricchito nei MSI-H sporadici con silenziamento MLH1, ma non esclusivo.",action:"BRAF V600E → encorafenib+binimetinib",referto:"Identificata mutazione {GENI} V600E. Tale alterazione ha valore prognostico sfavorevole ed è predittiva di risposta alla terapia target combinata BRAF+MEK inibitori (encorafenib+binimetinib)."},
+    {genes:["ERBB2"],histotype:"Adenocarcinoma colorettale RAS/BRAF WT",type:["snv","cnv"],role:"predittivo",priority:"ALTO",evidence:"Off-label · Trial F3",drug:"Trastuzumab + pertuzumab (off-label / trial)",note:"Amplificazione o mutazione attivante. Solo in RAS/BRAF WT. IHC prima, FISH se 2+, NGS per mutazioni.",action:"RAS/BRAF WT → testare HER2",referto:"In contesto RAS/BRAF wild-type, si documenta lo stato di {GENI} mediante IHC/NGS. Amplificazione o mutazione attivante orientano verso terapia anti-HER2 nell'ambito di trial clinici."},
+    {genes:["SMAD4"],histotype:"Adenocarcinoma colorettale metastatico",type:["snv"],role:"prognostico",priority:"MEDIO",evidence:"Prognostico",drug:"Nessun target diretto",note:"Perdita = prognosi sfavorevole in mCRC. Potenziale resistenza ai biologici.",action:"Valore prognostico sfavorevole",referto:"Documentata perdita/mutazione di {GENI}. Tale alterazione ha valore prognostico sfavorevole in carcinoma colorettale metastatico. Non sono disponibili terapie target approvate."},
+    {genes:["POLE"],histotype:"Adenocarcinoma colorettale (qualsiasi stadio)",type:["snv"],role:"predittivo",priority:"MEDIO",evidence:"FDA · Trial F3",drug:"Pembrolizumab / nivolumab",note:"Mutazioni ultramutatore → TMB molto elevato → risposta immunoterapia. Meccanismo diverso da MSI ma fenotipo sovrapposto.",action:"POLE mut → immunoterapia (TMB-ultra-high)",referto:"Identificata mutazione patogenetica di {GENI}. Il profilo ultramutatore è associato a TMB molto elevato e risposta a immunoterapia con inibitori del checkpoint."},
+    {genes:["BAT25","BAT26","NR21","NR22","NR24"],histotype:"Adenocarcinoma colorettale (tutti gli stadi)",type:["msi"],role:"misto",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"Pembrolizumab (I linea MSI-H)",note:"Pannello Bethesda esteso 126 marcatori. MSI-H → IO in I linea. dMMR → screening Lynch e consulenza genetica.",action:"MSI-H → pembrolizumab I linea; dMMR → test germinale Lynch",referto:"L'analisi dei marcatori di instabilità microsatellitare ({GENI}, pannello Bethesda esteso) documenta un profilo MSI-H. Tale reperto è predittivo di risposta a pembrolizumab in prima linea e impone approfondimento per sindrome di Lynch (IHC MMR + eventuale test germinale)."}
+  ]},
+  {id:"nsclc",label:"Carcinoma Polmonare",icon:"🫁",subtitle:"NSCLC stadio III-IV",notes:null,entries:[
+    {genes:["EGFR"],histotype:"Adenocarcinoma polmonare (reflex testing obbligatorio)",type:["snv","cnv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"Osimertinib (I linea) / erlotinib / gefitinib",note:"Esone 19 del, L858R = sensitizing. T790M = resistenza acquisita. Reflex testing obbligatorio su ADC.",action:"ADC → EGFR obbligatorio I linea; T790M → osimertinib",referto:"Si esegue analisi mutazionale di {GENI} su campione neoplastico. In presenza di mutazione sensitizing (esone 19 del / L858R) è indicata terapia TKI III generazione (osimertinib) in prima linea."},
+    {genes:["ALK"],histotype:"Adenocarcinoma polmonare (giovani, non fumatori)",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1",drug:"Alectinib / brigatinib / lorlatinib",note:"EML4-ALK fusione più frequente. IHC D5F3 Ventana come screening, NGS conferma. ~5% ADC.",action:"ALK fusione → TKI ALK II/III gen in I linea",referto:"Identificata fusione di {GENI}. Tale alterazione è predittiva di risposta a TKI ALK (alectinib, brigatinib, lorlatinib) con indicazione a terapia target in prima linea."},
+    {genes:["ROS1"],histotype:"Adenocarcinoma polmonare (non fumatori)",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Crizotinib / entrectinib",note:"~1-2% NSCLC. IHC meno affidabile → NGS preferito per conferma.",action:"ROS1 fusione → TKI ROS1",referto:"Identificata fusione di {GENI}. Tale riarrangiamento è predittivo di risposta a inibitori ROS1 (crizotinib, entrectinib)."},
+    {genes:["MET"],histotype:"Adenocarcinoma polmonare (ex14 skip) / NSCLC (amplif.)",type:["snv","cnv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA · NCCN Cat 1",drug:"Tepotinib / capmatinib",note:"Exon 14 skipping (SNV) = principale alterazione targetabile. Amplificazione (CNV) ~4%.",action:"MET ex14 skip O amplificazione → TKI MET",referto:"Identificata alterazione di {GENI} (skipping esone 14 / amplificazione). È predittiva di risposta a inibitori MET (tepotinib, capmatinib)."},
+    {genes:["KRAS"],histotype:"Adenocarcinoma polmonare (fumatori)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Sotorasib / adagrasib (solo G12C)",note:"G12C ~13% ADC caucasici. Tipizzare esattamente il codone 12: solo G12C targetabile.",action:"G12C → KRAS inibitore; altri codoni = no target approvato",referto:"Analisi mutazionale di {GENI} con tipizzazione del codone 12. La variante G12C è predittiva di risposta a inibitori KRAS G12C-specifici (sotorasib, adagrasib). Altre varianti non hanno target approvati."},
+    {genes:["BRAF"],histotype:"Adenocarcinoma polmonare",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"FDA · EMA",drug:"Dabrafenib + trametinib",note:"V600E ~2% NSCLC. Non-V600E = nessun target approvato.",action:"BRAF V600E → dabrafenib+trametinib",referto:"Identificata mutazione {GENI} V600E. È predittiva di risposta alla terapia target combinata BRAF+MEK inibitori (dabrafenib+trametinib)."},
+    {genes:["RET"],histotype:"Adenocarcinoma polmonare (non fumatori)",type:["snv","fusions"],role:"predittivo",priority:"ALTO",evidence:"FDA · EMA",drug:"Selpercatinib / pralsetinib",note:"Fusioni RET ~1-2%. Usare TKI RET selettivi — evitare vandetanib.",action:"RET fusione → TKI RET selettivo",referto:"Identificata fusione di {GENI}. È predittiva di risposta a inibitori RET selettivi (selpercatinib, pralsetinib)."},
+    {genes:["NTRK1","NTRK2","NTRK3"],histotype:"Adenocarcinoma polmonare (raro)",type:["snv","fusions"],role:"predittivo",priority:"ALTO",evidence:"FDA · EMA",drug:"Larotrectinib / entrectinib",note:"Fusioni NTRK <1% NSCLC. IHC pan-TRK come screening.",action:"NTRK fusione → TRK inibitore (agnostico)",referto:"Identificata fusione di {GENI}. Tale alterazione è predittiva di risposta a TRK inibitori (larotrectinib, entrectinib) con approvazione FDA/EMA tumor-agnostica."},
+    {genes:["ERBB2"],histotype:"Adenocarcinoma polmonare (mutazione exon 20 insertion)",type:["snv","cnv"],role:"predittivo",priority:"ALTO",evidence:"FDA · EMA",drug:"T-DXd (trastuzumab deruxtecan)",note:"Inserzioni esone 20 (~2-3%) meccanismo diverso da amplificazione: non risponde a trastuzumab standard. T-DXd approvato FDA/EMA.",action:"HER2 mut exon 20 → T-DXd",referto:"Identificata mutazione attivante di {GENI} (inserzione esone 20). È predittiva di risposta a trastuzumab deruxtecan (T-DXd), con approvazione FDA/EMA specifica per questa variante."},
+    {genes:["STK11","KEAP1"],histotype:"Adenocarcinoma polmonare (fumatori, spesso KRAS mut)",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"Trial F3",drug:"Predittore negativo IO — rivalutare regime",note:"Doppia mut STK11+KEAP1 = ridotta risposta a pembrolizumab anche in PD-L1 high. Dati F3 confermano impatto su sotorasib in KRAS G12C.",action:"STK11+KEAP1 mut → IO meno efficace, rivalutare strategia",referto:"Identificata mutazione di {GENI}. La co-presenza di queste alterazioni è associata a ridotta risposta a immunoterapia con anti-PD-1/PD-L1, anche in presenza di alta espressione PD-L1. Si raccomanda valutazione multidisciplinare per la scelta del regime."},
+    {genes:["NRG1"],histotype:"Adenocarcinoma polmonare mucinoso invasivo",type:["fusions"],role:"predittivo",priority:"MEDIO",evidence:"Trial F2",drug:"Afatinib / zenocutuzumab (trial)",note:"Fusioni NRG1 ~0.3%. Tipiche ADC mucinoso. Zenocutuzumab in trial.",action:"NRG1 fusione → pan-HER / trial zenocutuzumab",referto:"Identificata fusione di {GENI}. Tipica dell'ADC polmonare mucinoso, può orientare verso inibitori pan-HER o partecipazione a trial (zenocutuzumab)."},
+    {genes:["DDR2"],histotype:"Carcinoma squamocellulare polmonare",type:["snv"],role:"predittivo",priority:"MEDIO",evidence:"Trial F2",drug:"Dasatinib (trial)",note:"DDR2 mut ~4% squamoso. Nessuna approvazione regolatoria.",action:"Squamoso DDR2 mut → trial dasatinib",referto:"Identificata mutazione di {GENI} in carcinoma squamocellulare polmonare. Tale alterazione è oggetto di trial con dasatinib; non sono disponibili terapie approvate."}
+  ]},
+  {id:"gastrico",label:"Gastrico / GEJ",icon:"🫀",subtitle:"Adenocarcinoma gastrico / GEJ",notes:null,entries:[
+    {genes:["ERBB2"],histotype:"Adenocarcinoma gastrico/GEJ (tutti i sottotipi)",type:["snv","cnv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"Trastuzumab ± pembrolizumab",note:"IHC + FISH standard. Eterogeneità tumorale → campionamento multiplo. CNV dal pannello NGS.",action:"HER2 pos → trastuzumab ± IO in I linea",referto:"L'analisi di {GENI} documenta amplificazione genica (IHC/FISH/NGS-CNV). È predittiva di risposta a trastuzumab in prima linea, in associazione a chemioterapia ± pembrolizumab (CPS ≥1)."},
+    {genes:["FGFR2"],histotype:"Adenocarcinoma gastrico/GEJ (non MSI-H preferibilmente)",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Bemarituzumab",note:"Amplificazione FGFR2 o fusioni. IHC anti-FGFR2b (Ventana) per selezione; NGS conferma.",action:"FGFR2 amp/fus → bemarituzumab",referto:"Identificata amplificazione/fusione di {GENI}. È predittiva di risposta a bemarituzumab (anti-FGFR2b), con efficacia confermata in trial di fase III."},
+    {genes:["MET"],histotype:"Adenocarcinoma gastrico/GEJ",type:["snv","cnv"],role:"predittivo",priority:"ALTO",evidence:"Trial F3",drug:"TKI MET (trial)",note:"Amplificazione MET ~4% gastrico. CNV dal pannello.",action:"MET amplificazione → TKI MET (trial)",referto:"Documentata amplificazione di {GENI}. Può orientare verso trial clinici con inibitori MET."},
+    {genes:["KRAS","NRAS","BRAF"],histotype:"Adenocarcinoma gastrico/GEJ",type:["snv"],role:"prognostico",priority:"MEDIO",evidence:"Prognostico",drug:"Nessun target approvato nel gastrico",note:"Valore prevalentemente prognostico. No anti-EGFR approvati nel gastrico.",action:"Valore prognostico — nessun target",referto:"Identificata mutazione di {GENI}. Nel contesto gastrico, tale alterazione ha valore prevalentemente prognostico; non sono disponibili terapie target approvate correlate."},
+    {genes:["BAT25","BAT26","NR21","NR22","NR24"],histotype:"Adenocarcinoma gastrico/GEJ (tutti i sottotipi)",type:["msi"],role:"misto",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1",drug:"Pembrolizumab (I linea MSI-H)",note:"~9% gastrico MSI-H. IO molto efficace. Prognosi relativa migliore rispetto a MSS.",action:"MSI-H → pembrolizumab ± chemio I linea",referto:"L'analisi dei marcatori microsatellitari ({GENI}) documenta profilo MSI-H. Nel carcinoma gastrico/GEJ è predittivo di risposta a pembrolizumab in prima linea, con prognosi relativamente migliore rispetto ai tumori MSS."}
+  ]},
+  {id:"mammella",label:"Carcinoma Mammario",icon:"🎀",subtitle:"BC metastatico / HR+ HER2- / TNBC",notes:null,entries:[
+    {genes:["ERBB2"],histotype:"Carcinoma mammario NST / lobulare",type:["snv","cnv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"T-DXd / trastuzumab / pertuzumab",note:"Amplificazione (IHC+FISH) = HER2+. Mutazioni attivanti (L755S, V777L) meccanismo diverso dall'amp → T-DXd specifico.",action:"HER2 amp → standard; HER2 mut attivante → T-DXd",referto:"L'analisi di {GENI} documenta amplificazione/mutazione attivante. L'amplificazione indica terapia anti-HER2 standard; la mutazione attivante è predittiva di risposta a trastuzumab deruxtecan (T-DXd)."},
+    {genes:["ESR1"],histotype:"Carcinoma mammario HR+ HER2- (post progressione a AI)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Elacestrant",note:"Mutazioni ESR1 (D538G, Y537S/C/N) = resistenza acquisita a inibitori aromatasi. Test preferibilmente su ctDNA in progressione.",action:"ESR1 mut sotto AI → elacestrant",referto:"Identificata mutazione acquisita di {GENI}. È predittiva di resistenza agli inibitori dell'aromatasi e di risposta a elacestrant (approvato FDA/EMA)."},
+    {genes:["PIK3CA"],histotype:"Carcinoma mammario HR+ HER2-",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA · NCCN Cat 1",drug:"Alpelisib + fulvestrant",note:"Mutazione ~40% HR+ HER2-. Esone 9 (E545K, E542K) e esone 20 (H1047R) più frequenti.",action:"PIK3CA mut + HR+ HER2- → alpelisib",referto:"Identificata mutazione oncogenica di {GENI}. In carcinoma mammario HR+ HER2-, è predittiva di risposta ad alpelisib (inibitore PI3Kα) + fulvestrant."},
+    {genes:["AKT1"],histotype:"Carcinoma mammario HR+ HER2- (NST o lobulare)",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"FDA",drug:"Capivasertib + fulvestrant",note:"AKT1 E17K ~3% BC. Capivasertib approvato FDA per profilo PIK3CA/AKT1/PTEN altered.",action:"AKT1 E17K → capivasertib",referto:"Identificata mutazione {GENI} E17K. È predittiva di risposta a capivasertib (inibitore AKT) + fulvestrant, nell'ambito del profilo PIK3CA/AKT1/PTEN altered (approvazione FDA)."},
+    {genes:["PTEN"],histotype:"Carcinoma mammario HR+ HER2-",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"FDA",drug:"Capivasertib",note:"Perdita PTEN → attivazione PI3K. Incluso nel profilo capivasertib.",action:"PTEN loss → capivasertib (profilo altered)",referto:"Documentata perdita/mutazione inattivante di {GENI}. Attiva il pathway PI3K/AKT ed è inclusa nel profilo PIK3CA/AKT1/PTEN altered, con indicazione a capivasertib + fulvestrant."},
+    {genes:["NTRK1","NTRK2","NTRK3"],histotype:"Carcinoma secretorio mammario (raro, giovani/bambini)",type:["snv","fusions"],role:"predittivo",priority:"ALTO",evidence:"FDA · EMA",drug:"Larotrectinib / entrectinib",note:"ETV6-NTRK3 quasi patognomonica del carcinoma secretorio. Approvazione agnostica.",action:"Carcinoma secretorio → NTRK fusione → TRK inibitore",referto:"Identificata fusione di {GENI} (tipicamente ETV6-NTRK3 nel carcinoma secretorio). È predittiva di risposta a TRK inibitori con approvazione FDA/EMA tumor-agnostica."},
+    {genes:["BAT25","BAT26","NR21","NR22","NR24"],histotype:"Carcinoma mammario triplo negativo (TNBC)",type:["msi"],role:"predittivo",priority:"MEDIO",evidence:"FDA",drug:"Pembrolizumab (TNBC MSI-H)",note:"MSI-H raro (~2%) nel BC, principalmente TNBC.",action:"MSI-H in TNBC → pembrolizumab",referto:"L'analisi dei marcatori microsatellitari ({GENI}) documenta profilo MSI-H. In TNBC, è predittivo di risposta a pembrolizumab (approvazione FDA agnostica)."}
+  ]},
+  {id:"melanoma",label:"Melanoma",icon:"🟫",subtitle:"Melanoma metastatico / uvea",notes:null,entries:[
+    {genes:["BRAF"],histotype:"Melanoma cutaneo (a diffusione superficiale, nodulare)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"Vemurafenib/dabrafenib + cobimetinib/trametinib",note:"V600E ~50%, V600K ~10%. IHC VE1 screening, NGS conferma. Non-V600 = resistenza primaria.",action:"BRAF V600E/K → combo BRAF+MEK I linea",referto:"Identificata mutazione {GENI} V600E/K. È predittiva di risposta a terapia target combinata BRAF+MEK inibitori in prima linea."},
+    {genes:["NRAS"],histotype:"Melanoma cutaneo (nodulare, anziani)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"EMA · NCCN Cat 1",drug:"Binimetinib",note:"NRAS Q61 ~20% melanoma cutaneo. Efficacia modesta in monoterapia — unica opzione target.",action:"NRAS Q61 → binimetinib",referto:"Identificata mutazione {GENI} Q61. È predittiva di risposta a binimetinib (MEK inibitore)."},
+    {genes:["KIT"],histotype:"Melanoma acrale / melanoma delle mucose",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"NCCN Cat 1 · Off-label",drug:"Imatinib / nilotinib",note:"KIT mut/amp in melanomi acrale e mucose (~15-20%). Rarissimo nel cutaneo classico.",action:"KIT mut (acrale/mucosa) → imatinib",referto:"Identificata mutazione/amplificazione di {GENI}. In melanoma acrale e delle mucose, è predittiva di risposta a imatinib/nilotinib."},
+    {genes:["GNA11","GNAQ"],histotype:"Melanoma uveale (coroide, corpo ciliare, iride)",type:["snv"],role:"misto",priority:"URGENTE",evidence:"FDA (tebentafusp) · Trial F3",drug:"Tebentafusp (HLA-A*02:01+) / selumetinib trial",note:"GNA11/GNAQ mutati in ~80% melanoma uveale. Tebentafusp approvato FDA 2022 per HLA-A*02:01+.",action:"Melanoma uvea → GNA11/GNAQ + valutare tebentafusp",referto:"Identificata mutazione di {GENI} (tipica del melanoma uveale). Supporta diagnosi molecolare e orienta verso tebentafusp (FDA, HLA-A*02:01+) o trial con MEK inibitori."},
+    {genes:["NF1"],histotype:"Melanoma cutaneo BRAF/NRAS wild-type",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"Trial F2",drug:"MEK inibitori (trial)",note:"NF1 loss → MAPK attivato. ~14% melanomi WT.",action:"NF1 mut BRAF/NRAS WT → MEK inibitore (trial)",referto:"Identificata mutazione inattivante di {GENI} in melanoma BRAF/NRAS wild-type. Attiva il pathway MAPK e può orientare verso trial con MEK inibitori."}
+  ]},
+  {id:"pancreas",label:"Pancreas / CCA",icon:"🟡",subtitle:"PDAC / colangiocarcinoma",notes:null,entries:[
+    {genes:["KRAS"],histotype:"Adenocarcinoma duttale pancreatico (PDAC)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA (G12C) · Trial F3 (G12D)",drug:"Sotorasib/adagrasib (G12C) · MRTX1133 trial (G12D)",note:"KRAS mut ~90% PDAC. Tipizzazione esatta codone 12 obbligatoria. Solo G12C targetabile con approvazione.",action:"Tipizzare esattamente codone 12: G12C → KRAS inibitore; G12D → trial",referto:"Analisi mutazionale di {GENI} con tipizzazione del codone 12. G12C è predittiva di risposta a KRAS G12C inibitori (sotorasib, adagrasib). G12D è oggetto di trial (MRTX1133). Altre varianti non hanno target approvati."},
+    {genes:["FGFR2"],histotype:"Colangiocarcinoma intraepatico (iCCA)",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA · NCCN Cat 1",drug:"Pemigatinib / infigratinib / futibatinib",note:"Fusioni FGFR2 ~10-15% iCCA. Rare in CCA extraepatico e PDAC. Test NGS obbligatorio.",action:"iCCA → FGFR2 fusione → FGFR inibitore",referto:"Identificata fusione/amplificazione di {GENI} in colangiocarcinoma intraepatico. È predittiva di risposta a inibitori FGFR (pemigatinib, infigratinib, futibatinib), approvati FDA/EMA."},
+    {genes:["IDH1","IDH2"],histotype:"Colangiocarcinoma intraepatico (iCCA)",type:["snv"],role:"misto",priority:"ALTO",evidence:"FDA (IDH1) · Trial F3 (IDH2)",drug:"Ivosidenib (IDH1) / enasidenib (IDH2)",note:"IDH1/2 mut ~15-20% iCCA. Ivosidenib approvato FDA in mantenimento.",action:"iCCA → IDH1/2 obbligatorio; IDH1 mut → ivosidenib",referto:"Identificata mutazione di {GENI}. In iCCA, IDH1 mut è predittiva di risposta a ivosidenib (approvato FDA). Ha anche valore diagnostico differenziale con altre neoplasie epatiche."},
+    {genes:["BAT25","BAT26","NR21","NR22","NR24"],histotype:"PDAC / CCA",type:["msi"],role:"predittivo",priority:"ALTO",evidence:"FDA (agnostico)",drug:"Pembrolizumab",note:"MSI-H ~1-2% PDAC. Approvazione agnostica FDA.",action:"MSI-H → pembrolizumab (agnostico FDA)",referto:"L'analisi dei marcatori microsatellitari ({GENI}) documenta profilo MSI-H. È predittivo di risposta a pembrolizumab con approvazione FDA tumor-agnostica."},
+    {genes:["SMAD4"],histotype:"Adenocarcinoma duttale pancreatico",type:["snv"],role:"prognostico",priority:"MEDIO",evidence:"Prognostico",drug:"Nessun target approvato",note:"SMAD4 loss ~50% PDAC → prognosi sfavorevole.",action:"Marker prognostico sfavorevole",referto:"Documentata perdita/mutazione inattivante di {GENI}. È associata a prognosi sfavorevole nel PDAC; non sono disponibili terapie target approvate."}
+  ]},
+  {id:"gist",label:"GIST / Tumori Stromali",icon:"🟠",subtitle:"GIST metastatico / resistente",notes:null,entries:[
+    {genes:["KIT"],histotype:"GIST (stomaco, intestino tenue — tutti i siti)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA I linea · EMA · NCCN Cat 1 · AIOM",drug:"Imatinib → sunitinib → regorafenib → ripretinib",note:"KIT mut ~85% GIST. Esone 11 → imatinib 400mg; esone 9 → 800mg; esoni 13/17 → resistenza.",action:"Tipizzare esone KIT: esone 11 → 400mg; esone 9 → 800mg",referto:"Analisi mutazionale di {GENI} con tipizzazione dell'esone. Esone 11: risposta ottimale a imatinib 400 mg. Esone 9: dose aumentata 800 mg. Esoni 13/17: resistenza primaria a imatinib."},
+    {genes:["PDGFRA"],histotype:"GIST gastrico (prevalentemente epitelioide)",type:["snv"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Avapritinib (D842V) / imatinib (altri esoni)",note:"PDGFRA mut ~10%. D842V = resistenza primaria a imatinib → avapritinib specifico.",action:"PDGFRA D842V → avapritinib; altri esoni → imatinib",referto:"Analisi mutazionale di {GENI}. La variante D842V è resistente a imatinib e richiede avapritinib (approvato FDA/EMA). Altre varianti di PDGFRA mantengono sensibilità a imatinib."},
+    {genes:["BRAF"],histotype:"GIST KIT/PDGFRA wild-type",type:["snv"],role:"predittivo",priority:"MEDIO",evidence:"Trial F2",drug:"Vemurafenib + binimetinib (trial)",note:"BRAF V600E in GIST KIT/PDGFRA WT (~7%).",action:"KIT/PDGFRA WT → testare BRAF",referto:"In GIST KIT/PDGFRA wild-type, è stata ricercata mutazione di {GENI}. V600E può orientare verso trial con inibitori BRAF/MEK."}
+  ]},
+  {id:"tiroide",label:"Carcinoma Tiroideo",icon:"🦋",subtitle:"DTC / ATC / MTC",notes:null,entries:[
+    {genes:["BRAF"],histotype:"Carcinoma papillare (PTC) / carcinoma anaplastico (ATC)",type:["snv"],role:"misto",priority:"URGENTE",evidence:"FDA (ATC) · EMA · NCCN Cat 1",drug:"Dabrafenib + trametinib",note:"V600E ~60% PTC. ATC: terapia urgente data rapidissima progressione. PTC: predittore aggressività.",action:"ATC BRAF V600E → dabrafenib+trametinib URGENTE",referto:"Identificata mutazione {GENI} V600E. Nel carcinoma anaplastico tiroideo (ATC) è indicazione urgente a dabrafenib+trametinib (approvati FDA). Nel carcinoma papillare (PTC) ha valore prognostico di comportamento aggressivo."},
+    {genes:["RET"],histotype:"Carcinoma midollare (MTC) / carcinoma papillare (PTC)",type:["snv","fusions"],role:"misto",priority:"URGENTE",evidence:"FDA · EMA · NCCN Cat 1",drug:"Selpercatinib / pralsetinib",note:"Fusioni RET ~10-20% PTC. Mutazioni puntiformi in MTC: germinali in MEN2 (screening familiari obbligatorio), somatiche ~40% MTC sporadico.",action:"MTC → RET su tessuto + test germinale; PTC → fusioni",referto:"Identificata mutazione/fusione di {GENI}. Nel MTC, le mutazioni RET germinali richiedono screening per MEN2. Nel PTC, le fusioni RET sono predittive di risposta a selpercatinib/pralsetinib."},
+    {genes:["NTRK1","NTRK3"],histotype:"Carcinoma papillare tiroideo",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Larotrectinib / entrectinib",note:"Fusioni NTRK1/3 in PTC ~2-3%. ETV6-NTRK3 tipica.",action:"NTRK fusione → TRK inibitore",referto:"Identificata fusione di {GENI}. È predittiva di risposta a TRK inibitori (larotrectinib, entrectinib) con approvazione FDA/EMA."},
+    {genes:["HRAS","KRAS","NRAS"],histotype:"Carcinoma follicolare (FTC) / carcinoma poco differenziato",type:["snv"],role:"prognostico",priority:"ALTO",evidence:"Prognostico",drug:"Nessun target approvato",note:"Mut in FTC e carcinoma poco differenziato. Pathway MAPK e PI3K.",action:"RAS mut → marker aggressività, nessun target",referto:"Identificata mutazione di {GENI}. Ha valore prognostico di comportamento aggressivo nel carcinoma follicolare e poco differenziato. Non sono disponibili terapie target approvate specifiche."},
+    {genes:["TERT"],histotype:"PTC / FTC (varianti aggressive, recidive)",type:["snv"],role:"prognostico",priority:"ALTO",evidence:"Prognostico",drug:"Nessun target approvato",note:"TERT promoter mut (C228T, C250T) = prognosi sfavorevole. Con BRAF V600E = doppio hit prognostico.",action:"TERT + BRAF V600E = doppio hit prognostico negativo",referto:"Identificata mutazione del promotore di {GENI}. È associata a comportamento aggressivo nel DTC. La co-presenza con BRAF V600E configura un doppio hit prognostico sfavorevole."}
+  ]},
+  {id:"glioma",label:"Gliomi / Tumori SNC",icon:"🧠",subtitle:"Astrocitoma / Oligodendroglioma / GBM — WHO CNS5 2021",
+   notes:"⚠️ La classificazione WHO CNS5 2021 richiede anche 1p/19q (FISH/CGH) per diagnosi di oligodendroglioma e CDKN2A/B per grading astrocitomi. Questi test NON sono coperti da questo pannello e devono essere richiesti separatamente.",entries:[
+    {genes:["IDH1","IDH2"],histotype:"Astrocitoma IDH-mutato / Oligodendroglioma IDH-mutato (WHO Gr2-3-4)",type:["snv"],role:"diagnostico",priority:"URGENTE",evidence:"FDA (vorasidenib 2023) · Diag WHO 2021",drug:"Vorasidenib (glioma basso grado Gr1-2)",note:"IDH1 R132H ~70% gliomi WHO Gr2-3. IDH2 R172K. Definisce la diagnosi secondo WHO CNS5 — non solo biomarcatore terapeutico. IHC anti-IDH1 R132H per screening; NGS per varianti non-R132H.",action:"IDH1/2 → DIAGNOSTICO primario + vorasidenib (Gr1-2)",
+      referto_diag:"[RUOLO DIAGNOSTICO] La mutazione {GENI} definisce la categoria diagnostica secondo la classificazione WHO CNS5 2021. In un glioma diffuso IDH-mutato, tale alterazione è criterio classificativo primario — non un biomarcatore accessorio. Senza questo dato non è possibile assegnare la diagnosi nosologica corretta. NB: per la diagnosi di oligodendroglioma è necessaria la codelezione 1p/19q (FISH/CGH separato, non coperto da questo pannello).",
+      referto_pred:"[RUOLO PREDITTIVO] In gliomi IDH-mutati di basso grado (WHO Gr1-2), vorasidenib è approvato FDA (2023). Il grading istomolecolare del caso in esame deve essere considerato prima dell'applicazione terapeutica: la presenza di delezione omozigote CDKN2A/B (upgrade a Gr4) o di necrosi/proliferazione microvascolare pone il paziente al di fuori dell'indicazione approvata attuale."},
+    {genes:["TERT"],histotype:"GBM IDH-wild type / Oligodendroglioma IDH-mutato 1p/19q codel",type:["snv"],role:"diagnostico",priority:"URGENTE",evidence:"Diag WHO 2021",drug:"Nessun target approvato",note:"TERT promoter mut in GBM IDH-WT (~80%) = criterio molecolare WHO 2021. NB: il pattern +7/-10 richiede FISH/CGH separato — NON coperto da questo pannello.",action:"TERT + EGFR amp + +7/-10 (FISH separato) = GBM IDH-WT",
+      referto_diag:"[RUOLO DIAGNOSTICO] La mutazione del promotore di {GENI} (C228T / C250T) è criterio molecolare WHO CNS5 2021 per la diagnosi di glioblastoma IDH-wild type, in combinazione con amplificazione EGFR e/o pattern cromosomico +7/-10. Quest'ultimo richiede FISH/CGH separato, non coperto da questo pannello NGS. In glioma IDH-mutato, TERT contribuisce alla triade diagnostica dell'oligodendroglioma (IDH-mut + 1p/19q codel + TERT-mut).",
+      referto_pred:"[RUOLO PREDITTIVO] Non esistono terapie approvate che targetano direttamente TERT nel glioma. La mutazione non deve essere interpretata come indicazione terapeutica. Ha esclusivo valore diagnostico/classificativo e prognostico (prognosi sfavorevole nel DTC tiroideo se co-presente con BRAF V600E — contesto diverso)."},
+    {genes:["EGFR"],histotype:"Glioblastoma IDH-wild type (GBM WHO Gr4)",type:["snv","cnv"],role:"diagnostico",priority:"URGENTE",evidence:"Diag WHO 2021",drug:"TKI EGFR (scarsa risposta in GBM — trial)",note:"Amplificazione EGFR (CNV) ~40% GBM = criterio molecolare WHO 2021. EGFRvIII (del esone 2-7) rilevabile con NGS.",action:"EGFR amplificazione → criterio molecolare GBM IDH-WT",
+      referto_diag:"[RUOLO DIAGNOSTICO] L'amplificazione di {GENI} (CNV) in glioma IDH-wild type è criterio molecolare WHO CNS5 2021 per la diagnosi di glioblastoma, indipendentemente dal grado istologico. Ha valore classificativo primario: un glioma IDH-WT con amplificazione EGFR è GBM per definizione molecolare, anche in assenza di necrosi.",
+      referto_pred:"[RUOLO PREDITTIVO] I TKI anti-EGFR hanno mostrato risposta scarsa o assente nel GBM classico, a causa di eterogeneità tumorale e meccanismi di bypass. L'amplificazione EGFR non costituisce indicazione a gefitinib/erlotinib fuori da trial clinici. La variante EGFRvIII (delezione esone 2-7) è oggetto di trial specifici (vaccini, CAR-T, ADC) — segnalare la sua presenza se rilevata."},
+    {genes:["CDKN2A"],histotype:"Astrocitoma IDH-mutato (upgrade a Gr4)",type:["snv"],role:"diagnostico",priority:"ALTO",evidence:"Diag WHO 2021 · Trial F2",drug:"CDK4/6 inibitori (trial)",note:"Delezione omozigote CDKN2A/B = criterio WHO 2021 per upgrade Gr4 negli astrocitomi IDH-mut, anche senza necrosi/microvascolarizzazione.",action:"CDKN2A del omozigote in IDH-mut → astrocitoma WHO Gr4",
+      referto_diag:"[RUOLO DIAGNOSTICO] La delezione omozigote di {GENI}/B è criterio sufficiente per la diagnosi di astrocitoma IDH-mutato WHO Gr4 (WHO CNS5 2021), anche in assenza di necrosi e proliferazione microvascolare. Non è un biomarcatore terapeutico nel contesto del glioma: il grading che produce ha conseguenze dirette sul trattamento adiuvante (radioterapia + temozolomide).",
+      referto_pred:"[RUOLO PREDITTIVO] I CDK4/6 inibitori (palbociclib, ribociclib) sono approvati in ambiti oncologici diversi (mammella HR+). Nel glioma, la loro applicazione è sperimentale (trial fase I-II). La delezione CDKN2A/B non costituisce indicazione a CDK4/6 inibitori fuori da protocollo. Segnalare la presenza per eventuale eligibilità a trial."},
+    {genes:["BRAF"],histotype:"Glioma pediatrico basso grado / Astrocitoma pilocitico / PXA",type:["snv","fusions"],role:"misto",priority:"ALTO",evidence:"FDA (V600E glioma Gr1-2) · EMA",drug:"Dabrafenib + trametinib",note:"BRAF V600E in gliomi pediatrici e PXA. KIAA1549-BRAF fusione tipica del pilocitico — NON coperta da questo pannello (richiedere FISH/RNA panel dedicato).",action:"BRAF V600E pediatrico/PXA → dabrafenib+trametinib approvato",
+      referto_diag:"[RUOLO DIAGNOSTICO] La mutazione/fusione di {GENI} ha valore diagnostico nel contesto dei gliomi pediatrici e della PXA. BRAF V600E orienta verso PXA o glioma pediatrico di basso grado; le fusioni KIAA1549-BRAF sono quasi patognomoniche dell'astrocitoma pilocitico (non rilevabili con questo pannello — richiedere FISH o RNA fusion panel dedicato).",
+      referto_pred:"[RUOLO PREDITTIVO] La mutazione BRAF V600E in glioma pediatrico di basso grado (WHO Gr1-2) è indicazione approvata FDA/EMA a dabrafenib+trametinib. Nei gliomi di alto grado o nell'adulto l'evidenza è più limitata. La sola fusione KIAA1549-BRAF non è targetabile con BRAF inibitori standard (attivazione indipendente dal V600)."}
+  ]},
+  {id:"agnostico",label:"Test Tumore-Agnostico",icon:"🎯",subtitle:"Biomarker indipendenti dalla sede",notes:null,entries:[
+    {genes:["NTRK1","NTRK2","NTRK3"],histotype:"Qualsiasi tumore — frequente in carcinoma secretorio, fibrosarcoma infantile, MASC salivare",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA · EMA",drug:"Larotrectinib / entrectinib",note:"Risposta ~75-80%. IHC pan-TRK come screening. Approvazione agnostica.",action:"NTRK fusione → TRK inibitore OVUNQUE",referto:"Identificata fusione di {GENI}. È predittiva di risposta a TRK inibitori (larotrectinib, entrectinib) con approvazione FDA/EMA tumor-agnostica, indipendentemente dalla sede."},
+    {genes:["RET"],histotype:"Qualsiasi tumore — frequente in tiroide, polmone, CCA",type:["snv","fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA agnostico 2022 · EMA",drug:"Selpercatinib",note:"Approvazione agnostica FDA 2022. Usare TKI RET selettivo.",action:"RET fusione → selpercatinib (agnostico FDA 2022)",referto:"Identificata fusione di {GENI}. Selpercatinib è approvato FDA con indicazione tumor-agnostica (2022) per tumori solidi RET fusion-positivi."},
+    {genes:["BAT25","BAT26","NR21","NR22","NR24"],histotype:"Qualsiasi tumore solido",type:["msi"],role:"predittivo",priority:"URGENTE",evidence:"FDA agnostico · NCCN Cat 1",drug:"Pembrolizumab",note:"MSI-H/dMMR → pembrolizumab FDA agnostico. In Europa: approvazione sede-specifica — verificare EMA.",action:"MSI-H → pembrolizumab OVUNQUE (FDA); verificare EMA per sede",referto:"L'analisi dei marcatori microsatellitari ({GENI}) documenta profilo MSI-H/dMMR. È predittivo di risposta a pembrolizumab con approvazione FDA tumor-agnostica. Per EMA/AIFA verificare lo stato di approvazione specifico per la sede primitiva."},
+    {genes:["POLE"],histotype:"Qualsiasi tumore — frequente in endometrio, CRC",type:["snv"],role:"predittivo",priority:"ALTO",evidence:"FDA · Trial F3",drug:"Pembrolizumab (TMB-ultra-high)",note:"POLE mut → ultramutatore → TMB >100 mut/Mb → risposta IO.",action:"POLE mut → TMB-ultra-high → immunoterapia",referto:"Identificata mutazione patogenetica di {GENI}. Genera profilo TMB-ultra-high (>100 mut/Mb), associato a risposta a inibitori del checkpoint indipendentemente dalla sede primitiva."},
+    {genes:["ROS1"],histotype:"Qualsiasi tumore — frequente in NSCLC, CCA",type:["fusions"],role:"predittivo",priority:"URGENTE",evidence:"FDA agnostico · EMA",drug:"Entrectinib / crizotinib (NSCLC)",note:"Entrectinib approvato FDA per ROS1 fusion+ qualsiasi tumore solido.",action:"ROS1 fusione → entrectinib (agnostico FDA)",referto:"Identificata fusione di {GENI}. Entrectinib è approvato FDA con indicazione tumor-agnostica per tumori solidi ROS1 fusion-positivi."}
+  ]}
+];
+
+let state={selected:"crc",filter:"ALL",expanded:null};
+
+function inPanel(g,types){
+  return (types.includes("snv")&&PANEL.snv.includes(g))||(types.includes("fusions")&&PANEL.fusions.includes(g))||
+         (types.includes("cnv")&&PANEL.cnv.includes(g))||(types.includes("msi")&&PANEL.msi.includes(g));
+}
+
+function evClass(e){
+  if(e.includes("FDA"))return"ev-FDA";
+  if(e.includes("EMA"))return"ev-EMA";
+  if(e.includes("NCCN"))return"ev-NCCN";
+  if(e.includes("AIOM"))return"ev-AIOM";
+  if(e.includes("Trial"))return"ev-Trial";
+  if(e.includes("Diag"))return"ev-Diag";
+  return"ev-Prog";
+}
+
+function evBadges(ev){
+  return ev.split("·").map(e=>e.trim()).filter(Boolean).map(e=>`<span class="ev-tag ${evClass(e)}">${e}</span>`).join("");
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function makeRef(entry){
+  if(entry.referto) return entry.referto.replace(/\{GENI\}/g,entry.genes.join(", "));
+  return "";
+}
+function makeRefDiag(entry){
+  if(entry.referto_diag) return entry.referto_diag.replace(/\{GENI\}/g,entry.genes.join(", "));
+  return "";
+}
+function makeRefPred(entry){
+  if(entry.referto_pred) return entry.referto_pred.replace(/\{GENI\}/g,entry.genes.join(", "));
+  return "";
+}
+function copyRef(idx){
+  const sc=SC.find(s=>s.id===state.selected);
+  const entry=getFiltered(sc)[idx];
+  navigator.clipboard.writeText(makeRef(entry)).then(()=>{
+    const b=document.getElementById("cb-"+idx);
+    if(b){b.textContent="✓ Copiato";b.classList.add("copied");setTimeout(()=>{b.textContent="📋 Copia frase referto";b.classList.remove("copied");},2000);}
+  });
+}
+function copyRefSplit(idx,which){
+  const sc=SC.find(s=>s.id===state.selected);
+  const entry=getFiltered(sc)[idx];
+  const text=which==="diag"?makeRefDiag(entry):makeRefPred(entry);
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.getElementById(`cb-${idx}-${which}`);
+    if(b){b.textContent="✓ Copiato";b.classList.add("copied");setTimeout(()=>{b.textContent="📋 Copia";b.classList.remove("copied");},2000);}
+  });
+}
+
+function getFiltered(sc){
+  const q=document.getElementById("search").value.toLowerCase();
+  return(sc?.entries||[]).filter(e=>{
+    const mp=state.filter==="ALL"||e.priority===state.filter;
+    const ms=!q||e.genes.some(g=>g.toLowerCase().includes(q))||e.drug.toLowerCase().includes(q)||
+      e.note.toLowerCase().includes(q)||e.histotype.toLowerCase().includes(q)||e.evidence.toLowerCase().includes(q);
+    return mp&&ms;
+  });
+}
+
+function copyRef(idx){
+  const sc=SC.find(s=>s.id===state.selected);
+  const entry=getFiltered(sc)[idx];
+  navigator.clipboard.writeText(makeRef(entry)).then(()=>{
+    const b=document.getElementById("cb-"+idx);
+    if(b){b.textContent="✓ Copiato";b.classList.add("copied");setTimeout(()=>{b.textContent="📋 Copia frase referto";b.classList.remove("copied");},2000);}
+  });
+}
+
+function render(){
+  const sc=SC.find(s=>s.id===state.selected);
+  document.getElementById("sidebar").innerHTML=SC.map(s=>`<button class="sb-btn ${s.id===state.selected?"active":""}" onclick="selectSC('${s.id}')"><span style="margin-right:7px;font-size:14px">${s.icon}</span>${esc(s.label)}</button>`).join("");
+  if(!sc)return;
+  document.getElementById("sc-hdr").innerHTML=`<div style="display:flex;align-items:center;gap:11px;margin-bottom:3px"><span style="font-size:24px">${sc.icon}</span><div><div style="font-size:18px;font-weight:700;color:#0D1B2A">${esc(sc.label)}</div><div style="font-size:12px;color:#546E7A;font-style:italic">${esc(sc.subtitle)}</div></div></div>${sc.notes?`<div id="sc-note">${esc(sc.notes)}</div>`:""}`;
+  document.getElementById("filters").innerHTML=["ALL","URGENTE","ALTO","MEDIO"].map(p=>{
+    const lbl=p==="ALL"?"TUTTI":p==="URGENTE"?"⚡ URGENTE":p==="ALTO"?"🔶 ALTO":"🟢 MEDIO";
+    const cls=state.filter===p?(p==="ALL"?"fa":p==="URGENTE"?"fU":p==="ALTO"?"fAL":"fM"):"";
+    return`<button class="f-btn ${cls}" onclick="setF('${p}')">${lbl}</button>`;
+  }).join("");
+  const entries=getFiltered(sc);
+  if(!entries.length){document.getElementById("cards").innerHTML='<div id="no-res">Nessun risultato</div>';return;}
+  document.getElementById("cards").innerHTML=entries.map((e,i)=>{
+    const open=state.expanded===i;
+    const bp=`bp bp${e.priority[0]}`;
+    const cc=`c${e.priority[0]}`;
+    const gt=e.genes.map(g=>`<span class="g-tag">${esc(g)}</span>`).join("");
+    const tt=e.type.map(t=>`<span class="t-tag t-${t}">${TL[t]||t}</span>`).join("");
+    const rt=`<span class="r-tag r-${e.role}">${RL[e.role]||e.role}</span>`;
+    const ev=evBadges(e.evidence);
+    const pc=e.genes.map(g=>`<span class="${inPanel(g,e.type)?"g-ok":"g-ko"}">${esc(g)} ${inPanel(g,e.type)?"✓":"✗"}</span>`).join("");
+    const isSplit = (e.role==="diagnostico"||e.role==="misto") && e.referto_diag;
+    const refertoBox = isSplit
+      ? `<div class="ref-split-wrapper">
+          <div class="b-ref-diag">
+            <div class="i-lbl">🔬 Ruolo Diagnostico — Frase Referto</div>
+            <div class="ref-text">${esc(makeRefDiag(e))}</div>
+            <button class="btn-copy" id="cb-${i}-diag" onclick="copyRefSplit(${i},'diag')">📋 Copia</button>
+          </div>
+          <div class="b-ref-pred">
+            <div class="i-lbl">💊 Ruolo Predittivo — Frase Referto</div>
+            <div class="ref-text">${esc(makeRefPred(e))}</div>
+            <button class="btn-copy" id="cb-${i}-pred" onclick="copyRefSplit(${i},'pred')">📋 Copia</button>
+          </div>
+        </div>`
+      : `<div class="b-ref"><div class="i-lbl">✍️ Frase per Referto</div><div class="ref-text">${esc(makeRef(e))}</div><button class="btn-copy" id="cb-${i}" onclick="copyRef(${i})">📋 Copia frase referto</button></div>`;
+    const body=open?`<div class="c-body">
+      <div class="i-box ba-${e.priority[0]}"><div class="i-lbl">▶ Azione Clinica</div><div class="i-val">${esc(e.action)}</div></div>
+      <div class="i-box b-drug"><div class="i-lbl">💊 Farmaco / Target</div><div class="i-val">${esc(e.drug)}</div></div>
+      <div class="i-box b-note"><div class="i-lbl">📋 Note Tecniche</div><div class="i-val">${esc(e.note)}</div></div>
+      ${refertoBox}
+      <div class="p-check"><span class="p-lbl">Nel pannello:</span>${pc}</div>
+    </div>`:"";
+    return`<div class="card ${open?"open":""} ${cc}">
+      <button class="c-hdr" onclick="toggleCard(${i})">
+        <span class="${bp}">${e.priority}</span>
+        <div class="c-meta">
+          <div class="c-tags">${gt}<span class="dot">·</span>${tt}<span class="dot">·</span>${rt}<span class="dot">·</span>${ev}</div>
+          <div class="histotype">🔬 ${esc(e.histotype)}</div>
+        </div>
+        <span class="chevron">${open?"▲":"▼"}</span>
+      </button>${body}</div>`;
+  }).join("");
+  document.getElementById("pg").innerHTML=[
+    {l:"SNV/InsDel",c:"#4527A0",bg:"#EDE7F6",n:`${PANEL.snv.length} geni`},
+    {l:"Fusioni",   c:"#0D47A1",bg:"#E3F2FD",n:`${PANEL.fusions.length} geni`},
+    {l:"CNV",       c:"#37474F",bg:"#ECEFF1",n:`${PANEL.cnv.length} geni`},
+    {l:"MSI",       c:"#1B5E20",bg:"#E8F5E9",n:`${PANEL.msi.length} marcatori + 118 mononucl.`}
+  ].map(t=>`<div class="pc" style="background:${t.bg};border:1.5px solid ${t.c}33"><div class="pc-l" style="color:${t.c}">${t.l}</div><div class="pc-c">${t.n}</div></div>`).join("");
+}
+
+function selectSC(id){state.selected=id;state.expanded=null;render();}
+function setF(f){state.filter=f;state.expanded=null;render();}
+function toggleCard(i){state.expanded=state.expanded===i?null:i;render();}
+function openModal(){document.getElementById("mo").classList.add("open");}
+function closeModal(){document.getElementById("mo").classList.remove("open");}
+function closeModalOuter(e){if(e.target===document.getElementById("mo"))closeModal();}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+render();
+</script>
+</body>
+</html>
