@@ -33,9 +33,9 @@
   .filters-sep { width: 100%; height: 0; border-top: 1px dashed #CFD8DC; margin: 4px 0; }
   .f-btn { padding: 5px 14px; border-radius: 20px; border: 2px solid #CFD8DC; background: #fff; color: #37474F; font-size: 12px; font-family: inherit; cursor: pointer; font-weight: 700; transition: all 0.12s; }
   .f-btn.fa  { background: #1565C0; border-color: #1565C0; color: #fff; }
-  .f-btn.fD  { background: #6A1B9A; border-color: #4A148C; color: #fff; }
-  .f-btn.fR  { background: #1565C0; border-color: #0D47A1; color: #fff; }
-  .f-btn.fT  { background: #00897B; border-color: #00695C; color: #fff; }
+  .f-btn.fD  { background: #546E7A; border-color: #37474F; color: #fff; }
+  .f-btn.fR  { background: #E65100; border-color: #BF360C; color: #fff; }
+  .f-btn.fT  { background: #C62828; border-color: #B71C1C; color: #fff; }
   .filters-label { font-size: 10px; font-weight: 700; color: #90A4AE; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
 
   #cards { display: flex; flex-direction: column; gap: 9px; margin-top: 12px; }
@@ -48,7 +48,9 @@
   .c-hdr { width: 100%; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: transparent; border: none; cursor: pointer; text-align: left; font-family: inherit; }
   .c-hdr:hover { background: #FAFAFA; }
   .bp { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; flex-shrink: 0; text-transform: uppercase; color: #fff; margin-top: 2px; }
-  .bpD { background: #6A1B9A; } .bpR { background: #1565C0; } .bpT { background: #00897B; }
+  .bpT { background: #C62828; }
+  .bpR { background: #E65100; }
+  .bpD { background: #546E7A; }
 
   .c-top-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
   .c-type-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 3px; }
@@ -945,7 +947,7 @@ function render(){
   document.getElementById("sidebar").innerHTML=SC.map(s=>`<button type="button" class="sb-btn ${s.id===state.selected?"active":""}" onclick="selectSC('${s.id}')"><span style="margin-right:7px;font-size:14px">${s.icon}</span>${esc(s.label)}</button>`).join("");
   if(!sc)return;
   document.getElementById("filters").innerHTML=["ALL","DIAGNOSTICO","REFERTUALE","TERAPEUTICO"].map(p=>{
-    const lbl=p==="ALL"?"TUTTI":p==="DIAGNOSTICO"?"🔬 Diagnostico":p==="REFERTUALE"?"📋 Refertuale":"💊 Terapeutico";
+    const lbl=p==="ALL"?"TUTTI":p==="DIAGNOSTICO"?"🔵 Biologico":p==="REFERTUALE"?"🟠 Rilevante":"🔴 Obbligatorio";
     const cls=state.filter===p?(p==="ALL"?"fa":p==="DIAGNOSTICO"?"fD":p==="REFERTUALE"?"fR":"fT"):"";
     return`<button type="button" class="f-btn ${cls}" onclick="setF('${p}')">${lbl}</button>`;
   }).join("");
@@ -1040,7 +1042,7 @@ function render(){
     const staleTag = monthsAgo > 14 ? `<span title="Revisione: ${reviewStr}" style="font-size:10px;background:#FFF3E0;color:#E65100;border:1px solid #FFB74D;border-radius:3px;padding:1px 5px;margin-left:4px">⚠️ rev. ${reviewStr}</span>` : "";
     return`<div class="card ${open?"open":""} ${cc}">
       <button type="button" class="c-hdr" onclick="toggleCard(${i})">
-        <span class="${bp}">${e.priority}</span>
+        <span class="${bp}" title="${e.prio==='T'?'Cambia terapia immediata':e.prio==='R'?'Completa il referto':'Informazione prognostica/diagnostica'}">${e.prio==='T'?'⬤ Obbligatorio':e.prio==='R'?'⬤ Rilevante':'⬤ Biologico'}</span>
         <div class="c-meta">
           ${scenarioBadge}<div style="margin-bottom:4px">${rt}${staleTag}</div>
           <div class="c-top-row">
