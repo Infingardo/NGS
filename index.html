@@ -265,6 +265,7 @@
   .hp-box-count{font-size:20px;font-weight:700;margin-bottom:5px;}
   .hp-box-desc{font-size:11px;line-height:1.55;}
   .hp-box-ex{font-size:10px;font-style:italic;margin-top:5px;opacity:.75;}
+  .hp-box-def{font-size:11px;margin-top:8px;padding-top:7px;border-top:1px dashed currentColor;opacity:.85;line-height:1.55;text-align:left;}
   .hp-snv{background:#EDE7F6;border-color:#7E57C2;color:#4527A0;} .hp-snv:hover{background:#7E57C2;color:#fff;}
   .hp-fus{background:#E3F2FD;border-color:#42A5F5;color:#0D47A1;} .hp-fus:hover{background:#1565C0;color:#fff;}
   .hp-cnv{background:#ECEFF1;border-color:#78909C;color:#37474F;} .hp-cnv:hover{background:#546E7A;color:#fff;}
@@ -294,7 +295,7 @@
     <div id="logo">🧬</div>
     <div id="header-info">
       <div id="title">NGS Panel — Decision Support</div>
-      <div id="subtitle-hdr">Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">infingardo.github.io/NGS</a></div>
+      <div id="subtitle-hdr">Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">infingardo.github.io/NGS</a> · <a href="https://github.com/Infingardo/NGS/blob/main/pannello_NGS_Diatech_documento_clinico.md.pdf" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">&#128196; Documento clinico</a></div>
     </div>
     <span id="version-badge">v1.5 · Feb 2026</span>
     <button type="button" class="hdr-btn" onclick="openModal()" aria-label="Apri guida">ℹ️ Guida</button>
@@ -326,27 +327,30 @@
         <div class="hp-box-count">48 geni</div>
         <div class="hp-box-desc">Mutazioni puntiformi e piccole inserzioni/delezioni.</div>
         <div class="hp-box-ex">KRAS &middot; EGFR &middot; IDH1 &middot; BRAF &middot; TP53</div>
+        <div class="hp-box-def">Cambiamento nella <em>sequenza</em> del DNA: una base sostituita o piccola inserzione/delezione. Il numero di copie rimane normale. Effetto qualitativo: proteina alterata.<br><em>Es: KRAS G12C — codone 12 mutato → proteina costitutivamente attiva.</em></div>
       </div>
       <div class="hp-box hp-fus" onclick="goGeneFiltered('fusions')">
         <div class="hp-box-icon">&#128256;</div><div class="hp-box-type">Fusioni geniche</div>
         <div class="hp-box-count">12 geni</div>
         <div class="hp-box-desc">Riarrangiamenti cromosomici con proteine chimeriche.</div>
         <div class="hp-box-ex">ALK &middot; RET &middot; NTRK &middot; ROS1 &middot; FGFR</div>
+        <div class="hp-box-def">Due geni distinti si fondono in un unico trascritto chimerico. La proteina ibrida è costitutivamente attiva e oncogenica.<br><em>Es: EML4-ALK in NSCLC — chinasi ALK attiva indipendentemente dal ligando → alectinib.</em></div>
       </div>
       <div class="hp-box hp-cnv" onclick="goGeneFiltered('cnv')">
         <div class="hp-box-icon">&#128200;</div><div class="hp-box-type">CNV</div>
         <div class="hp-box-count">3 geni</div>
         <div class="hp-box-desc">Amplificazioni geniche con sovraespressione proteica.</div>
         <div class="hp-box-ex">EGFR &middot; ERBB2 (HER2) &middot; MET</div>
+        <div class="hp-box-def">Cambiamento nel <em>numero di copie</em> del gene. La sequenza è normale, ma il gene è amplificato (molte copie). Effetto quantitativo: sovraespressione proteica.<br><em>Es: HER2 amplificato nel gastrico — 20-30 copie invece di 2 → trastuzumab.</em></div>
       </div>
       <div class="hp-box hp-msi" onclick="goGeneFiltered('msi')">
         <div class="hp-box-icon">&#129518;</div><div class="hp-box-type">MSI</div>
         <div class="hp-box-count">126 marcatori</div>
         <div class="hp-box-desc">Instabilit&agrave; microsatellitare, disfunzione MMR.</div>
         <div class="hp-box-ex">Pannello Bethesda esteso &middot; Lynch</div>
+        <div class="hp-box-def">Difetto del sistema MMR: accumulo di errori nei tratti microsatellitari. Genera fenotipo ipermutato con alta immunogenicità.<br><em>Es: CRC dMMR/MSI-H — perdita MLH1 → pembrolizumab I linea + screening Lynch.</em></div>
       </div>
     </div>
-  </div>
   <div class="home-limits">
     <div class="home-limits-title">⚠️ Questo pannello NON analizza</div>
     <div class="home-limits-grid">
@@ -860,7 +864,7 @@ function goToScenario(id,gene){
 function goHome(){
   // Inject version into header subtitle
   const sub = document.getElementById("subtitle-hdr");
-  if(sub) sub.innerHTML = `Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">infingardo.github.io/NGS</a> · <span style="color:#90A4AE">rev. ${DATA_REVIEWED}</span>`;
+  if(sub) sub.innerHTML = `Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">infingardo.github.io/NGS</a> · <a href="https://github.com/Infingardo/NGS/blob/main/pannello_NGS_Diatech_documento_clinico.md.pdf" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">&#128196; Documento clinico</a> · <span style="color:#90A4AE">rev. ${DATA_REVIEWED}</span>`;
   const _s=document.getElementById("search");if(_s){_s.value="";}
   document.getElementById("home").style.display = "flex";
   document.getElementById("gene-view").style.display = "none";
