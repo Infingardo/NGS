@@ -758,35 +758,39 @@ function buildGeneIndex(){
 }
 
 function renderGenes(){
-  const q=(document.getElementById('gene-search')?.value||'').toLowerCase();
-  const geneMap=getGeneIndex();
-  const genes=Object.keys(geneMap).sort();
-  const tfs=[{k:'snv',l:'SNV/InsDel',c:'gtf-snv'},{k:'fusions',l:'Fusioni',c:'gtf-fus'},{k:'cnv',l:'CNV',c:'gtf-cnv'},{k:'msi',l:'MSI',c:'gtf-msi'}];
-  const fb=document.getElementById('gene-type-filter');
-  if(fb){
-    var btns=tfs.map(function(tf){return '<button type="button" class="gtf-btn '+tf.c+(state.geneTypeFilter===tf.k?' gtf-on':'')+'" onclick="setGeneTypeFilter(\''+tf.k+'\')">'+tf.l+'</button>';}).join('');
-    var clr=state.geneTypeFilter?'<button type="button" class="gtf-btn gtf-clear" onclick="setGeneTypeFilter(null)">\u00d7 Tutti</button>':'';
-    fb.innerHTML='<span class="gtf-label">Tipo:</span>'+btns+clr;
+  try{
+    var q=(document.getElementById('gene-search')?.value||'').toLowerCase();
+    var geneMap=getGeneIndex();
+    var genes=Object.keys(geneMap).sort();
+    var tfs=[{k:'snv',l:'SNV/InsDel',c:'gtf-snv'},{k:'fusions',l:'Fusioni',c:'gtf-fus'},{k:'cnv',l:'CNV',c:'gtf-cnv'},{k:'msi',l:'MSI',c:'gtf-msi'}];
+    var fb=document.getElementById('gene-type-filter');
+    if(fb){
+      var btns=tfs.map(function(tf){
+        return '<button type="button" class="gtf-btn '+tf.c+(state.geneTypeFilter===tf.k?' gtf-on':'')+'" onclick="setGeneTypeFilter(\'' +tf.k+ '\')">' +tf.l+ '</button>';
+      }).join('');
+      var clr=state.geneTypeFilter?'<button type="button" class="gtf-btn gtf-clear" onclick="setGeneTypeFilter(null)">&times; Tutti</button>':'';
+      fb.innerHTML='<span class="gtf-label">Tipo:</span>'+btns+clr;
+    }
+    var ta=state.geneTypeFilter?PANEL[state.geneTypeFilter]:null;
+    var filtered=genes.filter(function(g){return(!q||g.toLowerCase().includes(q))&&(!ta||ta.includes(g));});
+    var byLetter={};
+    filtered.forEach(function(g){var l=g[0];if(!byLetter[l])byLetter[l]=[];byLetter[l].push(g);});
+    var html=Object.keys(byLetter).sort().map(function(l){
+      var pills=byLetter[l].map(function(g){
+        var ihcOnly=['PD-L1','CLDN18'].includes(g);
+        var cls=ihcOnly?'gene-pill-ihc':'gene-pill';
+        var ttl=ihcOnly?' title="Solo IHC"':'';
+        var warn=ihcOnly?' ⚠️':'';
+        return '<span class="'+cls+'" onclick="openGenePanel(\'' +esc(g)+ '\')"'+ttl+'>'+esc(g)+warn+'</span>';
+      }).join('');
+      return '<div class="gene-letter">'+l+'</div><div class="gene-list">'+pills+'</div>';
+    }).join('');
+    document.getElementById('gene-grid').innerHTML=html||'<div style="color:#90A4AE;padding:20px;text-align:center">Nessun gene trovato</div>';
+  }catch(e){
+    console.error('renderGenes error:',e);
+    var gg=document.getElementById('gene-grid');
+    if(gg)gg.innerHTML='<div style="color:#B71C1C;padding:20px">Errore: '+e.message+'</div>';
   }
-  const ta=state.geneTypeFilter?PANEL[state.geneTypeFilter]:null;
-  const filtered=genes.filter(function(g){return(!q||g.toLowerCase().includes(q))&&(!ta||ta.includes(g));});
-  
-  // Group by letter
-  const byLetter = {};
-  filtered.forEach(g => {
-    const l = g[0];
-    if(!byLetter[l]) byLetter[l] = [];
-    byLetter[l].push(g);
-  });
-  
-  const html = Object.keys(byLetter).sort().map(l =>
-    `<div class="gene-letter">${l}</div>
-    <div class="gene-list">
-      ${byLetter[l].map(g => { const ihcOnly=['PD-L1','CLDN18'].includes(g); return `<span class="${ihcOnly?'gene-pill-ihc':'gene-pill'}" onclick="openGenePanel('${esc(g)}')" ${ihcOnly?'title="Solo IHC — Non nel pannello NGS"':''}>${esc(g)}${ihcOnly?' ⚠️':''}</span>`; }).join("")}
-    </div>`
-  ).join("");
-  
-  document.getElementById("gene-grid").innerHTML = html || '<div style="color:#90A4AE;padding:20px;text-align:center">Nessun gene trovato</div>';
 }
 
 function openGenePanel(gene){
@@ -899,7 +903,8 @@ function goGeneFiltered(type){
 function setGeneTypeFilter(t){state.geneTypeFilter=t;renderGenes();}
 
 function goGene(){
-  state.geneTypeFilter=null;if(_sg){_sg.value="";}
+  state.geneTypeFilter=null;
+  const _sg=document.getElementById("gene-search");if(_sg){_sg.value="";}
   document.getElementById("home").style.display = "none";
   document.getElementById("gene-view").style.display = "block";
   document.getElementById("layout").style.display = "none";
