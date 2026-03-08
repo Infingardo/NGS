@@ -1,133 +1,147 @@
-# NGS Panel — Decision Support Tool
+# NGS Panel — Decision Support
 
-Strumento di supporto decisionale per anatomopatologi.  
-Basato sul pannello **Diatech Pharmacogenetics** (48 SNV/InsDel · 12 fusioni · 3 CNV · MSI Bethesda esteso).
+**Strumento ad uso interno di reparto · ASST FBF-Sacco · SC Anatomia Patologica FBF-Melloni-Territorio**
 
-> **Versione: 1.5 · Febbraio 2026**  
-> 🌐 **https://infingardo.github.io/NGS/**  
-> Uso interno di reparto — non sostituisce le linee guida istituzionali.
-
----
-
-## Come si usa
-
-**Non serve installare nulla.**
-
-1. Apri direttamente online: **https://infingardo.github.io/NGS/**
-2. Oppure scarica `index.html` e aprilo con qualsiasi browser — funziona completamente offline
-
-```bash
-git clone https://github.com/infingardo/NGS.git
-cd NGS
-# apri index.html con doppio click
-```
+[![Versione](https://img.shields.io/badge/versione-1.5.4-green)](https://infingardo.github.io/NGS/)
+[![Pannello](https://img.shields.io/badge/pannello-Diatech_Pharmacogenetics-blue)](https://infingardo.github.io/NGS/)
+[![Revisione dati](https://img.shields.io/badge/dati_revisionati-marzo_2026-orange)](https://infingardo.github.io/NGS/)
 
 ---
 
-## File
+## Accesso
 
-| File | Descrizione |
-|------|-------------|
-| `index.html` | Tool completo — tutto in un file, zero dipendenze |
-| `README.md` | Questo file |
-| `pannello_NGS_Diatech_documento_clinico.md` | Documento clinico-metodologico completo (fonte per NotebookLM) |
+**→ [infingardo.github.io/NGS](https://infingardo.github.io/NGS/)**
 
 ---
 
-## Funzionalità
+## Descrizione
 
-- **10 scenari tumorali**: CRC, NSCLC, Gastrico/GEJ, Mammario, Melanoma, Pancreas/CCA, GIST, Tiroide, Gliomi/SNC, Agnostico
-- **Classificazione patologica** (vedi sotto): 🔬 Diagnostico / 📋 Refertuale / 💊 Terapeutico
-- **Filtro per ruolo del biomarcatore**: Diagnostico / Predittivo / Prognostico / Diag+Pred
-- **Livello di evidenza**: FDA / EMA / NCCN Cat 1 / AIOM / Trial F3 / Prognostico / Diag WHO
-- **Box referto sdoppiato**: per i biomarcatori SNC con ruolo diagnostico, il referto è separato in sezione diagnostica e sezione predittiva — con pulsante Copia indipendente per ciascuna
-- **Verifica copertura pannello**: ogni gene confrontato in tempo reale con il pannello Diatech (✓/✗)
-- **Ricerca libera**: per gene, farmaco, istotipo, livello di evidenza
+Tool HTML/JS standalone per il supporto decisionale in anatomia patologica oncologica molecolare.  
+Basato sul pannello NGS **Diatech Pharmacogenetics v3** (SNV/InsDel + Fusioni + CNV + MSI).  
+Sviluppato per uso interno — non sostituisce linee guida AIOM/ESMO/WHO né il giudizio clinico.
 
 ---
 
-## Logica di classificazione (prospettiva patologica)
+## Pannello Diatech v3 — cosa analizza
 
-Il tool classifica i biomarcatori secondo la logica dell'anatomopatologo, non dell'oncologo:
+| Tipo | Geni / Marcatori |
+|------|-----------------|
+| **SNV / InsDel** | 48 geni (KRAS, EGFR, BRAF, IDH1/2, TERT, PIK3CA, ecc.) |
+| **Fusioni geniche** | 12 geni (ALK, RET, NTRK1/2/3, ROS1, FGFR1/2/3, NRG1, ecc.) |
+| **CNV** | 3 geni (EGFR, ERBB2, MET) |
+| **MSI** | 126 marcatori (pannello Bethesda esteso) |
 
-| Livello | Significato |
-|---------|-------------|
-| 🔬 **Diagnostico** | Il risultato **cambia la diagnosi nosologica o il grading** secondo classificazione WHO/AIOM vigente. Senza questo dato il referto è incompleto o errato. Esempi: IDH1/2 nel glioma, MSI in CRC/gastrico/endometrio, TERT in GBM IDH-WT. |
-| 📋 **Refertuale** | Non cambia la diagnosi ma **completa il referto** con informazione prognostica o biologica rilevante. Il patologo la include perché appartiene alla caratterizzazione della neoplasia. Esempi: BRAF V600E nel CRC (fenotipo serrated, prognosi), KIT/PDGFRA nel GIST (tipizzazione esone), STK11/KEAP1 in NSCLC. |
-| 💊 **Terapeutico** | Il valore primario è **per il clinico**: il patologo lo referta, ma è l'oncologo che lo usa per decidere la terapia. Esempi: KRAS/NRAS in CRC, EGFR/ALK in NSCLC, ERBB2 in gastrico/mammella. |
+### Cosa il pannello **NON** analizza
 
-Questa distinzione è critica soprattutto in ambito SNC: IDH1/2 nel glioma non è un biomarcatore terapeutico accessorio — è la diagnosi stessa secondo WHO CNS5 2021.
-
----
-
-## Logica del referto sdoppiato (SNC)
-
-Per i biomarcatori con `role: "diagnostico"` o `"misto"` (principalmente gliomi/SNC), il box referto è diviso in due sezioni indipendenti:
-
-**🔬 Ruolo Diagnostico** — valore classificativo WHO CNS5 2021, cosa non si può diagnosticare senza quel dato, limiti del pannello (es. 1p/19q non coperto)
-
-**💊 Ruolo Predittivo** — se esiste un target approvato, in quale contesto è applicabile, dove l'indicazione non regge (es. IDH1 in Gr4 fuori dall'approvazione vorasidenib)
-
----
-
-## Pannello Diatech (copertura)
-
-- **SNV/InsDel**: 48 geni
-- **Fusioni**: 12 geni (ALK, FGFR1-3, MET, NRG1, NTRK1-3, PPARG, RET, ROS1)
-- **CNV**: EGFR, ERBB2, MET
-- **MSI**: 8 marcatori Bethesda nominali + 118 mononucleotidici
+- 1p/19q codelezione → oligodendroglioma (FISH/CGH)
+- +7/−10 cromosomico → GBM IDH-WT (FISH/CGH)
+- KIAA1549-BRAF fusione → astrocitoma pilocitico (RNA panel)
+- CDKN2A/B delezione omozigote → grading astrocitomi WHO Gr4 (FISH/CGH)
+- Metilazione MLH1 → sporadico vs Lynch
+- TMB formale (mut/Mb) → pannello ampio dedicato
+- DPYD germinale → sangue
+- PD-L1 → solo IHC (22C3/28-8/SP263)
+- CLDN18.2 → solo IHC (Ventana 43-14A RxDx)
 
 ---
 
-## Note cliniche importanti
+## Funzionalità principali
 
-- **SNC**: la classificazione WHO CNS5 2021 richiede **1p/19q** (FISH/CGH) e **CDKN2A/B delezione** per grading. Questi test **non sono coperti** dal pannello NGS — richiedere separatamente.
-- **TERT in SNC**: valore esclusivamente diagnostico/classificativo nel glioma. Non targetabile. Non confondere con TERT nel DTC tiroideo (valore prognostico distinto).
-- **KRAS pancreas**: la tipizzazione esatta del codone 12 è prerequisito terapeutico — "KRAS mutato" senza specificazione della variante è referto clinicamente incompleto.
-- **MSI**: classificato come 🔬 Diagnostico perché l'IHC MMR è già eseguita dall'anatomopatologo e il risultato cambia la gestione nosologica (fenotipo MSI-H, screening Lynch). Il pannello NGS Bethesda esteso (126 marcatori) è la conferma molecolare.
+### Due modalità di navigazione
+- **Cerca per Gene** — dato un gene alterato nel referto NGS, mostra scenari clinici, farmaci, evidenze, frase per referto
+- **Cerca per Istotipo** — dato l'istotipo, mostra tutti i biomarcatori rilevanti con priorità clinica
+
+### Sistema di priorità
+| Badge | Significato |
+|-------|-------------|
+| 🔬 **Diagnostico** | Cambia diagnosi nosologica o grading WHO — senza questo dato il referto è incompleto |
+| 📋 **Refertuale** | Completa il referto con informazione prognostica/biologica obbligatoria |
+| 💊 **Terapeutico** | Valore primario per l'oncologo — il patologo lo referta, il clinico lo usa |
+
+### Livelli di evidenza
+
+| Badge | Significato |
+|-------|-------------|
+| `FDA I linea` | Approvazione FDA come prima linea |
+| `FDA` | Approvazione FDA (linee successive / agnostica) |
+| `FDA accel.` | FDA Accelerated Approval — condizionale, dati confermatori attesi |
+| `EMA` | Approvazione EMA |
+| `NCCN Cat 1` | NCCN Category 1 |
+| `AIOM` | Linee guida AIOM |
+| `Trial F3` | Trial fase III con risultati disponibili |
+| `Trial F1/2` | Sviluppo clinico precoce |
+| `MDT` | Solo discussione multidisciplinare |
+| `Sviluppo interrotto` | Sviluppo regolatorio formalmente abbandonato dal promotore |
+
+### Copertura pannello — logica "coverage-aware"
+Il tool distingue tre livelli di copertura:
+
+- ✓ **verde** — gene nel pannello, alterazione clinicamente rilevante coperta
+- ⚠️ **arancione** — gene nel pannello come SNV, ma l'alterazione terapeuticamente rilevante non è coperta (es. FGFR2 CNV/overespressione, CDKN2A delezione omozigote, fusioni KIAA1549-BRAF)
+- ✗ **rosso** — gene fuori pannello
+
+### Referto Rapido
+Modalità compatta con frasi di referto precompilate, pronte per copia. Per i biomarcatori a doppio ruolo (diagnostico + predittivo), produce due frasi separate con pulsanti di copia indipendenti.
 
 ---
 
-## Come aggiornare i contenuti
+## Scenari clinici coperti
 
-Tutto il contenuto clinico è nella variabile `SC` in `index.html` (sezione `<script>`).
+- Carcinoma Colorettale (CRC metastatico, stadio II-III)
+- Carcinoma Polmonare (NSCLC stadio III-IV)
+- Gastrico / GEJ (adenocarcinoma)
+- Carcinoma Mammario (BC metastatico, HR+/HER2-/TNBC)
+- Melanoma (cutaneo, uveale)
+- Pancreas / CCA (PDAC, colangiocarcinoma intraepatico)
+- GIST / Tumori Stromali
+- Carcinoma Tiroideo (DTC, ATC, MTC)
+- Gliomi / Tumori SNC (WHO CNS5 2021)
+- Test Tumore-Agnostico (NTRK, RET, MSI-H, POLE, ROS1, PD-L1)
 
-Struttura base di ogni entry:
+---
 
-```js
-{
-  genes: ["KRAS"],
-  histotype: "Adenocarcinoma colorettale",
-  type: ["snv"],              // snv | cnv | fusions | msi
-  role: "predittivo",         // diagnostico | predittivo | prognostico | misto
-  priority: "TERAPEUTICO",    // DIAGNOSTICO | REFERTUALE | TERAPEUTICO
-  evidence: "FDA I linea · NCCN Cat 1",
-  drug: "Anti-EGFR (cetuximab/panitumumab)",
-  note: "Note tecniche",
-  action: "Azione clinica",
-  referto: "Frase standardizzata. {GENI} viene sostituito con i nomi dei geni."
-}
-```
+## Architettura tecnica
 
-Per entries SNC con `role: "diagnostico"` o `"misto"`, usare referto sdoppiato:
+- File HTML/CSS/JS singolo, **zero dipendenze esterne**, zero framework
+- Nessuna connessione di rete in runtime — completamente offline dopo il primo caricamento
+- Compatibile con qualsiasi browser moderno (Chrome, Firefox, Safari, Edge)
+- Responsive su mobile
 
-```js
-{
-  // ... campi base ...
-  referto_diag: "[RUOLO DIAGNOSTICO] Testo sezione classificativa. {GENI} sostituito automaticamente.",
-  referto_pred: "[RUOLO PREDITTIVO] Testo sezione terapeutica. {GENI} sostituito automaticamente."
-}
-```
+---
+
+## Changelog selezionato
+
+### v1.5.4 (marzo 2026)
+- **Bemarituzumab gastrico**: sviluppo regolatorio interrotto (Amgen, febbraio 2026, FORTITUDE-101/102). Badge `Sviluppo interrotto` rosso. Card mantenuta a scopo documentale.
+- **Tucatinib+trastuzumab CRC**: badge corretto in `FDA accel.` (era `FDA` generico)
+- Nuovo badge/classe `Sviluppo interrotto` (CSS `ev-Discont`) aggiunto a legenda e routing
+- Nuovo badge `FDA accel.` (CSS `ev-FDAaccel`) — visivamente distinto dall'approvazione standard
+
+### v1.5.3 (marzo 2026)
+- Logica "coverage-aware": `panel_coverage_warning` su FGFR2 gastrico, BRAF glioma (KIAA1549), CDKN2A
+- PD-L1 / CLDN18: type corretto da `["snv"]` a `["ihc"]` — erano semanticamente errati
+- CRC BRAF: divergenza FDA/EMA esplicita su prima linea (FDA approvata 2024; EMA in valutazione CHMP)
+- CRC HER2: rimosso "≥3 linee" — sostituito con formula FDA letterale
+- FGFR2 gastrico: evidence degradata da `FDA · EMA` a warning + verifica
+
+### v1.5.2 (marzo 2026)
+- CRC BRAF: corretto backbone da encorafenib+binimetinib a encorafenib+cetuximab
+- CRC HER2: tucatinib+trastuzumab promosso come opzione primaria FDA 2023
+- iCCA IDH1: rimosso "in mantenimento" errato
+- Glioma vorasidenib: approvazione ristretta a WHO Gr2 (non Gr3/Gr4)
+- Melanoma NRAS: rimosso badge EMA (domanda ritirata)
+- NRG1: zenocutuzumab-zbco (Bizengri) FDA accel. 2024 per NSCLC e PDAC
+- KRAS G12D PDAC: corretto Trial F3 → Trial F1/2
 
 ---
 
 ## Disclaimer
 
-Strumento ad uso interno di reparto. Le informazioni riflettono lo stato regolatorio FDA/EMA/AIFA a **Febbraio 2026**.  
-Non sostituisce le linee guida istituzionali (AIOM, ESMO, WHO), il giudizio clinico, né la consulenza oncologica multidisciplinare.  
-Verificare sempre l'aggiornamento delle approvazioni regolatorie e la disponibilità locale (rimborso AIFA, contratti regionali).
+Strumento ad uso **interno di reparto**, sviluppato e revisionato da personale specialistico.  
+**Non sostituisce le linee guida AIOM, ESMO, WHO né il giudizio clinico del patologo e dell'oncologo.**  
+I contenuti terapeutici devono essere verificati rispetto alle indicazioni approvate aggiornate prima di qualunque decisione clinica.  
+I dati regolatori sono aggiornati alla revisione indicata nel badge versione; il panorama approvatorio cambia rapidamente.
 
 ---
 
-*SC Anatomia Patologica — ASST Fatebenefratelli-Sacco, Milano*  
-*https://infingardo.github.io/NGS/*
+*SC Anatomia Patologica · Presidio FBF-Melloni-Territorio · ASST Fatebenefratelli-Sacco · Milano*
