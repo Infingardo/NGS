@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NGS Panel — Decision Support v1.5.4</title>
+<title>NGS Integrato v2.0 — AP FBF-Sacco</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Georgia, 'Times New Roman', serif; background: #F5F5F5; color: #1A1A1A; min-height: 100vh; }
@@ -231,17 +231,97 @@
   .search-scope-bar{display:flex;gap:6px;align-items:center;padding:4px 0 0;}
   .scope-btn{font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px;border:1.5px solid #CFD8DC;background:#fff;color:#546E7A;cursor:pointer;font-family:inherit;transition:all .12s;}
   .scope-btn.active{background:#1565C0;border-color:#1565C0;color:#fff;}
+  /* ============ REFERTO VIEW ============ */
+  #referto-view{padding:18px 22px;max-width:1100px;margin:0 auto;}
+  .rv-form{background:#fff;border:1.5px solid #CFD8DC;border-radius:10px;padding:18px 20px;margin-bottom:18px;}
+  .rv-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#546E7A;margin-bottom:6px;}
+  .rv-textarea{width:100%;height:220px;border:1.5px solid #B0BEC5;border-radius:7px;padding:10px 13px;font-family:'Courier New',monospace;font-size:12px;color:#263238;background:#FAFAFA;resize:vertical;outline:none;line-height:1.6;}
+  .rv-textarea:focus{border-color:#1565C0;}
+  .rv-row{display:flex;gap:10px;margin-top:10px;align-items:flex-end;flex-wrap:wrap;}
+  .rv-select{padding:7px 12px;border:1.5px solid #B0BEC5;border-radius:7px;font-size:13px;font-family:inherit;color:#263238;background:#fff;outline:none;}
+  .rv-select:focus{border-color:#1565C0;}
+  .rv-btn{background:#1565C0;color:#fff;border:none;border-radius:7px;padding:8px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
+  .rv-btn:hover{background:#0D47A1;}
+  .rv-btn:disabled{background:#90A4AE;cursor:not-allowed;}
+  .rv-btn-sec{background:#fff;color:#1565C0;border:1.5px solid #1565C0;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .rv-extracted{background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:12px;}
+  .rv-ext-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#2E7D32;letter-spacing:.07em;margin-bottom:8px;}
+  .rv-ext-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;}
+  .rv-ext-item{background:#fff;border:1px solid #A5D6A7;border-radius:5px;padding:5px 9px;}
+  .rv-ext-k{font-size:10px;color:#388E3C;font-weight:700;text-transform:uppercase;}
+  .rv-ext-v{font-size:12px;color:#1B5E20;font-weight:600;margin-top:1px;}
+  .rv-variants-list{margin-bottom:16px;}
+  .rv-var-card{background:#fff;border:1.5px solid #CFD8DC;border-radius:9px;margin-bottom:10px;overflow:hidden;}
+  .rv-var-head{background:#F5F5F5;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .rv-gene-tag{background:#E3F2FD;border:1.5px solid #90CAF9;color:#0D47A1;font-size:14px;font-weight:700;padding:2px 9px;border-radius:5px;font-family:'Courier New',monospace;}
+  .rv-var-info{font-size:12px;color:#37474F;flex:1;}
+  .rv-vaf-ok{background:#E8F5E9;border:1.5px solid #A5D6A7;color:#1B5E20;font-size:12px;font-weight:700;padding:2px 9px;border-radius:5px;}
+  .rv-vaf-warn{background:#FFF8E1;border:1.5px solid #FFD54F;color:#F57F17;font-size:12px;font-weight:700;padding:2px 9px;border-radius:5px;}
+  .rv-vaf-crit{background:#FFEBEE;border:1.5px solid #EF9A9A;color:#C62828;font-size:12px;font-weight:700;padding:2px 9px;border-radius:5px;}
+  .rv-vaf-loh{background:#EDE7F6;border:1.5px solid #CE93D8;color:#6A1B9A;font-size:12px;font-weight:700;padding:2px 9px;border-radius:5px;}
+  .rv-classif{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:700;}
+  .rv-classif-p{background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A;}
+  .rv-classif-lp{background:#FFF3E0;color:#E65100;border:1px solid #FFB74D;}
+  .rv-classif-vus{background:#FFF8E1;color:#F57F17;border:1px solid #FFD54F;}
+  .rv-classif-b{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
+  .rv-var-body{padding:0;}
+  .rv-dual{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1.5px solid #E0E0E0;}
+  @media(max-width:700px){.rv-dual{grid-template-columns:1fr;}}
+  .rv-col{padding:12px 14px;}
+  .rv-col-pat{border-right:1.5px solid #E0E0E0;}
+  .rv-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .rv-col-pat .rv-col-title{color:#6A1B9A;}
+  .rv-col-onco .rv-col-title{color:#1565C0;}
+  .rv-frase{font-size:12px;color:#263238;line-height:1.7;background:#F9F9F9;border:1px solid #E0E0E0;border-radius:5px;padding:8px 10px;white-space:pre-wrap;font-family:'Courier New',monospace;font-size:11.5px;}
+  .rv-btn-copy{margin-top:6px;background:#6A1B9A;color:#fff;border:none;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .rv-btn-copy:hover{background:#4A148C;}
+  .rv-btn-copy.copied{background:#2E7D32;}
+  .rv-drug{font-size:12px;color:#1B5E20;font-weight:700;margin-bottom:4px;}
+  .rv-evidence-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+  .rv-action{font-size:11px;color:#37474F;line-height:1.5;margin-top:4px;}
+  .rv-coverage-warn{background:#FFF3E0;border:1.5px solid #FFB74D;border-left:4px solid #E65100;border-radius:5px;padding:7px 10px;font-size:11px;color:#4E342E;line-height:1.5;margin-top:7px;}
+  .rv-not-in-db{background:#F5F5F5;border:1.5px dashed #B0BEC5;border-radius:5px;padding:7px 10px;font-size:11px;color:#546E7A;font-style:italic;}
+  .rv-vaf-alert-box{background:#FFEBEE;border:1.5px solid #EF9A9A;border-left:4px solid #C62828;border-radius:5px;padding:7px 10px;font-size:11px;color:#B71C1C;margin-top:6px;line-height:1.5;}
+  .rv-vaf-alert-warn{background:#FFF8E1;border-color:#FFD54F;border-left-color:#F9A825;color:#5D4037;}
+  .rv-vaf-alert-loh{background:#EDE7F6;border-color:#CE93D8;border-left-color:#6A1B9A;color:#4A148C;}
+  .rv-ai-box{background:#E3F2FD;border:1.5px solid #90CAF9;border-left:5px solid #1565C0;border-radius:9px;padding:14px 18px;margin-top:16px;}
+  .rv-ai-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0D47A1;margin-bottom:8px;}
+  .rv-ai-content{font-size:13px;color:#1A1A1A;line-height:1.7;white-space:pre-wrap;}
+  .rv-ai-loading{color:#546E7A;font-style:italic;font-size:13px;}
+  .rv-db-badge{display:inline-block;background:#E8F5E9;border:1px solid #A5D6A7;color:#2E7D32;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;vertical-align:middle;margin-left:4px;font-family:'Courier New',monospace;}
+  .rv-ai-badge{display:inline-block;background:#E3F2FD;border:1px solid #90CAF9;color:#1565C0;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;vertical-align:middle;margin-left:4px;font-family:'Courier New',monospace;}
+  .rv-scenario-sep{font-size:10px;font-weight:700;color:#546E7A;background:#ECEFF1;border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:5px;}
+  .rv-no-match{color:#90A4AE;font-size:12px;font-style:italic;padding:8px 0;}
+  .rv-ihc-note{background:#FCE4EC;border:1px solid #F48FB1;border-radius:5px;padding:6px 9px;font-size:11px;color:#880E4F;margin-top:5px;line-height:1.5;}
+  .rv-msi-banner{background:#E8F5E9;border:2px solid #66BB6A;border-radius:8px;padding:10px 14px;margin-bottom:12px;}
+  .rv-msi-banner-h{font-size:13px;font-weight:700;color:#1B5E20;}
+  .rv-msi-banner-b{font-size:11px;color:#2E7D32;margin-top:4px;line-height:1.5;}
+  .rv-pole-banner{background:#EDE7F6;border:2px solid #AB47BC;border-radius:8px;padding:10px 14px;margin-bottom:12px;}
+  .rv-pole-banner-h{font-size:13px;font-weight:700;color:#4A148C;}
+  .rv-pole-banner-b{font-size:11px;color:#6A1B9A;margin-top:4px;line-height:1.5;}
+  .rv-disclaimer{background:#FFF8E1;border:1.5px solid #FFD54F;border-left:5px solid #F9A825;border-radius:7px;padding:10px 14px;margin-top:16px;font-size:11px;color:#5D4037;line-height:1.6;}
+  .rv-no-text{color:#90A4AE;text-align:center;padding:40px;font-size:13px;}
+  .rv-inadeg-banner{background:#FFEBEE;border:2.5px solid #C62828;border-left:7px solid #B71C1C;border-radius:8px;padding:13px 17px;margin-bottom:14px;}
+  .rv-inadeg-h{font-size:15px;font-weight:800;color:#B71C1C;letter-spacing:.01em;}
+  .rv-inadeg-b{font-size:12px;color:#7F1D1D;margin-top:6px;line-height:1.6;}
+  .rv-ocr{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .rv-ocr-btn{cursor:pointer;margin:0;background:#fff;color:#00695C;border:1.5px solid #00695C;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;font-family:inherit;}
+  .rv-ocr-btn:hover{background:#E0F2F1;}
+  .rv-ocr-hint{font-size:11px;color:#546E7A;}
+  .rv-ocr-status{font-size:11.5px;color:#546E7A;flex-basis:100%;line-height:1.5;}
 </style>
+<!-- OCR offline: Tesseract.js + motore WASM + lingua italiana sono in ./tess/ (nessuna CDN) -->
+<script src="tess/tesseract.min.js"></script>
 </head>
 <body>
 <div id="header">
   <div id="header-top">
     <div id="logo">🧬</div>
     <div id="header-info">
-      <div id="title">NGS Panel — Decision Support</div>
+      <div id="title">NGS Integrato — Decision Support + Interpreta Referto</div>
       <div id="subtitle-hdr">Diatech Pharmacogenetics · SNV/InsDel · Fusioni · CNV · MSI · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;text-decoration:none;font-weight:700">infingardo.github.io/NGS</a></div>
     </div>
-    <span id="version-badge">v1.5.4 · Mar 2026</span>
+    <span id="version-badge">v2.0 · Lug 2026</span>
     <button type="button" class="hdr-btn" onclick="openModal()">ℹ️ Guida</button>
   </div>
   <input id="search" type="text" placeholder="🔍 Cerca gene, farmaco, istotipo, evidenza..." oninput="onSearchInput()">
@@ -253,7 +333,7 @@
 </div>
 
 <div id="home">
-  <div class="home-title">NGS Panel — Decision Support</div>
+  <div class="home-title">NGS Integrato v2.0</div>
   <div class="home-sub">Pannello Diatech Pharmacogenetics · ASST FBF-Sacco</div>
   <div class="home-cards">
     <div class="home-card" onclick="goGene()">
@@ -265,6 +345,11 @@
       <div class="hc-icon">🔬</div>
       <div class="hc-title">Cerca per Istotipo</div>
       <div class="hc-desc">Sto refertando una neoplasia specifica.<br>Cosa devo richiedere o segnalare?</div>
+    </div>
+    <div class="home-card" onclick="goReferto()" style="border-color:#00695C;background:linear-gradient(135deg,#E0F2F1,#f0faf9)">
+      <div class="hc-icon">🤖</div>
+      <div class="hc-title" style="color:#004D40">Interpreta Referto</div>
+      <div class="hc-desc" style="color:#00695C">Incolla il testo del referto Diatech.<br>Lookup DB + sintesi AI per il gap.</div>
     </div>
   </div>
   <div class="home-panel-section">
@@ -385,9 +470,12 @@
       <div class="lg-ev-r"><span class="ev-tag ev-Diag">Diag WHO</span><span style="font-size:11px;color:#37474F">Criterio diagnostico classificazione WHO</span></div>
       <div class="lg-ev-r"><span class="ev-tag ev-MDT">MDT</span><span style="font-size:11px;color:#37474F">Decisione multidisciplinare — nessuna approvazione regolatoria standard</span></div>
     </div>
-    <div id="m-foot">v1.5.4 · Marzo 2026 · Uso interno — non sostituisce AIOM/ESMO/WHO né il giudizio clinico · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;font-weight:700">infingardo.github.io/NGS</a></div>
+    <div id="m-foot">v2.0 · Luglio 2026 · Uso interno — non sostituisce AIOM/ESMO/WHO né il giudizio clinico · <a href="https://infingardo.github.io/NGS/" target="_blank" rel="noopener noreferrer" style="color:#1565C0;font-weight:700">infingardo.github.io/NGS</a></div>
   </div>
 </div>
+
+<!-- ============ REFERTO VIEW ============ -->
+<div id="referto-view" style="display:none;padding:18px 22px;max-width:1060px;margin:0 auto"></div>
 
 <script>
 const PANEL_VERSION="Diatech Pharmacogenetics v3 · SNV/InsDel + Fusioni + CNV + MSI";
@@ -651,6 +739,7 @@ function goHome(){
   document.getElementById("home").style.display="flex";
   document.getElementById("gene-view").style.display="none";
   document.getElementById("layout").style.display="none";
+  const rv=document.getElementById("referto-view");if(rv)rv.style.display="none";
 }
 function onSearchInput(){
   const q=(document.getElementById("search")?.value||"").trim();
@@ -729,6 +818,433 @@ function openModal(){document.getElementById("mo").classList.add("open");}
 function closeModal(){document.getElementById("mo").classList.remove("open");}
 function closeModalOuter(e){if(e.target===document.getElementById("mo"))closeModal();}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+/* ===== REFERTO VIEW ===== */
+function goReferto(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("gene-view").style.display="none";
+  document.getElementById("layout").style.display="none";
+  document.getElementById("referto-view").style.display="block";
+  document.getElementById("scope-bar").style.display="none";
+  renderRefertoForm();
+}
+
+function renderRefertoForm(){
+  const opts=SC.map(s=>`<option value="${s.id}">${s.icon} ${s.label}</option>`).join("");
+  document.getElementById("referto-view").innerHTML=`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+    <button type="button" class="back-btn" onclick="goHome()"><span class="back-arrow">←</span> Home</button>
+    <div style="font-size:17px;font-weight:700;color:#0D1B2A">🤖 Interpreta Referto NGS</div>
+    <span style="font-size:11px;color:#546E7A;font-style:italic">Parser Diatech · OCR immagini · Lookup DB · Sintesi AI</span>
+  </div>
+  <div class="rv-form">
+    <div class="rv-label">Testo del referto (incolla il referto Diatech — testo libero)</div>
+    <textarea class="rv-textarea" id="rv-text" placeholder="Incolla qui il testo del referto NGS Diatech...&#10;&#10;Il parser riconosce automaticamente:&#10;• Varianti (gene, c., p., VAF, classificazione)&#10;• Cellularità stimata&#10;• Stato MSI&#10;• Stato POLE&#10;• CNV / Fusioni"></textarea>
+    <div class="rv-ocr">
+      <label class="rv-ocr-btn">📷 Carica immagine referto
+        <input type="file" accept="image/*" style="display:none" onchange="rvOCR(this.files[0]);this.value=''">
+      </label>
+      <span class="rv-ocr-hint">…oppure incolla un'immagine (Ctrl/Cmd+V) nella casella qui sopra. Il testo estratto va <b>sempre riletto</b>: l'OCR può sbagliare numeri, VAF e nomi di geni.</span>
+      <span class="rv-ocr-status" id="rv-ocr-status"></span>
+    </div>
+    <div class="rv-row">
+      <div>
+        <div class="rv-label" style="margin-bottom:4px">Istotipo (opzionale — migliora il lookup)</div>
+        <select class="rv-select" id="rv-istotipo">
+          <option value="">— Non specificato —</option>
+          ${opts}
+        </select>
+      </div>
+      <button type="button" class="rv-btn" id="rv-analyze-btn" onclick="analyzeReferto()">🔍 Analizza Referto</button>
+      <button type="button" class="rv-btn-sec" onclick="document.getElementById('rv-text').value='';document.getElementById('rv-results').innerHTML=''">✕ Cancella</button>
+    </div>
+  </div>
+  <div id="rv-results"></div>
+  <div class="rv-disclaimer">
+    <strong>⚠️ Uso interno — non sostituisce il giudizio clinico</strong><br>
+    Le frasi referto contrassegnate 🟢 DB provengono dal database verificato (aggiornamento marzo 2026). Le note contrassegnate 🔵 AI sono generate dal modello linguistico e devono essere verificate. PMID e fonti regolatorie: AIOM/ESMO/NCCN/FDA/EMA.
+  </div>`;
+  // Incolla immagine direttamente nella textarea → OCR
+  const ta=document.getElementById("rv-text");
+  if(ta)ta.addEventListener("paste",e=>{
+    const items=e.clipboardData&&e.clipboardData.items;if(!items)return;
+    for(const it of items){if(it.type&&it.type.startsWith("image/")){e.preventDefault();rvOCR(it.getAsFile());break;}}
+  });
+}
+
+/* ---- OCR immagini (Tesseract.js, 100% locale ./tess/) ---- */
+let _rvOcrWorker=null;
+async function rvOCR(file){
+  const status=document.getElementById("rv-ocr-status");
+  const set=(html)=>{if(status)status.innerHTML=html;};
+  if(!file){return;}
+  if(!file.type||!file.type.startsWith("image/")){set("⚠️ Il file non è un'immagine.");return;}
+  if(typeof Tesseract==="undefined"){set("⚠️ Motore OCR non caricato. Serve la cartella <code>tess/</code> accanto a questa pagina.");return;}
+  set("⏳ OCR in corso… <b id='rv-ocr-pct'>0%</b> (la prima volta carica il motore, ~5-10 s)");
+  try{
+    if(!_rvOcrWorker){
+      // URL assoluti: necessari perché il Web Worker (blob) non risolve i path relativi;
+      // derivati dalla pagina, così valgono anche sotto sottocartella (es. /NGS/ su github.io).
+      const base=new URL("tess/",location.href).href;
+      _rvOcrWorker=await Tesseract.createWorker("ita",1,{
+        workerPath:base+"worker.min.js",
+        corePath:base,
+        langPath:base,
+        logger:m=>{if(m.status==="recognizing text"){const p=document.getElementById("rv-ocr-pct");if(p)p.textContent=Math.round((m.progress||0)*100)+"%";}}
+      });
+    }
+    const {data}=await _rvOcrWorker.recognize(file);
+    const txt=(data&&data.text?data.text:"").trim();
+    const ta=document.getElementById("rv-text");
+    if(!txt){set("⚠️ Nessun testo riconosciuto nell'immagine. Prova con uno screenshot più nitido.");return;}
+    ta.value=ta.value.trim()?(ta.value.trim()+"\n"+txt):txt;
+    ta.focus();
+    set("✅ Testo estratto e inserito nella casella. <b>Rileggilo e correggilo</b> (VAF, numeri, geni) <b>prima</b> di premere «Analizza Referto».");
+  }catch(err){
+    const msg=(err&&err.message)?err.message:String(err);
+    const fileProto=location.protocol==="file:";
+    set("⚠️ Errore OCR: "+msg+(fileProto?"<br>➡️ Stai aprendo la pagina con <code>file://</code>: alcuni browser bloccano l'OCR così. Servi la cartella con un server locale (es. <code>python3 -m http.server</code>) oppure usa la versione online su github.io.":""));
+  }
+}
+
+/* ---- Parser referto Diatech ---- */
+function parseReferto(text){
+  const result={paziente:null,esame:null,cellularity:null,msi:null,pole:null,variants:[],cnv:[],fusions:[],notEvaluable:false,notEvaluableMsg:null};
+
+  // SICUREZZA: analisi non eseguita / campione non valutabile (DNA insufficiente, materiale inadeguato).
+  // NB: "Arricchimento non eseguito" e "Quantità ... adeguata" NON devono attivarlo.
+  const inadegM=text.match(/[^\n.]*(?:non\s+sufficiente|insufficient\w*|non\s+valutabil\w*|materiale\s+non\s+idone\w*|campione\s+(?:non\s+idone\w*|inadegua\w*)|impossibile\s+esegui\w*|non\s+eseguibil\w*)[^\n.]*/i);
+  if(inadegM){result.notEvaluable=true;result.notEvaluableMsg=inadegM[0].trim();}
+
+  // Paziente
+  const pazMatch=text.match(/[Pp]aziente[:\s]+([A-ZÀÈÉÌÒÙ][a-zA-Zàèéìòùü\s'-]{2,50})/);
+  if(pazMatch)result.paziente=pazMatch[1].trim();
+
+  // N. esame
+  const esamMatch=text.match(/(?:Esame|Campione|N\.?)\s*[Nn]\.?\s*[:\s]*([\w-]+)/);
+  if(esamMatch)result.esame=esamMatch[1].trim();
+
+  // Cellularità — gestisce ">40%", "40%", "40 %", "circa 30%" (parole tra ':' e numero)
+  const cellMatch=text.match(/[Cc]ellularit[àa][^%\d]*?(\d{1,3})\s*%/);
+  if(cellMatch)result.cellularity=parseInt(cellMatch[1]);
+
+  // MSI — token espliciti (MSI-H/MSI-L/MSS) o dicitura estesa "(in)stabilità microsatellitare".
+  // Ordine obbligato: instabilità va valutata PRIMA di stabilità.
+  result.msi = /\bMSI[\s-]?H\b/i.test(text)||/\binstabil\w*\s+microsat/i.test(text) ? "MSI-H"
+             : /\bMSI[\s-]?L\b/i.test(text) ? "MSI-L"
+             : /\bMSS\b/i.test(text)||/\bstabil\w*\s+microsat/i.test(text) ? "MSS"
+             : null;
+
+  // POLE
+  const poleMatch=text.match(/POLE[:\s]+([\w]+)/i);
+  if(poleMatch)result.pole=poleMatch[1];
+
+  // Varianti — pattern multipli Diatech
+  const lines=text.split(/\n/);
+  for(const line of lines){
+    const l=line.trim();
+    if(!l||l.length<5)continue;
+
+    // Pattern A: - GENE [esone N] c.XXX p.YYY VAF: ZZ% Classificazione: X
+    const patA=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\s*[\[（(](?:[Ee]s(?:one)?\.?\s*)?(\d+)[\])）]?\s*(c\.\S+)?\s*(p\.\S+)?\s*(?:VAF|Frequenza)[:\s]+(\d+[,.]?\d*)\s*%?\s*(?:Classificazione|Classificata\s*\(?ClinVar\)?)?[:\s]+([\w\s]+)/i;
+    const mA=l.match(patA);
+    if(mA){
+      const vaf=parseFloat(mA[5].replace(",","."));
+      result.variants.push({gene:mA[1],esone:mA[2]||null,cdna:mA[3]||null,prot:mA[4]||null,vaf,classif:classifNorm(mA[6])});
+      continue;
+    }
+
+    // Formato Diatech esteso: "GENE <esone> c.xxx p.yyy <tipo variante> VAF nn.nn <Classificazione>"
+    // esone come numero libero e parole descrittive tra p. e VAF. Estrazione per campi (tollerante).
+    const gM=l.match(/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\b/);
+    const cM=l.match(/\b(c\.[A-Za-z0-9>._+*\-]+)/);
+    const vM=l.match(/(?:VAF|Frequenza(?:\s+allelica)?)\s*[:=]?\s*(\d+[,.]?\d*)\s*%?/i);
+    if(gM&&cM&&vM){
+      const pM=l.match(/\b(p\.[A-Za-z0-9*=._\-]+)/);
+      // esone: "esone N" / "(esone N)" (parola eson*), altrimenti numero libero subito dopo il gene
+      const exM=l.match(/eson\w*\.?\s*(\d{1,2})/i)||l.match(/^[-•*]?\s*[A-Z][A-Z0-9]{1,9}\s+(\d{1,2})\s+c\./i);
+      const clM=l.match(/(likely\s+pathogenic|likely\s+benign|pathogenic|benign|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|benign[ao]|significato\s+incerto)/i);
+      result.variants.push({gene:gM[1],esone:exM?exM[1]:null,cdna:cM[1].replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
+      continue;
+    }
+
+    // Pattern B senza parentesi esone: - GENE c.XXX p.YYY VAF: ZZ% ...
+    const patB=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\s+(c\.\S+)\s+(p\.\S+)?\s*(?:VAF|Frequenza)[:\s]+(\d+[,.]?\d*)\s*%?\s*(?:Classificazione|Classificata)?[:\s]*([\w\s]*)/i;
+    const mB=l.match(patB);
+    if(mB){
+      const vaf=parseFloat(mB[4].replace(",","."));
+      result.variants.push({gene:mB[1],esone:null,cdna:mB[2]||null,prot:mB[3]||null,vaf,classif:classifNorm(mB[5])});
+      continue;
+    }
+
+    // Pattern CNV: GENE amplificazione / delezione
+    const patCNV=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\s*[:–-]\s*(amplificazione|delezione|gain|loss|amp)/i;
+    const mCNV=l.match(patCNV);
+    if(mCNV){result.cnv.push({gene:mCNV[1],type:mCNV[2].toLowerCase()});continue;}
+
+    // Pattern fusioni: GENE1-GENE2 fusione
+    const patFUS=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})[–-]([A-Z][A-Z0-9]{1,9})\s*(?:fusione|riarrangiamento|fusion)/i;
+    const mFUS=l.match(patFUS);
+    if(mFUS){result.fusions.push({gene1:mFUS[1],gene2:mFUS[2]});continue;}
+  }
+  return result;
+}
+
+function classifNorm(s){
+  if(!s)return"ND";
+  s=s.trim().toLowerCase();
+  // "likely/probably" va valutato PRIMA delle forme piene: altrimenti "likely pathogenic"
+  // contiene "pathog" e verrebbe erroneamente promosso a "Patogenetica".
+  if((s.includes("likely")&&s.includes("path"))||s.includes("class 4")||s.includes("probably")||s.includes("probabilmente pato"))return"Likely pathogenic";
+  if(s.includes("pato")||s.includes("class 5")||s.includes("pathog"))return"Patogenetica";
+  if(s.includes("vus")||s.includes("uncertain")||s.includes("class 3")||s.includes("significato"))return"VUS";
+  if(s.includes("beni")||s.includes("class 1")||s.includes("class 2")||s.includes("likely ben"))return"Benigna";
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+
+/* ---- VAF check ---- */
+function checkVAF(vaf,cellularity){
+  if(!cellularity)return{level:"ok",badge:"",alertHtml:""};
+  const expected=cellularity/2;
+  const ratio=vaf/expected;
+  let vafBadge=`<span class="rv-vaf-ok">VAF ${vaf}% ✓</span>`;
+  let alertHtml="";
+  if(vaf<10&&cellularity>=30){
+    vafBadge=`<span class="rv-vaf-crit">VAF ${vaf}% ⚠️ critico</span>`;
+    alertHtml=`<div class="rv-vaf-alert-box">⚠️ VAF ${vaf}% con cellularità ${cellularity}%: atteso ~${expected}%. Possibile artefatto FFPE, subclonale o insufficienza di DNA. Verificare prima di refertare come driver.</div>`;
+  } else if(ratio>0&&ratio<0.4){
+    vafBadge=`<span class="rv-vaf-warn">VAF ${vaf}% ↓</span>`;
+    alertHtml=`<div class="rv-vaf-alert-box rv-vaf-alert-warn">⚠️ VAF inferiore all'atteso (${vaf}% vs atteso ~${expected}%). Eterogeneità intratumorale, subclonale o artefatto. Valutare con cautela.</div>`;
+  } else if(ratio>1.6&&vaf>50){
+    vafBadge=`<span class="rv-vaf-loh">VAF ${vaf}% LOH?</span>`;
+    alertHtml=`<div class="rv-vaf-alert-box rv-vaf-alert-loh">ℹ️ VAF elevato (${vaf}% vs atteso ~${expected}%). Compatibile con LOH (perdita allele wild-type). Segnalare nel referto.</div>`;
+  } else {
+    vafBadge=`<span class="rv-vaf-ok">VAF ${vaf}% ✓</span>`;
+  }
+  return{level:vaf<10&&cellularity>=30?"crit":ratio<0.4?"warn":ratio>1.6&&vaf>50?"loh":"ok",badge:vafBadge,alertHtml};
+}
+
+/* ---- DB Lookup ---- */
+function lookupGeneInDB(gene,preferScenarioId){
+  const results=[];
+  // Prima cerca nello scenario preferito
+  if(preferScenarioId){
+    const sc=SC.find(s=>s.id===preferScenarioId);
+    if(sc){
+      sc.entries.forEach(e=>{if(e.genes.includes(gene))results.push({sc,entry:e,priority:0});});
+    }
+  }
+  // Poi scenario agnostico
+  const agnostic=SC.find(s=>s.id==="agnostico");
+  if(agnostic){
+    agnostic.entries.forEach(e=>{
+      if(e.genes.includes(gene)&&!results.some(r=>r.entry===e))
+        results.push({sc:agnostic,entry:e,priority:1});
+    });
+  }
+  // Poi tutti gli altri
+  SC.forEach(sc=>{
+    if(sc.id===preferScenarioId||sc.id==="agnostico")return;
+    sc.entries.forEach(e=>{
+      if(e.genes.includes(gene)&&!results.some(r=>r.entry===e))
+        results.push({sc,entry:e,priority:2});
+    });
+  });
+  return results;
+}
+
+/* ---- Render risultati ---- */
+function renderVariantCard(v,idx,dbMatches,cellularity){
+  const vafInfo=checkVAF(v.vaf,cellularity);
+  const classifClass=v.classif.includes("Patog")?"rv-classif-p":v.classif.includes("Likely")?"rv-classif-lp":v.classif.includes("VUS")?"rv-classif-vus":"rv-classif-b";
+
+  // Colonna Patologo
+  let patHtml="";
+  // Colonna Oncologo
+  let oncoHtml="";
+
+  if(dbMatches.length===0){
+    patHtml=`<div class="rv-not-in-db">Gene non presente nel database verificato per questo contesto. Vedi sintesi AI.</div>`;
+    oncoHtml=`<div class="rv-not-in-db">Nessuna entry DB — dati da sintesi AI.</div>`;
+  } else {
+    dbMatches.slice(0,3).forEach(({sc,entry},i)=>{
+      const isSplit=(entry.role==="diagnostico"||entry.role==="misto")&&entry.referto_diag;
+      const refText=isSplit?(makeRefDiag(entry)+"\n\n[PREDITTIVO]\n"+makeRefPred(entry)):makeRef(entry);
+      const scenBadge=dbMatches.length>1||sc.id!=="agnostico"?`<span class="rv-scenario-sep">${sc.icon} ${sc.label}</span><br>`:"";
+      patHtml+=`<div style="margin-bottom:${i<dbMatches.length-1?10:0}px">${scenBadge}
+        <div class="rv-frase">${esc(refText)}</div>
+        <button type="button" class="rv-btn-copy" onclick="rvCopy(this,'${esc(refText)}')">📋 Copia</button>
+        ${entry.panel_coverage_warning?`<div class="rv-coverage-warn">⚠️ ${esc(entry.panel_coverage_warning)}</div>`:""}
+        ${entry.ihc?`<div class="rv-ihc-note">🔵 IHC correlata: ${esc(entry.ihc.test)}</div>`:""}
+      </div>`;
+      const drugText=entry.drug||"";
+      const evBadgeHtml=entry.evidence?entry.evidence.split("·").map(e=>e.trim()).filter(Boolean).map(e=>`<span class="ev-tag ${evClass(e)}">${e}</span>`).join(""):"";
+      oncoHtml+=`<div style="margin-bottom:${i<dbMatches.length-1?10:0}px">${scenBadge}
+        <div class="rv-evidence-badges">${evBadgeHtml}</div>
+        <div class="rv-drug">💊 ${esc(drugText)}</div>
+        <div class="rv-action">▶ ${esc(entry.action||"")}</div>
+      </div>`;
+    });
+  }
+
+  return`<div class="rv-var-card" id="rv-card-${idx}">
+    <div class="rv-var-head">
+      <span class="rv-gene-tag">${esc(v.gene)}</span>
+      <div class="rv-var-info">${v.prot?esc(v.prot):""}${v.cdna?" · "+esc(v.cdna):""}${v.esone?" · Es."+v.esone:""}</div>
+      ${vafInfo.badge}
+      <span class="rv-classif ${classifClass}">${esc(v.classif)}</span>
+      <span class="rv-db-badge">🟢 DB</span>
+    </div>
+    ${vafInfo.alertHtml}
+    <div class="rv-dual">
+      <div class="rv-col rv-col-pat">
+        <div class="rv-col-title">🔬 Per il Patologo — Frase Referto</div>
+        ${patHtml}
+      </div>
+      <div class="rv-col rv-col-onco">
+        <div class="rv-col-title">💊 Per l'Oncologo — Target &amp; Farmaci</div>
+        ${oncoHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
+function rvCopy(btn,text){
+  safeCopy(text).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent="✓ Copiato";btn.classList.add("copied");
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove("copied");},2000);
+  });
+}
+
+/* ---- Analisi principale ---- */
+async function analyzeReferto(){
+  const text=document.getElementById("rv-text").value.trim();
+  if(!text||text.length<20){
+    document.getElementById("rv-results").innerHTML='<div class="rv-no-text">⚠️ Incolla prima il testo del referto.</div>';
+    return;
+  }
+  const btn=document.getElementById("rv-analyze-btn");
+  btn.disabled=true;btn.textContent="⏳ Analisi in corso...";
+
+  const parsed=parseReferto(text);
+
+  // SICUREZZA: se l'analisi non è stata eseguita / campione non valutabile,
+  // NON mostrare "0 varianti" (falsa negatività). Banner critico e stop.
+  if(parsed.notEvaluable){
+    document.getElementById("rv-results").innerHTML=
+      `<div class="rv-inadeg-banner">
+        <div class="rv-inadeg-h">⛔ ANALISI NGS NON ESEGUITA / CAMPIONE NON VALUTABILE</div>
+        <div class="rv-inadeg-b">Motivo rilevato nel referto: «${esc(parsed.notEvaluableMsg||"materiale/DNA non adeguato")}».<br>
+        <b>L'assenza di varianti NON è un risultato negativo.</b> Il test non è informativo: valutare re-biopsia, nuovo campionamento o metodica alternativa. Non refertare come «wild-type» né escludere target azionabili sulla base di questo esame.</div>
+      </div>`+
+      (parsed.cellularity!==null?`<div class="rv-extracted"><div class="rv-ext-title">📋 Dati estratti</div><div class="rv-ext-grid"><div class="rv-ext-item"><div class="rv-ext-k">Cellularità</div><div class="rv-ext-v">${parsed.cellularity}%</div></div></div></div>`:"");
+    btn.disabled=false;btn.textContent="🔍 Analizza Referto";
+    return;
+  }
+
+  const scenarioId=document.getElementById("rv-istotipo").value||null;
+  const allVariants=[...parsed.variants];
+
+  // Lookup per ogni variante
+  const lookupResults=allVariants.map(v=>({
+    v,
+    dbMatches:lookupGeneInDB(v.gene,scenarioId)
+  }));
+
+  // Geni non trovati nel DB
+  const notInDb=lookupResults.filter(r=>r.dbMatches.length===0).map(r=>r.v.gene);
+
+  // Render estratto
+  let extractedHtml=`<div class="rv-extracted"><div class="rv-ext-title">📋 Dati estratti dal referto</div><div class="rv-ext-grid">
+    ${parsed.paziente?`<div class="rv-ext-item"><div class="rv-ext-k">Paziente</div><div class="rv-ext-v">${esc(parsed.paziente)}</div></div>`:""}
+    ${parsed.esame?`<div class="rv-ext-item"><div class="rv-ext-k">Esame N°</div><div class="rv-ext-v">${esc(parsed.esame)}</div></div>`:""}
+    ${parsed.cellularity!==null?`<div class="rv-ext-item"><div class="rv-ext-k">Cellularità</div><div class="rv-ext-v">${parsed.cellularity}%</div></div>`:""}
+    ${parsed.msi?`<div class="rv-ext-item"><div class="rv-ext-k">MSI</div><div class="rv-ext-v" style="color:${parsed.msi==="MSI-H"?"#C62828":"#1B5E20"}">${parsed.msi}</div></div>`:""}
+    ${parsed.pole?`<div class="rv-ext-item"><div class="rv-ext-k">POLE</div><div class="rv-ext-v">${esc(parsed.pole)}</div></div>`:""}
+    <div class="rv-ext-item"><div class="rv-ext-k">Varianti</div><div class="rv-ext-v">${allVariants.length} identificate</div></div>
+    ${scenarioId?`<div class="rv-ext-item"><div class="rv-ext-k">Istotipo</div><div class="rv-ext-v">${SC.find(s=>s.id===scenarioId)?.label||scenarioId}</div></div>`:""}
+  </div></div>`;
+
+  // Banner MSI-H
+  let msiBanner="";
+  if(parsed.msi==="MSI-H"){
+    const msiEntries=lookupGeneInDB("BAT25",scenarioId);
+    const msiDrug=msiEntries[0]?.entry?.drug||"Pembrolizumab (FDA agnostico)";
+    msiBanner=`<div class="rv-msi-banner"><div class="rv-msi-banner-h">🟢 MSI-H — Profilo microsatellitare instabile</div><div class="rv-msi-banner-b">Predittivo di risposta a immunoterapia checkpoint. Target: ${esc(msiDrug)}. Impone screening Lynch (IHC MMR: MLH1·MSH2·MSH6·PMS2).</div></div>`;
+  }
+
+  // Banner POLE patogenetico
+  let poleBanner="";
+  if(parsed.pole&&parsed.pole.toLowerCase()!=="wt"&&parsed.pole.toLowerCase()!=="negativo"){
+    poleBanner=`<div class="rv-pole-banner"><div class="rv-pole-banner-h">🟣 POLE — mutazione rilevata</div><div class="rv-pole-banner-b">Verificare se patogenetica nel dominio esonucleasico (P286R, V411L, S459F). Solo in quel caso → fenotipo ultramutatore → risposta a IO.</div></div>`;
+  }
+
+  // Render cards varianti
+  const cardsHtml=lookupResults.map((r,i)=>renderVariantCard(r.v,i,r.dbMatches,parsed.cellularity)).join("");
+
+  // Sezione AI
+  const aiBoxHtml=`<div class="rv-ai-box" id="rv-ai-box">
+    <div class="rv-ai-title">🔵 Sintesi AI — Gap, co-mutazioni, VAF anomali <span class="rv-ai-badge">AI</span></div>
+    <div class="rv-ai-loading rv-ai-content" id="rv-ai-content">—</div>
+  </div>`;
+
+  document.getElementById("rv-results").innerHTML=extractedHtml+msiBanner+poleBanner+`<div class="rv-variants-list">${cardsHtml}</div>`+aiBoxHtml;
+
+  // Chiama API Claude
+  await callRefertoAPI(parsed,lookupResults,notInDb,scenarioId);
+  btn.disabled=false;btn.textContent="🔍 Analizza Referto";
+}
+
+/* ---- API Claude (solo gap) ---- */
+async function callRefertoAPI(parsed,lookupResults,notInDb,scenarioId){
+  const el=document.getElementById("rv-ai-content");
+  if(!el)return;
+  // Costruisci prompt compatto
+  const varList=parsed.variants.map(v=>{
+    const vafInfo=parsed.cellularity?checkVAF(v.vaf,parsed.cellularity):null;
+    const vafNote=vafInfo&&vafInfo.level!=="ok"?` [VAF ANOMALO: ${vafInfo.level}]`:"";
+    return`- ${v.gene} ${v.prot||""} ${v.cdna||""} VAF:${v.vaf}%${vafNote} [${v.classif}]`;
+  }).join("\n");
+
+  const dbSummary=lookupResults.map(r=>
+    r.dbMatches.length?`${r.v.gene}: trovato in DB (${r.dbMatches.map(m=>m.sc.label).join(", ")})`:`${r.v.gene}: NON in DB`
+  ).join("\n");
+
+  const coMut=parsed.variants.map(v=>v.gene);
+  const coMutNote=coMut.includes("STK11")&&coMut.includes("KEAP1")?"CO-MUTAZIONE STK11+KEAP1 → predittore negativo IO.\n":"";
+  const tert_braf=coMut.includes("TERT")&&coMut.includes("BRAF")?"CO-MUTAZIONE TERT+BRAF → doppio hit prognostico sfavorevole in DTC.\n":"";
+
+  const userPrompt=`PANNELLO NGS — SINTESI PER ANATOMIA PATOLOGICA
+
+Paziente: ${parsed.paziente||"N/D"} | Esame: ${parsed.esame||"N/D"} | Cellularità: ${parsed.cellularity!==null?parsed.cellularity+"%":"N/D"}
+Istotipo richiesto: ${scenarioId?SC.find(s=>s.id===scenarioId)?.label||scenarioId:"Non specificato"}
+MSI: ${parsed.msi||"N/D"} | POLE: ${parsed.pole||"N/D"}
+
+VARIANTI RILEVATE:
+${varList||"Nessuna variante estratta automaticamente."}
+
+COPERTURA DB:
+${dbSummary||"N/D"}
+${coMutNote}${tert_braf}
+GENI NON IN DB: ${notInDb.length?notInDb.join(", "):"nessuno"}
+
+Il database ha già generato le frasi referto e i target farmacologici per le varianti in DB.
+Il tuo compito è LIMITATO a:
+1. Anomalie VAF [VAF ANOMALO] — breve commento se presenti
+2. Co-mutazioni rilevanti non gestite dal DB
+3. Geni NON IN DB — breve nota clinica
+4. Sintesi per l'oncologo (2-3 frasi max)
+NON ripetere i target già nel DB. NON ripetere le frasi referto già generate.
+Risposta in italiano, stile refertale conciso.`;
+
+  const SYSTEM=`Sei un patologo oncologo molecolare senior che interpreta pannelli NGS. Rispondi in italiano. Stile refertale: preciso, conciso, senza ridondanze. Il database clinico ha già coperto le varianti principali — il tuo contributo riguarda SOLO i gap specificati dall'utente.`;
+
+  // Sintesi AI disattivata in questa build 100% offline: nessuna chiamata a servizi esterni.
+  // Il prompt sopra resta predisposto per un eventuale backend locale/proxy futuro.
+  void userPrompt; void SYSTEM;
+  el.innerHTML=`<span style="color:#546E7A">La sintesi AI richiede un backend online, <b>non attivo</b> in questa versione offline.<br>Le frasi referto e i target farmacologici qui sopra provengono dal <b>database locale verificato</b> e sono validi anche senza connessione.</span>`;
+}
+
 goHome();
 </script>
 </body>
