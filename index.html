@@ -940,9 +940,19 @@ function parseReferto(text){
   if(poleMatch)result.pole=poleMatch[1];
 
   // Varianti — pattern multipli Diatech
-  const lines=text.split(/\n/);
-  for(const line of lines){
-    const l=line.trim();
+  // Pre-pass: unisce una classificazione "orfana" (finita su riga a sé per a-capo) alla riga variante precedente.
+  const rawLines=text.split(/\n/);
+  const lines=[];
+  for(let _i=0;_i<rawLines.length;_i++){
+    const cur=rawLines[_i].trim();
+    const isClassOnly=/^(conflicting|pathogenic\b|likely[\s_]|benign\b|variant\s+of\s+uncertain|uncertain\s+significance|\bVUS\b)/i.test(cur)&&!/\bc\.\d/.test(cur)&&cur.length<70;
+    const prev=lines.length?lines[lines.length-1]:"";
+    if(isClassOnly&&/\bc\.[A-Za-z0-9]/.test(prev)&&/(?:VAF|Frequenza)/i.test(prev)){
+      lines[lines.length-1]=prev+" "+cur;continue;
+    }
+    lines.push(cur);
+  }
+  for(const l of lines){
     if(!l||l.length<5)continue;
 
     // Pattern A: - GENE [esone N] c.XXX p.YYY VAF: ZZ% Classificazione: X
@@ -954,18 +964,23 @@ function parseReferto(text){
       continue;
     }
 
-    // Formato Diatech esteso: "GENE <esone> c.xxx p.yyy <tipo variante> VAF nn.nn <Classificazione>"
-    // esone come numero libero e parole descrittive tra p. e VAF. Estrazione per campi (tollerante).
-    const gM=l.match(/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\b/);
+    // Estrazione variante per campi (tollerante). Gestisce sia il formato bullet ("-NRAS 2 c...")
+    // sia la prosa ("...del gene NRAS: c..."), dove il gene NON è a inizio riga.
     const cM=l.match(/\b(c\.[A-Za-z0-9>._+*\-]+)/);
     const vM=l.match(/(?:VAF|Frequenza(?:\s+allelica)?)\s*[:=]?\s*(\d+[,.]?\d*)\s*%?/i);
-    if(gM&&cM&&vM){
-      const pM=l.match(/\b(p\.[A-Za-z0-9*=._\-]+)/);
-      // esone: "esone N" / "(esone N)" (parola eson*), altrimenti numero libero subito dopo il gene
-      const exM=l.match(/eson\w*\.?\s*(\d{1,2})/i)||l.match(/^[-•*]?\s*[A-Z][A-Z0-9]{1,9}\s+(\d{1,2})\s+c\./i);
-      const clM=l.match(/(conflicting[\w\s]*classif\w*|likely\s+pathogenic|likely\s+benign|\bpathogenic\b|\bbenign\b|benign[ao]|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|significato\s+incerto)/i);
-      result.variants.push({gene:gM[1],esone:exM?exM[1]:null,cdna:cM[1].replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
-      continue;
+    if(cM&&vM){
+      // gene = ultimo token gene-like PRIMA della notazione c. (esclude sigle non-gene comuni)
+      const BLOCK={DNA:1,RNA:1,NGS:1,VAF:1,CNV:1,MSI:1,MSS:1,PCR:1,IVD:1,FFPE:1};
+      const gtoks=(l.slice(0,cM.index).match(/[A-Z][A-Z0-9]{1,9}/g)||[]).filter(t=>!BLOCK[t]);
+      const gene=gtoks.length?gtoks[gtoks.length-1]:null;
+      if(gene){
+        const clSrc=l.replace(/_/g," "); // normalizza "Likely_pathogenic", "missense_variant", ecc.
+        const pM=l.match(/\b(p\.[A-Za-z0-9*=._\-]+)/);
+        const exM=clSrc.match(/eson\w*\.?\s*(\d{1,2})/i)||l.match(/^[-•*]?\s*[A-Z][A-Z0-9]{1,9}\s+(\d{1,2})\s+c\./i);
+        const clM=clSrc.match(/(conflicting[\w\s]*classif\w*|likely\s+pathogenic|likely\s+benign|\bpathogenic\b|\bbenign\b|benign[ao]|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|significato\s+incerto)/i);
+        result.variants.push({gene,esone:exM?exM[1]:null,cdna:cM[1].replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
+        continue;
+      }
     }
 
     // Pattern B senza parentesi esone: - GENE c.XXX p.YYY VAF: ZZ% ...
