@@ -264,6 +264,7 @@
   .rv-classif-lp{background:#FFF3E0;color:#E65100;border:1px solid #FFB74D;}
   .rv-classif-vus{background:#FFF8E1;color:#F57F17;border:1px solid #FFD54F;}
   .rv-classif-b{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7;}
+  .rv-classif-nd{background:#ECEFF1;color:#546E7A;border:1px solid #B0BEC5;}
   .rv-var-body{padding:0;}
   .rv-dual{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1.5px solid #E0E0E0;}
   @media(max-width:700px){.rv-dual{grid-template-columns:1fr;}}
@@ -962,7 +963,7 @@ function parseReferto(text){
       const pM=l.match(/\b(p\.[A-Za-z0-9*=._\-]+)/);
       // esone: "esone N" / "(esone N)" (parola eson*), altrimenti numero libero subito dopo il gene
       const exM=l.match(/eson\w*\.?\s*(\d{1,2})/i)||l.match(/^[-•*]?\s*[A-Z][A-Z0-9]{1,9}\s+(\d{1,2})\s+c\./i);
-      const clM=l.match(/(likely\s+pathogenic|likely\s+benign|pathogenic|benign|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|benign[ao]|significato\s+incerto)/i);
+      const clM=l.match(/(conflicting[\w\s]*classif\w*|likely\s+pathogenic|likely\s+benign|\bpathogenic\b|\bbenign\b|benign[ao]|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|significato\s+incerto)/i);
       result.variants.push({gene:gM[1],esone:exM?exM[1]:null,cdna:cM[1].replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
       continue;
     }
@@ -992,8 +993,10 @@ function parseReferto(text){
 function classifNorm(s){
   if(!s)return"ND";
   s=s.trim().toLowerCase();
-  // "likely/probably" va valutato PRIMA delle forme piene: altrimenti "likely pathogenic"
-  // contiene "pathog" e verrebbe erroneamente promosso a "Patogenetica".
+  // "conflicting classifications of pathogenicity": categoria a sé (incerta), NON patogenetica.
+  // Va PRIMA di tutto perché contiene "pathogenicity" (→ altrimenti letta come Patogenetica).
+  if(s.includes("conflicting")||s.includes("conflitto")||s.includes("discord"))return"Conflicting";
+  // "likely/probably" PRIMA delle forme piene: altrimenti "likely pathogenic" → "pathog" → Patogenetica.
   if((s.includes("likely")&&s.includes("path"))||s.includes("class 4")||s.includes("probably")||s.includes("probabilmente pato"))return"Likely pathogenic";
   if(s.includes("pato")||s.includes("class 5")||s.includes("pathog"))return"Patogenetica";
   if(s.includes("vus")||s.includes("uncertain")||s.includes("class 3")||s.includes("significato"))return"VUS";
@@ -1055,7 +1058,7 @@ function lookupGeneInDB(gene,preferScenarioId){
 /* ---- Render risultati ---- */
 function renderVariantCard(v,idx,dbMatches,cellularity){
   const vafInfo=checkVAF(v.vaf,cellularity);
-  const classifClass=v.classif.includes("Patog")?"rv-classif-p":v.classif.includes("Likely")?"rv-classif-lp":v.classif.includes("VUS")?"rv-classif-vus":"rv-classif-b";
+  const classifClass=v.classif.includes("Patog")?"rv-classif-p":v.classif.includes("Likely")?"rv-classif-lp":(v.classif.includes("VUS")||v.classif.includes("Conflicting"))?"rv-classif-vus":v.classif.includes("Benig")?"rv-classif-b":"rv-classif-nd";
 
   // Colonna Patologo
   let patHtml="";
@@ -1128,18 +1131,26 @@ async function analyzeReferto(){
 
   const parsed=parseReferto(text);
 
-  // SICUREZZA: se l'analisi non è stata eseguita / campione non valutabile,
-  // NON mostrare "0 varianti" (falsa negatività). Banner critico e stop.
+  // SICUREZZA: campione non valutabile / analisi non eseguita.
+  // - Senza varianti → banner critico e stop (evita falsa negatività "0 varianti").
+  // - Con varianti (analisi PARZIALE su materiale insufficiente) → banner di cautela
+  //   PREPENDED ai risultati, che vengono comunque mostrati per valutazione clinica.
+  let inadegBanner="";
   if(parsed.notEvaluable){
-    document.getElementById("rv-results").innerHTML=
-      `<div class="rv-inadeg-banner">
-        <div class="rv-inadeg-h">⛔ ANALISI NGS NON ESEGUITA / CAMPIONE NON VALUTABILE</div>
+    const partial=parsed.variants.length>0;
+    inadegBanner=`<div class="rv-inadeg-banner">
+        <div class="rv-inadeg-h">⛔ ${partial?"ANALISI PARZIALE SU MATERIALE INSUFFICIENTE":"ANALISI NGS NON ESEGUITA / CAMPIONE NON VALUTABILE"}</div>
         <div class="rv-inadeg-b">Motivo rilevato nel referto: «${esc(parsed.notEvaluableMsg||"materiale/DNA non adeguato")}».<br>
-        <b>L'assenza di varianti NON è un risultato negativo.</b> Il test non è informativo: valutare re-biopsia, nuovo campionamento o metodica alternativa. Non refertare come «wild-type» né escludere target azionabili sulla base di questo esame.</div>
-      </div>`+
-      (parsed.cellularity!==null?`<div class="rv-extracted"><div class="rv-ext-title">📋 Dati estratti</div><div class="rv-ext-grid"><div class="rv-ext-item"><div class="rv-ext-k">Cellularità</div><div class="rv-ext-v">${parsed.cellularity}%</div></div></div></div>`:"");
-    btn.disabled=false;btn.textContent="🔍 Analizza Referto";
-    return;
+        ${partial
+          ?"I risultati sotto derivano da un'<b>analisi parziale su materiale insufficiente</b>: vanno interpretati con cautela e <b>validati dal clinico</b>. L'eventuale assenza di altre varianti NON è conclusiva (possibili falsi negativi per basso input)."
+          :"<b>L'assenza di varianti NON è un risultato negativo.</b> Il test non è informativo: valutare re-biopsia, nuovo campionamento o metodica alternativa. Non refertare come «wild-type» né escludere target azionabili sulla base di questo esame."}</div>
+      </div>`;
+    if(!partial){
+      document.getElementById("rv-results").innerHTML=inadegBanner+
+        (parsed.cellularity!==null?`<div class="rv-extracted"><div class="rv-ext-title">📋 Dati estratti</div><div class="rv-ext-grid"><div class="rv-ext-item"><div class="rv-ext-k">Cellularità</div><div class="rv-ext-v">${parsed.cellularity}%</div></div></div></div>`:"");
+      btn.disabled=false;btn.textContent="🔍 Analizza Referto";
+      return;
+    }
   }
 
   const scenarioId=document.getElementById("rv-istotipo").value||null;
@@ -1188,7 +1199,7 @@ async function analyzeReferto(){
     <div class="rv-ai-loading rv-ai-content" id="rv-ai-content">—</div>
   </div>`;
 
-  document.getElementById("rv-results").innerHTML=extractedHtml+msiBanner+poleBanner+`<div class="rv-variants-list">${cardsHtml}</div>`+aiBoxHtml;
+  document.getElementById("rv-results").innerHTML=inadegBanner+extractedHtml+msiBanner+poleBanner+`<div class="rv-variants-list">${cardsHtml}</div>`+aiBoxHtml;
 
   // Chiama API Claude
   await callRefertoAPI(parsed,lookupResults,notInDb,scenarioId);
