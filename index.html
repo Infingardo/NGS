@@ -305,6 +305,16 @@
   .rv-inadeg-banner{background:#FFEBEE;border:2.5px solid #C62828;border-left:7px solid #B71C1C;border-radius:8px;padding:13px 17px;margin-bottom:14px;}
   .rv-inadeg-h{font-size:15px;font-weight:800;color:#B71C1C;letter-spacing:.01em;}
   .rv-inadeg-b{font-size:12px;color:#7F1D1D;margin-top:6px;line-height:1.6;}
+  .rv-frase-blocked{font-size:11.5px;color:#7F1D1D;line-height:1.6;background:#FFF3F3;border:1.5px dashed #EF9A9A;border-radius:5px;padding:9px 11px;}
+  .rv-frase-blocked-sub{display:inline-block;margin-top:5px;color:#8D6E63;font-size:11px;}
+  .rv-drug-caution{font-size:11px;color:#8D4B00;background:#FFF8E1;border:1px solid #FFCC80;border-radius:4px;padding:6px 8px;margin-bottom:6px;line-height:1.5;}
+  .rv-sez-banner{border-radius:8px;padding:13px 17px;margin-bottom:14px;}
+  .rv-sez-pos{background:#FFEBEE;border:2.5px solid #C62828;border-left:7px solid #B71C1C;}
+  .rv-sez-miss{background:#FFF8E1;border:2px solid #FFB300;border-left:7px solid #FF8F00;}
+  .rv-sez-h{font-size:14px;font-weight:800;letter-spacing:.01em;}
+  .rv-sez-pos .rv-sez-h{color:#B71C1C;} .rv-sez-miss .rv-sez-h{color:#8D4B00;}
+  .rv-sez-b{font-size:12px;margin-top:6px;line-height:1.6;}
+  .rv-sez-pos .rv-sez-b{color:#7F1D1D;} .rv-sez-miss .rv-sez-b{color:#6D4C00;}
   .rv-ocr{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
   .rv-ocr-btn{cursor:pointer;margin:0;background:#fff;color:#00695C;border:1.5px solid #00695C;border-radius:7px;padding:8px 16px;font-size:13px;font-weight:700;font-family:inherit;}
   .rv-ocr-btn:hover{background:#E0F2F1;}
@@ -909,7 +919,10 @@ async function rvOCR(file){
 
 /* ---- Parser referto Diatech ---- */
 function parseReferto(text){
-  const result={paziente:null,esame:null,cellularity:null,msi:null,pole:null,variants:[],cnv:[],fusions:[],notEvaluable:false,notEvaluableMsg:null};
+  const result={paziente:null,esame:null,cellularity:null,msi:null,pole:null,variants:[],cnv:[],fusions:[],sections:null,notEvaluable:false,notEvaluableMsg:null};
+
+  // Sigle che non sono geni. Usata sia dall'estrazione varianti sia dalle sezioni CNV/fusioni.
+  const BLOCK={DNA:1,RNA:1,NGS:1,VAF:1,CNV:1,MSI:1,MSS:1,PCR:1,IVD:1,FFPE:1,LOH:1,CE:1,ND:1};
 
   // SICUREZZA: analisi non eseguita / campione non valutabile (DNA insufficiente, materiale inadeguato).
   // NB: "Arricchimento non eseguito" e "Quantità ... adeguata" NON devono attivarlo.
@@ -939,15 +952,51 @@ function parseReferto(text){
   const poleMatch=text.match(/POLE[:\s]+([\w]+)/i);
   if(poleMatch)result.pole=poleMatch[1];
 
+  // Sezioni numerate del referto Diatech:
+  //   "2) CNV: assenza"  "3) Fusioni: assenza"  "4) Sbilanciamento di Alk: non positivo"
+  // Il prefisso numerico è spesso corrotto dall'OCR ("2}", "Z)", "2 )"): non ci si ancora sopra.
+  // PRINCIPIO: non si indovina il formato del POSITIVO (mai osservato su referto reale).
+  // Si riconosce il NEGATIVO; qualunque altro valore viene mostrato grezzo con avviso.
+  const NEG=/\b(assenza|assenti?|non\s+rilevat\w*|non\s+identificat\w*|nessun\w*|non\s+positiv\w*|negativ\w*)\b/i;
+  const readSection=label=>{
+    const re=new RegExp("^\\s*(?:[\\dA-Za-z]{1,2}\\s*[)\\}\\].]\\s*)?"+label+"\\s*:\\s*(\\S.*)$","im");
+    const m=text.match(re);
+    if(!m)return{present:false,status:"missing",raw:null};
+    const raw=m[1].trim();
+    return{present:true,status:NEG.test(raw)?"negative":"positive",raw};
+  };
+  const genesIn=s=>(s.match(/\b[A-Z][A-Z0-9]{1,9}\b/g)||[]).filter(t=>!BLOCK[t]);
+  result.sections={
+    cnv:readSection("CNV"),
+    fusions:readSection("Fusion[ei]"),
+    alk:readSection("Sbilanciamento(?:\\s+di\\s+[A-Za-z0-9]+)?")
+  };
+
+  if(result.sections.cnv.status==="positive"){
+    const raw=result.sections.cnv.raw;
+    const g=genesIn(raw), t=(raw.match(/amplificazion\w*|delezion\w*|\bgain\b|\bloss\b/i)||[])[0];
+    result.cnv.push(g.length&&t?{gene:g[0],type:t.toLowerCase(),raw}:{gene:g[0]||null,type:null,raw,unparsed:true});
+  }
+  if(result.sections.fusions.status==="positive"){
+    const raw=result.sections.fusions.raw;
+    const m=raw.match(/\b([A-Z][A-Z0-9]{1,9})\s*(?:::|–|-)\s*([A-Z][A-Z0-9]{1,9})\b/);
+    if(m)result.fusions.push({gene1:m[1],gene2:m[2],raw});
+    else{const g=genesIn(raw);result.fusions.push({gene1:g[0]||null,gene2:null,raw,unparsed:!g.length});}
+  }
+  if(result.sections.alk.status==="positive"){
+    // Lo sbilanciamento 3'/5' è un surrogato del riarrangiamento, non la fusione documentata.
+    result.fusions.push({gene1:"ALK",gene2:null,raw:result.sections.alk.raw,source:"sbilanciamento"});
+  }
+
   // Varianti — pattern multipli Diatech
   // Pre-pass: unisce una classificazione "orfana" (finita su riga a sé per a-capo) alla riga variante precedente.
   const rawLines=text.split(/\n/);
   const lines=[];
   for(let _i=0;_i<rawLines.length;_i++){
     const cur=rawLines[_i].trim();
-    const isClassOnly=/^(conflicting|pathogenic\b|likely[\s_]|benign\b|variant\s+of\s+uncertain|uncertain\s+significance|\bVUS\b)/i.test(cur)&&!/\bc\.\d/.test(cur)&&cur.length<70;
+    const isClassOnly=/^(conflicting|pathogenic\b|likely[\s_]|benign\b|variant\s+of\s+uncertain|uncertain\s+significance|\bVUS\b)/i.test(cur)&&!/\bc\.\s?\d/.test(cur)&&cur.length<70;
     const prev=lines.length?lines[lines.length-1]:"";
-    if(isClassOnly&&/\bc\.[A-Za-z0-9]/.test(prev)&&/(?:VAF|Frequenza)/i.test(prev)){
+    if(isClassOnly&&/\bc\.\s?[A-Za-z0-9]/.test(prev)&&/(?:VAF|Frequenza)/i.test(prev)){
       lines[lines.length-1]=prev+" "+cur;continue;
     }
     lines.push(cur);
@@ -966,11 +1015,12 @@ function parseReferto(text){
 
     // Estrazione variante per campi (tollerante). Gestisce sia il formato bullet ("-NRAS 2 c...")
     // sia la prosa ("...del gene NRAS: c..."), dove il gene NON è a inizio riga.
-    const cM=l.match(/\b(c\.[A-Za-z0-9>._+*\-]+)/);
+    // `c.\s*` tollera lo spazio che l'OCR inserisce dopo il punto ("c. 548C>G"):
+    // senza, la variante veniva persa per intero, non degradata.
+    const cM=l.match(/\b(c\.\s*[A-Za-z0-9>._+*\-]+)/);
     const vM=l.match(/(?:VAF|Frequenza(?:\s+allelica)?)\s*[:=]?\s*(\d+[,.]?\d*)\s*%?/i);
     if(cM&&vM){
       // gene = ultimo token gene-like PRIMA della notazione c. (esclude sigle non-gene comuni)
-      const BLOCK={DNA:1,RNA:1,NGS:1,VAF:1,CNV:1,MSI:1,MSS:1,PCR:1,IVD:1,FFPE:1};
       const gtoks=(l.slice(0,cM.index).match(/[A-Z][A-Z0-9]{1,9}/g)||[]).filter(t=>!BLOCK[t]);
       const gene=gtoks.length?gtoks[gtoks.length-1]:null;
       if(gene){
@@ -978,7 +1028,7 @@ function parseReferto(text){
         const pM=l.match(/\b(p\.[A-Za-z0-9*=._\-]+)/);
         const exM=clSrc.match(/eson\w*\.?\s*(\d{1,2})/i)||l.match(/^[-•*]?\s*[A-Z][A-Z0-9]{1,9}\s+(\d{1,2})\s+c\./i);
         const clM=clSrc.match(/(conflicting[\w\s]*classif\w*|likely\s+pathogenic|likely\s+benign|\bpathogenic\b|\bbenign\b|benign[ao]|uncertain(?:\s+significance)?|\bVUS\b|patogenetic[ao]|significato\s+incerto)/i);
-        result.variants.push({gene,esone:exM?exM[1]:null,cdna:cM[1].replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
+        result.variants.push({gene,esone:exM?exM[1]:null,cdna:cM[1].replace(/\s+/g,"").replace(/\.+$/,""),prot:pM?pM[1].replace(/\.+$/,""):null,vaf:parseFloat(vM[1].replace(",",".")),classif:classifNorm(clM?clM[0]:"")});
         continue;
       }
     }
@@ -992,15 +1042,9 @@ function parseReferto(text){
       continue;
     }
 
-    // Pattern CNV: GENE amplificazione / delezione
-    const patCNV=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})\s*[:–-]\s*(amplificazione|delezione|gain|loss|amp)/i;
-    const mCNV=l.match(patCNV);
-    if(mCNV){result.cnv.push({gene:mCNV[1],type:mCNV[2].toLowerCase()});continue;}
-
-    // Pattern fusioni: GENE1-GENE2 fusione
-    const patFUS=/^[-•*]?\s*([A-Z][A-Z0-9]{1,9})[–-]([A-Z][A-Z0-9]{1,9})\s*(?:fusione|riarrangiamento|fusion)/i;
-    const mFUS=l.match(patFUS);
-    if(mFUS){result.fusions.push({gene1:mFUS[1],gene2:mFUS[2]});continue;}
+    // CNV e fusioni NON si leggono qui: sono sezioni numerate, gestite sopra.
+    // Le vecchie regex per-riga ("GENE: amplificazione") non corrispondevano ad alcun
+    // formato reale e producevano falsi positivi ("Risultato: amplificazione").
   }
   return result;
 }
@@ -1033,8 +1077,8 @@ function checkVAF(vaf,cellularity){
     vafBadge=`<span class="rv-vaf-warn">VAF ${vaf}% ↓</span>`;
     alertHtml=`<div class="rv-vaf-alert-box rv-vaf-alert-warn">⚠️ VAF inferiore all'atteso (${vaf}% vs atteso ~${expected}%). Eterogeneità intratumorale, subclonale o artefatto. Valutare con cautela.</div>`;
   } else if(ratio>1.6&&vaf>50){
-    vafBadge=`<span class="rv-vaf-loh">VAF ${vaf}% LOH?</span>`;
-    alertHtml=`<div class="rv-vaf-alert-box rv-vaf-alert-loh">ℹ️ VAF elevato (${vaf}% vs atteso ~${expected}%). Compatibile con LOH (perdita allele wild-type). Segnalare nel referto.</div>`;
+    vafBadge=`<span class="rv-vaf-loh">VAF ${vaf}% ↑</span>`;
+    alertHtml=`<div class="rv-vaf-alert-box rv-vaf-alert-loh">ℹ️ VAF elevato (${vaf}% vs atteso ~${expected}%). Differenziale, in ordine: <b>variante germinale</b> (VAF ~50% indipendente dalla cellularità — verificare rs ID e presenza in gnomAD); <b>LOH</b> con perdita dell'allele wild-type; <b>sottostima della cellularità</b> tumorale. Non refertare come somatica senza aver escluso la germinale.</div>`;
   } else {
     vafBadge=`<span class="rv-vaf-ok">VAF ${vaf}% ✓</span>`;
   }
@@ -1071,7 +1115,15 @@ function lookupGeneInDB(gene,preferScenarioId){
 }
 
 /* ---- Render risultati ---- */
-function renderVariantCard(v,idx,dbMatches,cellularity){
+// `denied` = classi di alterazione che IL REFERTO dichiara assenti ({fusion:bool,cnv:bool}).
+// Guardia di sicurezza: una entry può descrivere una fusione o un'amplificazione anche quando
+// la variante rilevata è una SNV puntiforme (nel DB il campo `type` indica la copertura del
+// pannello per quel gene, non la classe cui si applica la raccomandazione). Se il laboratorio
+// ha escluso quella classe, la frase pronta da copiare NON va emessa: sarebbe un'asserzione
+// falsa in un referto. Farmaco ed evidenza restano visibili, con avviso: per alcuni geni
+// (ERBB2, MET, RET) il farmaco è indicato anche per la mutazione puntiforme.
+function renderVariantCard(v,idx,dbMatches,cellularity,denied){
+  denied=denied||{fusion:false,cnv:false};
   const vafInfo=checkVAF(v.vaf,cellularity);
   const classifClass=v.classif.includes("Patog")?"rv-classif-p":v.classif.includes("Likely")?"rv-classif-lp":(v.classif.includes("VUS")||v.classif.includes("Conflicting"))?"rv-classif-vus":v.classif.includes("Benig")?"rv-classif-b":"rv-classif-nd";
 
@@ -1084,19 +1136,29 @@ function renderVariantCard(v,idx,dbMatches,cellularity){
     patHtml=`<div class="rv-not-in-db">Gene non presente nel database verificato per questo contesto. Vedi sintesi AI.</div>`;
     oncoHtml=`<div class="rv-not-in-db">Nessuna entry DB — dati da sintesi AI.</div>`;
   } else {
+    const isSNV=!!v.cdna;
     dbMatches.slice(0,3).forEach(({sc,entry},i)=>{
       const isSplit=(entry.role==="diagnostico"||entry.role==="misto")&&entry.referto_diag;
       const refText=isSplit?(makeRefDiag(entry)+"\n\n[PREDITTIVO]\n"+makeRefPred(entry)):makeRef(entry);
       const scenBadge=dbMatches.length>1||sc.id!=="agnostico"?`<span class="rv-scenario-sep">${sc.icon} ${sc.label}</span><br>`:"";
+
+      const claimFusion=/fusione|riarrangiament/i.test(refText);
+      const claimAmp=/amplificazion/i.test(refText);
+      const blocked=isSNV&&((claimFusion&&denied.fusion)||(claimAmp&&denied.cnv));
+      const claimLabel=claimFusion&&denied.fusion?"una fusione":"un'amplificazione";
+
       patHtml+=`<div style="margin-bottom:${i<dbMatches.length-1?10:0}px">${scenBadge}
-        <div class="rv-frase">${esc(refText)}</div>
-        <button type="button" class="rv-btn-copy" onclick="rvCopy(this,'${esc(refText)}')">📋 Copia</button>
+        ${blocked
+          ?`<div class="rv-frase-blocked">🚫 Frase non generata. Questa voce del database descrive <b>${claimLabel}</b> di ${esc(entry.genes.join(", "))}, ma il referto la dichiara <b>assente</b>. La variante rilevata è puntiforme (${esc(v.cdna)}). Copiarla produrrebbe un'affermazione falsa.<br><span class="rv-frase-blocked-sub">Se il farmaco sotto è indicato anche per la mutazione puntiforme, scrivere la frase a mano.</span></div>`
+          :`<div class="rv-frase">${esc(refText)}</div>
+             <button type="button" class="rv-btn-copy" onclick="rvCopy(this,'${esc(refText)}')">📋 Copia</button>`}
         ${entry.panel_coverage_warning?`<div class="rv-coverage-warn">⚠️ ${esc(entry.panel_coverage_warning)}</div>`:""}
         ${entry.ihc?`<div class="rv-ihc-note">🔵 IHC correlata: ${esc(entry.ihc.test)}</div>`:""}
       </div>`;
       const drugText=entry.drug||"";
       const evBadgeHtml=entry.evidence?entry.evidence.split("·").map(e=>e.trim()).filter(Boolean).map(e=>`<span class="ev-tag ${evClass(e)}">${e}</span>`).join(""):"";
       oncoHtml+=`<div style="margin-bottom:${i<dbMatches.length-1?10:0}px">${scenBadge}
+        ${blocked?`<div class="rv-drug-caution">⚠️ Indicazione riferita a ${claimLabel}, esclusa dal referto. Valutare solo se il farmaco è approvato anche per la variante puntiforme.</div>`:""}
         <div class="rv-evidence-badges">${evBadgeHtml}</div>
         <div class="rv-drug">💊 ${esc(drugText)}</div>
         <div class="rv-action">▶ ${esc(entry.action||"")}</div>
@@ -1205,8 +1267,32 @@ async function analyzeReferto(){
     poleBanner=`<div class="rv-pole-banner"><div class="rv-pole-banner-h">🟣 POLE — mutazione rilevata</div><div class="rv-pole-banner-b">Verificare se patogenetica nel dominio esonucleasico (P286R, V411L, S459F). Solo in quel caso → fenotipo ultramutatore → risposta a IO.</div></div>`;
   }
 
+  // Sezioni CNV / Fusioni / Sbilanciamento ALK.
+  // Il referto è l'unica fonte autorevole: se dichiara la classe assente, nessuna frase
+  // può asserirla. Se il valore non è riconosciuto, si avvisa invece di tacere.
+  const S=parsed.sections||{cnv:{status:"missing"},fusions:{status:"missing"},alk:{status:"missing"}};
+  const denied={
+    fusion:S.fusions.status==="negative"&&S.alk.status!=="positive",
+    cnv:S.cnv.status==="negative"
+  };
+
+  let sezioniBanner="";
+  const positivi=[];
+  if(S.cnv.status==="positive")positivi.push(`<b>CNV</b>: «${esc(S.cnv.raw)}»`);
+  if(S.fusions.status==="positive")positivi.push(`<b>Fusioni</b>: «${esc(S.fusions.raw)}»`);
+  if(S.alk.status==="positive")positivi.push(`<b>Sbilanciamento ALK</b>: «${esc(S.alk.raw)}» — surrogato di riarrangiamento, richiede conferma`);
+  if(positivi.length){
+    sezioniBanner=`<div class="rv-sez-banner rv-sez-pos"><div class="rv-sez-h">🔴 Alterazione strutturale segnalata dal referto</div>
+      <div class="rv-sez-b">${positivi.join("<br>")}<br><br>Il parser non è validato su referti con CNV o fusioni positive: <b>rileggere la sezione originale del referto</b> prima di refertare.</div></div>`;
+  }
+  const mancanti=["cnv","fusions","alk"].filter(k=>S[k].status==="missing");
+  if(mancanti.length===3){
+    sezioniBanner+=`<div class="rv-sez-banner rv-sez-miss"><div class="rv-sez-h">⚠️ Sezioni CNV / Fusioni non trovate nel testo</div>
+      <div class="rv-sez-b">Il testo incollato non contiene le sezioni «CNV:», «Fusioni:», «Sbilanciamento di …:». Possibile OCR incompleto. <b>Nessuna conclusione su amplificazioni o fusioni può essere tratta da questa analisi.</b></div></div>`;
+  }
+
   // Render cards varianti
-  const cardsHtml=lookupResults.map((r,i)=>renderVariantCard(r.v,i,r.dbMatches,parsed.cellularity)).join("");
+  const cardsHtml=lookupResults.map((r,i)=>renderVariantCard(r.v,i,r.dbMatches,parsed.cellularity,denied)).join("");
 
   // Sezione AI
   const aiBoxHtml=`<div class="rv-ai-box" id="rv-ai-box">
@@ -1214,7 +1300,7 @@ async function analyzeReferto(){
     <div class="rv-ai-loading rv-ai-content" id="rv-ai-content">—</div>
   </div>`;
 
-  document.getElementById("rv-results").innerHTML=inadegBanner+extractedHtml+msiBanner+poleBanner+`<div class="rv-variants-list">${cardsHtml}</div>`+aiBoxHtml;
+  document.getElementById("rv-results").innerHTML=inadegBanner+extractedHtml+sezioniBanner+msiBanner+poleBanner+`<div class="rv-variants-list">${cardsHtml}</div>`+aiBoxHtml;
 
   // Chiama API Claude
   await callRefertoAPI(parsed,lookupResults,notInDb,scenarioId);
