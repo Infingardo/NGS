@@ -1,4 +1,4 @@
-/* Estrae funzioni e costanti da index.html per testarle in node.
+/* Estrae costanti e funzioni da index.html per testarle in node.
    Legge il sorgente a runtime: non va aggiornato quando index.html cambia,
    purché i nomi restino gli stessi.
 
@@ -8,7 +8,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const SRC = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const SRC_PATH = path.join(__dirname, "..", "index.html");
+const SRC = fs.readFileSync(SRC_PATH, "utf8");
 
 /* Un `/` inizia una regex solo se l'ultimo carattere significativo è uno di questi. */
 const REGEX_OK = new Set(["", "(", ",", "=", ":", "[", "!", "&", "|", "?", "{", "}", ";", "+", "-", "*", "%", "<", ">", "~", "^", "\n"]);
@@ -16,8 +17,8 @@ const REGEX_OK = new Set(["", "(", ",", "=", ":", "[", "!", "&", "|", "?", "{", 
 /* Ritorna il testo da `start` fino alla chiusura bilanciata di open/close. */
 function balanced(src, start, open, close) {
   let i = start, state = "code", depth = 0, started = false, prev = "";
-  const tmpl = [];          // profondità graffe dentro ogni `${ ... }` aperto
-  let reClass = false;      // dentro [...] di una regex
+  const tmpl = [];
+  let reClass = false;
 
   while (i < src.length) {
     const c = src[i], c2 = src.substr(i, 2);
@@ -32,9 +33,7 @@ function balanced(src, start, open, close) {
 
       if (c === "{") { if (tmpl.length) tmpl[tmpl.length - 1]++; }
       if (c === "}") {
-        if (tmpl.length) {
-          if (--tmpl[tmpl.length - 1] === 0) { tmpl.pop(); state = "tmpl"; i++; continue; }
-        }
+        if (tmpl.length && --tmpl[tmpl.length - 1] === 0) { tmpl.pop(); state = "tmpl"; i++; continue; }
       }
       if (c === open) { depth++; started = true; }
       else if (c === close) { if (--depth === 0 && started) return src.slice(start, i + 1); }
@@ -61,9 +60,8 @@ function balanced(src, start, open, close) {
       if (c === "[") reClass = true;
       else if (c === "]") reClass = false;
       else if (c === "/" && !reClass) {
-        state = "code"; prev = "/";
-        i++;
-        while (i < src.length && /[a-z]/.test(src[i])) i++;  // flag
+        state = "code"; prev = "/"; i++;
+        while (i < src.length && /[a-z]/.test(src[i])) i++;
         continue;
       }
       i++; continue;
@@ -90,16 +88,14 @@ function decl(name, open, close) {
 
 const src = [
   decl("PANEL", "{", "}"),
+  decl("GENE_DESC", "{", "}"),
   decl("SC", "[", "]"),
-  fn("classifNorm"),
-  fn("parseReferto"),
-  fn("checkVAF"),
-  fn("lookupGeneInDB"),
-  fn("esc"), fn("makeRef"), fn("makeRefDiag"), fn("makeRefPred"), fn("evClass"),
-  fn("renderVariantCard"),
-  "module.exports={parseReferto,classifNorm,checkVAF,lookupGeneInDB,renderVariantCard};",
+  fn("buildGeneIndex"),
+  fn("inPanel"),
+  fn("_geni"),
+  fn("makeRef"), fn("makeRefDiag"), fn("makeRefPred"),
+  "module.exports={PANEL,GENE_DESC,SC,buildGeneIndex,inPanel,makeRef,makeRefDiag,makeRefPred};",
 ].join("\n");
 
-module.exports = new Function("module", "exports", src + "\nreturn module.exports;")(
-  { exports: {} }, {}
-);
+module.exports = new Function("module", "exports", src + "\nreturn module.exports;")({ exports: {} }, {});
+module.exports.SOURCE = SRC;

@@ -80,8 +80,11 @@ Il tool distingue tre livelli di copertura:
 - ⚠️ **arancione** — gene nel pannello come SNV, ma l'alterazione terapeuticamente rilevante non è coperta (es. FGFR2 CNV/overespressione, CDKN2A delezione omozigote, fusioni KIAA1549-BRAF)
 - ✗ **rosso** — gene fuori pannello
 
-### Referto Rapido
-Modalità compatta con frasi di referto precompilate, pronte per copia. Per i biomarcatori a doppio ruolo (diagnostico + predittivo), produce due frasi separate con pulsanti di copia indipendenti.
+### Cosa questo strumento NON fa
+
+**Non genera testo da incollare nel referto.** Le schede riportano il significato di ciascuna alterazione e cosa segnalare, ma non offrono frasi copiabili: qui il gene è solo un gene, la classe di alterazione del paziente non è nota, e una frase pronta sarebbe un'asserzione non verificabile. Per compilare la Parte B del referto si usa l'[Assistente di Refertazione](https://github.com/Infingardo/NGS-50-geni), che parte dalla variante selezionata dal patologo.
+
+**Non interpreta i referti.** La lettura del testo Diatech, l'OCR delle immagini e il parser delle varianti sono stati rimossi (luglio 2026): lo strumento risponde a due domande — *"cosa posso fare con questo kit su questo tumore"* e *"questo gene cosa fa"* — e a nient'altro.
 
 ---
 
