@@ -82,7 +82,7 @@ Un biomarcatore ha ruolo diagnostico quando la sua presenza (o assenza) è neces
 
 **CDKN2A delezione omozigote negli astrocitomi**: In un astrocitoma IDH-mutato, la delezione omozigote di CDKN2A/B è sufficiente per l'upgrade a WHO Gr4, anche in assenza di necrosi di coagulazione o proliferazione microvascolare all'esame istologico. Senza questo dato, un tumore che morfologicamente appare di basso grado potrebbe essere sottotrattato.
 
-**GNAQ/GNA11 nel melanoma uveale**: La presenza di mutazione in GNAQ o GNA11 (~80% dei melanomi uveali) ha valore diagnostico differenziale quando la sede primitiva non è chiara, oltre al valore predittivo per tebentafusp.
+**GNAQ/GNA11 nel melanoma uveale**: La presenza di mutazione in GNAQ o GNA11 (~80% dei melanomi uveali) ha valore diagnostico differenziale quando la sede primitiva non è chiara. Non è un biomarcatore predittivo per tebentafusp: l'eleggibilità a tebentafusp dipende dall'aplotipo HLA-A*02:01 (test su sangue), non dallo stato di GNAQ/GNA11.
 
 ### 4.2 Ruolo predittivo
 
