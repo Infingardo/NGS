@@ -170,7 +170,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 ### 5.6 Carcinoma Pancreatico (PDAC) e Colangiocarcinoma (CCA)
 
-**KRAS nel PDAC**: mutato in ~90% dei PDAC. La tipizzazione esatta del codone 12 è clinicamente critica: G12C (~1%) indica sotorasib/adagrasib; G12D (~40%) è oggetto di trial con MRTX1133; G12V (~30%) non ha target approvati. Un referto che riporta solo "KRAS mutato" senza specificare la variante è clinicamente incompleto nel 2026.
+**KRAS nel PDAC**: mutato in ~90% dei PDAC. La tipizzazione esatta del codone 12 è clinicamente critica: G12C (~1%): sotorasib/adagrasib sono opzioni NCCN dopo terapia precedente (cat. 2A per PS buono/intermedio, dedotta dalla nota generale; 2B per PS scadente, esplicita; v3.2026, adattamento polacco), non un'indicazione di label FDA nel PDAC (stato EMA/AIFA non verificato; la raccomandazione non equivale ad autorizzazione o rimborsabilità in Italia); G12D (~40%) è oggetto di trial con MRTX1133; G12V (~30%) non ha target approvati. Un referto che riporta solo "KRAS mutato" senza specificare la variante è clinicamente incompleto nel 2026.
 
 **FGFR2 nel CCA intraepatico**: fusioni FGFR2 in ~10-15% dei colangiocarcinomi intraepatici. Indicano inibitori FGFR (pemigatinib, infigratinib, futibatinib), tutti approvati FDA/EMA. Sono rare nel CCA extraepatico e nel PDAC. Il testing NGS è obbligatorio in tutti i CCA intraepatici al momento della diagnosi di malattia avanzata.
 

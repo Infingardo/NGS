@@ -6,7 +6,7 @@
    2. nessuna entry dichiara una classe di alterazione che il saggio non produce;
    3. non esiste nessun modo di copiare una frase di referto da qui. */
 
-const { PANEL, GENE_DESC, SC, buildGeneIndex, makeRef, SOURCE } = require("./extract.js");
+const { PANEL, GENE_DESC, SC, buildGeneIndex, makeRef, evClass, SOURCE } = require("./extract.js");
 
 let pass = 0, fail = 0;
 const failures = [];
@@ -124,6 +124,54 @@ check("gli scenari con limiti noti dichiarano cosa il pannello NON copre",
   conNote.includes("tiroide") && conNote.includes("glioma"),
   `hanno notes: ${conNote.join(", ") || "nessuno"}`);
 console.log(`      (${conNote.length}/${SC.length} scenari hanno note — gli altri sono un debito aperto)`);
+
+/* ─────────────────────────────────────────────────────────────── */
+group("Stato regolatorio: raccomandazione ≠ indicazione approvata");
+
+const evBadgesTesto = ev => ev.split("·").map(x => x.trim()).filter(Boolean);
+const entryDi = (scId, gene) => SC.find(s => s.id === scId).entries.find(e => e.genes.includes(gene));
+const testo = e => [e.evidence, e.drug, e.note, e.action, e.referto].join(" ");
+
+// KRAS G12C nel PDAC: sotorasib/adagrasib non hanno indicazione di label nel PDAC
+// (FDA: solo NSCLC/CRC); l'unica base è la raccomandazione NCCN.
+const krasPdac = entryDi("pancreas", "KRAS");
+check("KRAS PDAC: nessuna dicitura FDA/approvazione che attivi il badge di approvazione",
+  evClass(krasPdac.evidence) === "ev-NCCN" && !/FDA/i.test(krasPdac.evidence),
+  `evidence="${krasPdac.evidence}" → ${evClass(krasPdac.evidence)}`);
+const senzaNegazioni = [krasPdac.evidence, krasPdac.drug, krasPdac.note, krasPdac.action, krasPdac.referto]
+  .join(" ").replace(/no target approvati/g, "");
+check("KRAS PDAC: nessuna affermazione di approvazione (solo «no target approvati» per le altre varianti)",
+  !/approvat|con approvazione/i.test(senzaNegazioni), senzaNegazioni.match(/.{30}approvat.{20}/i)?.[0]);
+check("KRAS PDAC: il badge NCCN dichiara 2A/2B e «non Cat 1» (la legenda dello stile NCCN è Cat 1)",
+  /NCCN cat\. 2A\/2B, non Cat 1/.test(krasPdac.evidence) && evBadgesTesto(krasPdac.evidence).some(t => /non Cat 1/.test(t)));
+check("KRAS PDAC: G12C attribuito a NCCN, con versione e categorie 2A e 2B",
+  /NCCN/.test(krasPdac.evidence) && /v3\.2026/.test(krasPdac.note) && /2A/.test(krasPdac.note) && /2B/.test(krasPdac.note));
+check("KRAS PDAC: il referto limita la negazione alla label FDA e dichiara EMA/AIFA non verificati",
+  /non è un'indicazione di label FDA nel PDAC \(stato EMA\/AIFA non verificato\)/.test(krasPdac.referto));
+check("KRAS PDAC: la nota separa raccomandazione, label e stato italiano",
+  /raccomandazione, non un'indicazione di label/.test(krasPdac.note) && /EMA\/AIFA non verificato/.test(krasPdac.note) && /rimborsabilità in Italia/.test(krasPdac.note));
+check("KRAS PDAC: G12D resta in trial, nessun target approvato per le altre varianti",
+  /G12D.*trial/.test(krasPdac.referto) && /no target approvati/.test(krasPdac.referto));
+
+// Il documento clinico non deve contraddire la scheda (G12C nel PDAC ≠ approvato).
+const DOC = require("fs").readFileSync(require("path").join(__dirname, "..", "pannello_NGS_Diatech_documento_clinico.md"), "utf8");
+const rigaDoc = DOC.split("\n").find(r => r.startsWith("**KRAS nel PDAC**")) || "";
+check("documento clinico (riga KRAS nel PDAC): G12C = opzione NCCN, non indicazione approvata",
+  /sotorasib\/adagrasib sono opzioni NCCN/.test(rigaDoc) && /v3\.2026/.test(rigaDoc) && !/indica sotorasib/.test(rigaDoc)
+  && rigaDoc.includes("non un'indicazione di label FDA nel PDAC") && !/(^|[^n]\s)un'indicazione (approvata|di label FDA)/.test(rigaDoc));
+check("documento clinico (riga KRAS nel PDAC): la categoria 2A è dichiarata dedotta, la 2B esplicita",
+  /2A.*dedotta.*2B.*esplicita/.test(rigaDoc));
+check("KRAS PDAC: la nota dichiara la 2A dedotta e la 2B esplicita, e la fonte come adattamento polacco",
+  /2A.*dedotta.*2B.*esplicita/.test(krasPdac.note) && /adattamento polacco/.test(krasPdac.note));
+check("documento clinico (riga KRAS nel PDAC): limite FDA, EMA/AIFA non verificati, non equivale a rimborsabilità in Italia",
+  /label FDA nel PDAC \(stato EMA\/AIFA non verificato/.test(rigaDoc) && /rimborsabilità in Italia/.test(rigaDoc));
+
+// NRG1 (zenocutuzumab): approvazione FDA accelerata, dopo terapia precedente. Guardia di regressione.
+for (const [scId, nome] of [["nsclc", "NSCLC"], ["pancreas", "PDAC"]]) {
+  const e = entryDi(scId, "NRG1");
+  check(`NRG1 ${nome}: approvazione FDA accelerata, dopo terapia precedente`,
+    /FDA accel/i.test(e.evidence) && /precedent/i.test(testo(e)), `evidence="${e.evidence}"`);
+}
 
 /* ─────────────────────────────────────────────────────────────── */
 console.log(`\n${"─".repeat(60)}\n  ${pass} passati, ${fail} falliti`);

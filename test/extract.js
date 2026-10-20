@@ -93,8 +93,8 @@ const src = [
   fn("buildGeneIndex"),
   fn("inPanel"),
   fn("_geni"),
-  fn("makeRef"), fn("makeRefDiag"), fn("makeRefPred"),
-  "module.exports={PANEL,GENE_DESC,SC,buildGeneIndex,inPanel,makeRef,makeRefDiag,makeRefPred};",
+  fn("makeRef"), fn("makeRefDiag"), fn("makeRefPred"), fn("evClass"),
+  "module.exports={PANEL,GENE_DESC,SC,buildGeneIndex,inPanel,makeRef,makeRefDiag,makeRefPred,evClass};",
 ].join("\n");
 
 module.exports = new Function("module", "exports", src + "\nreturn module.exports;")({ exports: {} }, {});
