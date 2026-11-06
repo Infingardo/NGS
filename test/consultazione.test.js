@@ -372,7 +372,7 @@ check("ESR1: imlunestrant FDA 25/09/2025 ed EMA 09/01/2026; associazione con abe
   && /AIFA\/rimborsabilità non verificato/.test(esr1.note) && /elacestrant e a imlunestrant/.test(esr1.referto) && !/non approvat/i.test(tutto(esr1)), esr1.note.slice(-260));
 check("HER2 polmone: zongertinib (08/08/2025, estesa 26/02/2026) e sevabertinib (19/11/2025, estesa 09/09/2026) come FDA accelerata; EMA non verificato; badge FDA accel.",
   /zongertinib/.test(her2L.drug) && /sevabertinib/.test(her2L.drug) && /08\/08\/2025/.test(her2L.note) && /26\/02\/2026/.test(her2L.note) && /19\/11\/2025/.test(her2L.note) && /09\/09\/2026/.test(her2L.note) && !/senza il requisito/.test(her2L.note) && /non solo le inserzioni dell'esone 20/.test(her2L.note) && /non limitate alle inserzioni dell'esone 20/.test(her2L.referto)
-  && /Stato EMA di zongertinib e sevabertinib non verificato/.test(her2L.note) && evClass(tag(her2L, /accel/) || "") === "ev-FDAaccel" && /T-DXd approvato FDA\/EMA/.test(her2L.note), her2L.evidence);
+  && /Stato EMA di zongertinib e sevabertinib non verificato/.test(her2L.note) && evClass(tag(her2L, /accel/) || "") === "ev-FDAaccel" && /T-DXd: FDA, approvazione accelerata dell'11\/08\/2022/.test(her2L.note) && !/T-DXd approvato FDA\/EMA/.test(her2L.note), her2L.evidence);
 check("ROS1 polmone: repotrectinib FDA 15/11/2023 ed EMA condizionata 13/01/2025; taletrectinib FDA 11/06/2025, EMA non verificato; indicazione NTRK EU distinta",
   /repotrectinib \/ taletrectinib/.test(ros1.drug) && /FDA 15\/11\/2023/.test(ros1.note) && /popolazione di efficacia inclusi pazienti già trattati/.test(ros1.note) && /condizionata dal 13\/01\/2025/.test(ros1.note) && /FDA 11\/06\/2025/.test(ros1.note)
   && /stato EMA non verificato/.test(ros1.note) && /fusione NTRK \(non pertinente a ROS1\)/.test(ros1.note) && /taletrectinib; per taletrectinib stato EMA non verificato/.test(ros1.referto), ros1.note.slice(-220));
@@ -384,6 +384,17 @@ check("le quattro schede aggiornate NON ricevono last_review 2026-11 (verifica i
 check("descrizioni dei geni (ROS1, ESR1, ERBB2, BRAF) e documento clinico allineati alle novità terapeutiche",
   /repotrectinib, taletrectinib/.test(GENE_DESC.ROS1) && /imlunestrant/.test(GENE_DESC.ESR1) && /zongertinib\/sevabertinib/.test(GENE_DESC.ERBB2) && /encorafenib\+binimetinib \(EMA\)/.test(GENE_DESC.BRAF)
   && /repotrectinib o taletrectinib/.test(docRiga("**ROS1**")) && /elacestrant e a imlunestrant/.test(docRiga("**ESR1**")), GENE_DESC.ROS1);
+
+// Polmone, lotto 1 (EPAR EMA; registro FDA delle approvazioni accelerate in corso, 06/11/2026).
+const metL = entryDi("nsclc", "MET"), krasL = entryDi("nsclc", "KRAS");
+check("MET polmone: EMA limitata a dopo immunoterapia e/o chemioterapia a base di platino (tepotinib e capmatinib); FDA da verificare separatamente; badge invariato",
+  /EMA: tepotinib e capmatinib indicati nel NSCLC avanzato con MET exon 14 skipping, nei pazienti che necessitano di terapia sistemica dopo precedente immunoterapia e\/o chemioterapia a base di platino/.test(metL.note)
+  && /Indicazione FDA da verificare separatamente/.test(metL.note) && /FDA · EMA · NCCN Cat 1/.test(metL.evidence) && metL.last_review === "2026-03", metL.note.slice(-260));
+check("KRAS G12C polmone: EMA condizionata (06/01/2022, 05/01/2024) dopo ≥1 terapia; FDA accelerata (28/05/2021, 12/12/2022) in corso; badge invariato; last_review invariato",
+  /sotorasib \(06\/01\/2022\) e adagrasib \(05\/01\/2024\) autorizzati con procedura condizionata/.test(krasL.note) && /sotorasib \(28\/05\/2021\) e adagrasib \(12\/12\/2022\) con approvazione accelerata/.test(krasL.note)
+  && /FDA · EMA/.test(krasL.evidence) && krasL.last_review === "2026-03" && !/non approvat/i.test(tutto(krasL)), krasL.note.slice(-300));
+check("T-DXd HER2 polmone: FDA accelerata 11/08/2022 dopo terapia sistemica; EMA condizionata dopo platino ± immunoterapia; badge FDA · EMA conservato",
+  /EMA: autorizzazione condizionata nel NSCLC avanzato HER2-mutato dopo chemioterapia a base di platino, con o senza immunoterapia/.test(her2L.note) && /^FDA · EMA/.test(her2L.evidence), her2L.evidence);
 
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
