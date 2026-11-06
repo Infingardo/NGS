@@ -339,6 +339,18 @@ check("documento clinico (ATC): frequenze RAS/BRAF/TP53/TERT/PIK3CA/PTEN/EIF1AX 
 check("documento clinico (ATC): MMR ≠ MSI-H; nessun PD-L1",
   /non implica necessariamente deficit funzionale del sistema né instabilità microsatellitare/.test(rigaAtc) && /MSI-H è un biomarcatore potenzialmente predittivo/.test(rigaAtc) && !/PD-?L1/i.test(rigaAtc));
 
+// PTC (WHO Endocrine 2022): IHC VE1 come alternativa (cut-off qualificato), fusioni NTRK/ALK, varianti follicolari.
+check("BRAF tiroide (scheda 473): riga IHC VE1 «alternativa», ≥90% come criterio da letteratura (non WHO universale), VE1 negativa ≠ wild-type",
+  brafTir.ihc && brafTir.ihc.type === "alternative" && /VE1/.test(brafTir.ihc.test) && /≥90% delle cellule tumorali secondo i criteri proposti in letteratura/.test(brafTir.ihc.note)
+  && /conferma molecolare/.test(brafTir.ihc.note) && /VE1 negativa non equivale a BRAF wild-type/.test(brafTir.ihc.note), JSON.stringify(brafTir.ihc || {}).slice(0, 160));
+check("RAS tiroide (scheda 471): variante follicolare infiltrativa BRAF-like ≠ invasiva incapsulata RAS-like; nessuna IHC RAS/RET/ALK/pan-TRK",
+  /PTC follicolare infiltrativo presenta prevalentemente un profilo BRAF-like/.test(rasTir.note) && /invasivo incapsulato, descritto in una voce separata nella WHO 2022, presenta prevalentemente un profilo RAS-like/.test(rasTir.note)
+  && !rasTir.ihc, rasTir.note.slice(-260));
+const rFus = docRiga("**Fusioni nel PTC (NTRK, ALK, RET)**");
+check("documento clinico (fusioni PTC): NTRK 3–5%, ALK senza frequenza WHO, sclerosante diffuso e solido/trabecolare, indicazione RNA-based marcata non-WHO",
+  /NTRK1\/3 \(3–5%\)/.test(rFus) && /il WHO 2022 non riporta una frequenza per ALK/.test(rFus) && /sclerosante diffuso/.test(rFus) && /NCOA4::RET, CCDC6::RET ed ETV6::NTRK3/.test(rFus)
+  && /non dato WHO\): un pannello DNA/.test(rFus) && /RNA-based/.test(rFus), rFus.slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
