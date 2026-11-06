@@ -270,6 +270,16 @@ check("documento clinico (RET MTC): raccomandato; circa la metà degli sporadici
   /raccomandato in tutti i pazienti/.test(rigaMtcDoc) && !/obbligatori/i.test(rigaMtcDoc) && /circa la metà dei MTC sporadici/.test(rigaMtcDoc) && !/~40%/.test(rigaMtcDoc)
   && /M918T fino all'80%/.test(rigaMtcDoc) && /codoni cisteinici di RET, in particolare C634/.test(rigaMtcDoc) && !/MEN2A con RET C634/.test(rigaMtcDoc), rigaMtcDoc.slice(0, 200));
 
+// Omissioni MTC (WHO Endocrine 2022): RAS nei RET-wildtype, prognosi per codone, riarrangiamenti isolati, grading a due livelli.
+check("RET MTC (scheda): RAS ~70% nei RET-wildtype (24% degli sporadici), esclusivo con RET; prognosi M918T; riarrangiamenti solo isolati",
+  /RAS in circa il 70%/.test(retTir.note) && /24% degli sporadici/.test(retTir.note) && /esclusive con RET/.test(retTir.note)
+  && /RET M918T \(esoni 15\/16\) = esito peggiore/.test(retTir.note) && /solo segnalazioni isolate/.test(retTir.note), retTir.note.slice(0, 160));
+check("RAS tiroide (scheda 471) e descrizione HRAS: il RAS nel carcinoma midollare non è il fenotipo RAS-like follicolare",
+  /driver alternativo a RET/.test(rasTir.note) && /RET-wildtype è la mutazione RAS più frequente/.test(GENE_DESC.HRAS), GENE_DESC.HRAS);
+check("documento clinico (MTC): RAS, prognosi per codone, riarrangiamenti isolati e grading a due livelli (mitosi ≥5/2 mm², Ki-67 ≥5%, necrosi)",
+  /circa il 70% ha mutazioni RAS/.test(rigaMtcDoc) && /M918T \(esoni 15 e 16\) = esito peggiore/.test(rigaMtcDoc) && /solo segnalazioni isolate/.test(rigaMtcDoc)
+  && /mitosi ≥5\/2 mm², Ki-67 ≥5% e necrosi/.test(rigaMtcDoc), rigaMtcDoc.slice(-200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
