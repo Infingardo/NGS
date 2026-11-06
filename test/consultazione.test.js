@@ -296,6 +296,17 @@ check("RET PTC: nessuna percentuale complessiva «~10-20%» non supportata; freq
   !/~10-20%/.test(retTir.note) && /variabile per area geografica e più alta nel PTC radio-indotto/.test(retTir.note)
   && /CCDC6::RET 60–70% e NCOA4::RET 20–30% delle fusioni/.test(retTir.note) && /test germinale di RET raccomandato/.test(retTir.note), retTir.note.slice(0, 200));
 
+// Limiti del pannello nei gliomi: H3 (K27-altered, G34-mutant) e ATRX non coperti (WHO CNS5).
+const noteGlioma = SC.find(s => s.id === "glioma").notes;
+check("glioma (nota di scenario): H3 K27-altered/G34-mutant non valutabili, accertamenti mirati prima di GBM IDH-wildtype",
+  /H3 K27-altered e H3 G34-mutant non valutabili con il pannello/.test(noteGlioma) && /prima della classificazione come glioblastoma IDH-wildtype/.test(noteGlioma), noteGlioma.slice(0, 160));
+check("glioma (nota di scenario): ATRX non valutabile; perdita nucleare supporta astrocitoma senza 1p/19q; ATRX conservato → 1p/19q; ATRX = linea, non grado",
+  /ATRX non valutabile con il pannello/.test(noteGlioma) && /senza necessità routinaria di 1p\/19q/.test(noteGlioma) && /Se ATRX è conservato, è necessaria la valutazione della codelezione 1p\/19q/.test(noteGlioma)
+  && /marcatore di linea, non di grado/.test(noteGlioma), noteGlioma.slice(-200));
+check("documento clinico (1p/19q e TERT GBM): ATRX e H3 integrati; nessun «senza fenotipo chiaro»",
+  /ATRX non valutabile con il pannello/.test(docRiga("**1p/19q codelezione**")) && !/senza fenotipo chiaro/.test(docRiga("**1p/19q codelezione**"))
+  && /H3 K27-altered e H3 G34-mutant non valutabili con il pannello/.test(docRiga("**TERT nei gliomi IDH-wild type**")), docRiga("**1p/19q codelezione**").slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
