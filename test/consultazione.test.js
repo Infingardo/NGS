@@ -351,6 +351,20 @@ check("documento clinico (fusioni PTC): NTRK 3–5%, ALK senza frequenza WHO, sc
   /NTRK1\/3 \(3–5%\)/.test(rFus) && /il WHO 2022 non riporta una frequenza per ALK/.test(rFus) && /sclerosante diffuso/.test(rFus) && /NCOA4::RET, CCDC6::RET ed ETV6::NTRK3/.test(rFus)
   && /non dato WHO\): un pannello DNA/.test(rFus) && /RNA-based/.test(rFus), rFus.slice(0, 200));
 
+// Tracciabilità: last_review 2026-11 solo sulle schede verificate; revisione generale 03/2026 invariata, aggiornamento parziale 11/2026.
+const verificate = [["crc","BRAF"],["crc","ERBB2"],["nsclc","NRG1"],["mammella","AKT1"],["pancreas","NRG1"],["tiroide","NRAS"],["tiroide","PPARG"],["tiroide","BRAF"],["tiroide","RET"],["tiroide","TERT"],["glioma","IDH1"],["glioma","TERT"],["glioma","EGFR"],["glioma","CDKN2A"]];
+const nonVerificate = [["pancreas","FGFR2"],["nsclc","RET"],["agnostico","RET"],["crc","KRAS"],["nsclc","EGFR"],["gist","KIT"]];
+check("last_review 2026-11 sulle 14 schede verificate",
+  verificate.every(([sc,g]) => entryDi(sc,g).last_review === "2026-11"), verificate.filter(([sc,g]) => entryDi(sc,g).last_review !== "2026-11").join(" | "));
+check("last_review NON aggiornato sulle schede solo parzialmente o non verificate (FGFR2 iCCA, RET NSCLC, RET agnostico, KRAS/EGFR/KIT)",
+  nonVerificate.every(([sc,g]) => entryDi(sc,g).last_review !== "2026-11"), nonVerificate.map(([sc,g]) => `${sc}/${g}=${entryDi(sc,g).last_review}`).join(" "));
+check("DATA_REVIEWED resta 2026-03 (revisione generale); DATA_PARTIAL 2026-11; intestazione «rev. … · agg. parziale …»",
+  /const DATA_REVIEWED="2026-03";/.test(SOURCE) && /const DATA_PARTIAL="2026-11";/.test(SOURCE) && /rev\. \$\{DATA_REVIEWED\} · agg\. parziale \$\{DATA_PARTIAL\}/.test(SOURCE));
+const README = require("fs").readFileSync(require("path").join(__dirname, "..", "README.md"), "utf8");
+check("README: changelog v2.0 senza dichiarare revisione completa; stato della revisione con revisione generale 03/2026 e aggiornamento parziale 11/2026",
+  /### v2\.0 \(novembre 2026\)/.test(README) && /\*\*non\*\* una revisione completa del database/.test(README)
+  && /Revisione generale: 03\/2026/.test(README) && /Aggiornamento parziale: 11\/2026/.test(README) && /versione del software\*\* \(v2\.0\) è distinta dallo stato della revisione scientifica/.test(README));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");

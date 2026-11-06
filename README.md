@@ -4,7 +4,8 @@
 
 [![Versione](https://img.shields.io/badge/versione-2.0-green)](https://infingardo.github.io/NGS/)
 [![Pannello](https://img.shields.io/badge/pannello-Diatech_Pharmacogenetics-blue)](https://infingardo.github.io/NGS/)
-[![Revisione dati](https://img.shields.io/badge/dati_revisionati-marzo_2026-orange)](https://infingardo.github.io/NGS/)
+[![Revisione generale](https://img.shields.io/badge/revisione_generale-marzo_2026-orange)](https://infingardo.github.io/NGS/)
+[![Aggiornamento parziale](https://img.shields.io/badge/aggiornamento_parziale-novembre_2026-yellow)](https://infingardo.github.io/NGS/)
 
 ---
 
@@ -112,7 +113,31 @@ Il tool distingue tre livelli di copertura:
 
 ---
 
+## Stato della revisione dei dati
+
+- **Revisione generale: 03/2026** (`DATA_REVIEWED`). Ultima revisione sistematica del database; da considerare baseline documentale.
+- **Aggiornamento parziale: 11/2026** (`DATA_PARTIAL`). Verifica selettiva su fonti primarie (FDA, EMA, WHO CNS5 2021, WHO Endocrine 2022). Non è una validazione integrale dei contenuti.
+- **`last_review` della singola scheda** documenta la data in cui quella scheda è stata verificata. Le schede con `last_review: "2026-11"` sono quelle verificate nell'aggiornamento parziale; le altre restano alla data precedente. Le etichette di classe NCCN e AIOM non sono state riverificate.
+- La **versione del software** (v2.0) è distinta dallo stato della revisione scientifica.
+
 ## Changelog selezionato
+
+### v2.0 (novembre 2026)
+Versione del software 2.0. Aggiornamento parziale dei contenuti, **non** una revisione completa del database.
+
+- **Stato regolatorio (fonti FDA/EMA)**:
+  - NRG1 PDAC: approvazione FDA accelerata il 4 dicembre 2024.
+  - BRAF colon-retto: I linea con encorafenib+cetuximab+FOLFOX indicata anche dall'EMA (EPAR Braftovi).
+  - FGFR2 colangiocarcinoma intraepatico: infigratinib rimosso (approvazione FDA ritirata il 16/05/2024; mai autorizzato in EU).
+  - Vorasidenib: approvazione FDA il 6 agosto 2024; indicazione EU più ristretta (Gr2 prevalentemente non captante).
+  - Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
+  - AKT1 mammella: capivasertib autorizzato anche in EU.
+  - BRAF tiroide: EMA solo per carcinoma differenziato refrattario a radioiodio; FDA per anaplastico.
+- **Gliomi (WHO CNS5 2021)**: nel GBM IDH-wildtype basta uno tra TERT, amplificazione EGFR e +7/−10; frequenza di IDH1 R132H con denominatore esplicito; rimossa la frequenza di TERT non supportata; algoritmo di test IDH; H3 e ATRX tra i limiti del pannello; TERT negli IDH-mutati e grado 4 per CDKN2A/B nel documento clinico.
+- **Tiroide (WHO Endocrine 2022)**: "doppio hit" TERT+BRAF limitato al PTC; BRAF nel PTC con frequenze per sottotipo, valore prognostico non dimostrato del solo BRAF, IHC VE1; varianti follicolari infiltrativa (BRAF-like) e invasiva incapsulata (RAS-like); RET nel carcinoma midollare (test germinale raccomandato, RAS nei RET-wildtype, prognosi per codone); frequenza delle fusioni RET nel PTC; profilo molecolare e prognosi dell'anaplastico; fusioni NTRK/ALK/RET nel PTC (documento clinico).
+- **Documento clinico**: intestazione versione 2.0 (novembre 2026); riga BRAF nel colon-retto corretta (backbone encorafenib+cetuximab); PDF rigenerato.
+- **Revisione**: `last_review: "2026-11"` solo sulle schede verificate; `DATA_PARTIAL` e dicitura «rev. 2026-03 · agg. parziale 2026-11» nell'intestazione dell'app.
+- **Test**: harness `test/consultazione.test.js` esteso con controlli di regressione per ciascuna correzione.
 
 ### v1.5.4 (marzo 2026)
 - **Bemarituzumab gastrico**: sviluppo regolatorio interrotto (Amgen, febbraio 2026, FORTITUDE-101/102). Badge `Sviluppo interrotto` rosso. Card mantenuta a scopo documentale.
