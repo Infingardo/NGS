@@ -292,6 +292,10 @@ check("BRAF PTC: ~60% come stima generale dichiarata non-WHO, con frequenze per 
   /circa il 60% dei PTC complessivamente \(stima da casistiche, variabile tra serie; non è un dato WHO\)/.test(brafTir.note) && /~80% nel sottotipo a cellule alte/.test(brafTir.note)
   && /~20% nello sclerosante diffuso/.test(brafTir.note) && /prevalentemente RAS-like/.test(brafTir.note) && !/98–99%/.test(brafTir.note) && /ATC: terapia urgente/.test(brafTir.note), brafTir.note.slice(0, 200));
 
+check("RET PTC: nessuna percentuale complessiva «~10-20%» non supportata; frequenza variabile per area e radio-indotto, CCDC6/NCOA4 (WHO 2022)",
+  !/~10-20%/.test(retTir.note) && /variabile per area geografica e più alta nel PTC radio-indotto/.test(retTir.note)
+  && /CCDC6::RET 60–70% e NCOA4::RET 20–30% delle fusioni/.test(retTir.note) && /test germinale di RET raccomandato/.test(retTir.note), retTir.note.slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
