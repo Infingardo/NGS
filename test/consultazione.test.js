@@ -174,6 +174,72 @@ for (const [scId, nome] of [["nsclc", "NSCLC"], ["pancreas", "PDAC"]]) {
 }
 
 /* ─────────────────────────────────────────────────────────────── */
+group("Correzioni verificate su fonti primarie (FDA/EMA, 06/11/2026)");
+
+const tutto = e => [e.evidence, e.drug, e.note, e.action, e.referto, e.referto_diag, e.referto_pred].filter(Boolean).join(" ");
+const tag = (e, re) => evBadgesTesto(e.evidence).find(t => re.test(t));
+const docRiga = inizio => DOC.split("\n").find(r => r.startsWith(inizio)) || "";
+
+// 1. NRG1 PDAC: approvazione FDA accelerata del 4 dicembre 2024 (non agosto).
+const nrgPdac = entryDi("pancreas", "NRG1");
+check("NRG1 PDAC: data di approvazione FDA 4 dicembre 2024, nessun «agosto 2024»",
+  /4 dicembre 2024/.test(nrgPdac.note) && !/agosto 2024/i.test(tutto(nrgPdac)), nrgPdac.note);
+
+// 2. BRAF CRC: I linea con FOLFOX autorizzata anche da EMA; nessuna dicitura «in valutazione».
+const brafCrc = entryDi("crc", "BRAF");
+check("BRAF CRC: nessuna dicitura «in valutazione»/CHMP/divergenza FDA-EMA ancora aperta",
+  !/in valutazione|CHMP|DIVERGENZA/i.test(tutto(brafCrc)), tutto(brafCrc).match(/.{30}(in valutazione|CHMP|DIVERGENZA).{30}/i)?.[0]);
+check("BRAF CRC: badge EMA copre la I linea (non solo «post-prior»)",
+  /I\+II linea/.test(tag(brafCrc, /^EMA/) || "") && evClass(tag(brafCrc, /^EMA/) || "") === "ev-EMA", brafCrc.evidence);
+check("BRAF CRC: la I linea indica FOLFOX per EMA e mFOLFOX6 per FDA; il backbone resta encorafenib+cetuximab",
+  /FDA.*mFOLFOX6/.test(brafCrc.referto_pred) && /EMA.*FOLFOX/.test(brafCrc.referto_pred) && /NON encorafenib\+binimetinib/.test(brafCrc.note));
+
+// 3. iCCA FGFR2: infigratinib ritirato (FDA 16/05/2024), mai autorizzato in EU.
+const fgfrIcca = entryDi("pancreas", "FGFR2");
+check("iCCA FGFR2: infigratinib non è proposto tra i farmaci né nel referto",
+  !/infigratinib/i.test(fgfrIcca.drug) && !/infigratinib/i.test(fgfrIcca.referto) && !/infigratinib/i.test(fgfrIcca.action));
+check("iCCA FGFR2: la nota dichiara ritiro FDA 16/05/2024 e assenza in EU",
+  /Infigratinib: approvazione FDA ritirata il 16\/05\/2024/.test(fgfrIcca.note) && /mai autorizzato in EU/.test(fgfrIcca.note));
+check("documento clinico (FGFR2 iCCA): infigratinib non più tra gli approvati, ritiro dichiarato",
+  !/pemigatinib, infigratinib/.test(docRiga("**FGFR2 nel CCA")) && /16\/05\/2024/.test(docRiga("**FGFR2 nel CCA")));
+
+// 4. Vorasidenib: FDA 06/08/2024; EU più ristretto.
+const idhGlioma = entryDi("glioma", "IDH1");
+check("glioma IDH: nessun «2023» associato a vorasidenib; FDA 2024 in evidenza e referto",
+  /vorasidenib 2024/.test(idhGlioma.evidence) && /6 agosto 2024/.test(idhGlioma.referto_pred) && !/2023/.test(tutto(idhGlioma)), idhGlioma.evidence);
+check("glioma IDH: indicazione EU (Gr2 prevalentemente non captante, dopo sola chirurgia) in evidenza, nota e referto",
+  /EMA \(Gr2 non captante\)/.test(idhGlioma.evidence) && /non captante/.test(idhGlioma.note) && /non captante/.test(idhGlioma.referto_pred)
+  && evClass(tag(idhGlioma, /^EMA/) || "") === "ev-EMA");
+check("glioma IDH: il perimetro Gr2 (non Gr3, non Gr4) resta dichiarato",
+  /EU: Gr2 non captante/.test(idhGlioma.action) && /NON Gr3, NON Gr4/.test(idhGlioma.note) && /NON si estende al Grado 3 né al Grado 4/.test(idhGlioma.referto_pred));
+for (const [inizio, nome] of [["**Scenario A", "scenario A"], ["**IDH1/IDH2 — ruolo", "ruolo diagnostico"]]) {
+  const r = docRiga(inizio);
+  check(`documento clinico (vorasidenib, ${nome}): 6 agosto 2024, grado 2, nessun «2023» né «grado 1-2»`,
+    /6 agosto 2024/.test(r) && !/vorasidenib[^.]*2023/i.test(r) && !/Gr1-2|grado 1-2/i.test(r), r.slice(0, 160));
+}
+
+// 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
+for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
+  const e = entryDi(scId, "RET");
+  // ogni campo che nomina pralsetinib deve riportare anche il ritiro dell'AIC EU
+  const campi = ["drug", "note", "action", "referto", "referto_diag", "referto_pred"].filter(k => /pralsetinib/i.test(e[k] || ""));
+  const senza = campi.filter(k => !/24\/10\/2024/.test(e[k]));
+  check(`RET ${nome}: ogni campo che cita pralsetinib riporta il ritiro dell'AIC EU (24/10/2024)`,
+    campi.length > 0 && senza.length === 0, `campi: ${campi.join(", ")}; senza ritiro: ${senza.join(", ") || "nessuno"}`);
+}
+check("RET: la descrizione sintetica del gene riporta il ritiro EU di pralsetinib",
+  /pralsetinib[^.]*24\/10\/2024/.test(GENE_DESC.RET), GENE_DESC.RET);
+check("documento clinico (RET MTC): pralsetinib con ritiro EU del 24/10/2024",
+  /pralsetinib \(per pralsetinib l'autorizzazione EU è stata ritirata il 24\/10\/2024\)/.test(docRiga("**RET nel carcinoma midollare")));
+check("RET agnostico: selpercatinib resta l'unico farmaco (EMA agnostico verificato)",
+  entryDi("agnostico", "RET").drug === "Selpercatinib" && /EMA/.test(entryDi("agnostico", "RET").evidence));
+
+// 6. AKT1: capivasertib autorizzato anche in EU.
+const akt1 = entryDi("mammella", "AKT1");
+check("AKT1: badge FDA e EMA; nota con indicazione EU PIK3CA/AKT1/PTEN",
+  evClass(tag(akt1, /^FDA/) || "") === "ev-FDA" && evClass(tag(akt1, /^EMA/) || "") === "ev-EMA" && /PIK3CA\/AKT1\/PTEN/.test(akt1.note) && /EU/.test(akt1.note) && /dopo ricorrenza o progressione su terapia endocrina/.test(akt1.note), akt1.evidence);
+
+/* ─────────────────────────────────────────────────────────────── */
 console.log(`\n${"─".repeat(60)}\n  ${pass} passati, ${fail} falliti`);
 if (fail) { console.log("\n  Difetti:"); failures.forEach(f => console.log(`    · ${f}`)); }
 process.exitCode = fail ? 1 : 0;

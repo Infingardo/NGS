@@ -1,6 +1,6 @@
 # Verifica schede su fonti primarie — novembre 2026
 
-Stato: **solo segnalazioni, nessuna scheda modificata.** Le modifiche ai contenuti diagnostici richiedono istruzione esplicita (CLAUDE.md).
+Stato: le correzioni 1–6 della sezione A sono state applicate su istruzione di Filippo (schede, documento clinico `.md`, test). Le sezioni C e D restano non applicate. Il PDF del documento clinico non è stato rigenerato. Le colonne «Cosa dice ora» descrivono lo stato prima delle correzioni.
 Fonti: pagine ufficiali FDA (fda.gov) ed EMA (EPAR su ema.europa.eu), lette direttamente il 06/11/2026.
 Limite: i label su accessdata.fda.gov non sono raggiungibili da questa sessione (errore di certificato sul proxy); non ho aggirato il controllo.
 
