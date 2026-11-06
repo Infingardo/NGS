@@ -288,6 +288,10 @@ check("glioma IDH: R132H con denominatore esplicito (83–91% dei gliomi IDH-mut
 check("TERT GBM: nessuna frequenza «~80%» non supportata dalla fonte WHO; resta il criterio molecolare",
   !/~80%/.test(tertGbm.note) && /criterio molecolare WHO 2021/.test(tertGbm.note), tertGbm.note);
 
+check("BRAF PTC: ~60% come stima generale dichiarata non-WHO, con frequenze per sottotipo (cellule alte ~80%, sclerosante diffuso ~20%) e pattern follicolare RAS-like",
+  /circa il 60% dei PTC complessivamente \(stima da casistiche, variabile tra serie; non è un dato WHO\)/.test(brafTir.note) && /~80% nel sottotipo a cellule alte/.test(brafTir.note)
+  && /~20% nello sclerosante diffuso/.test(brafTir.note) && /prevalentemente RAS-like/.test(brafTir.note) && !/98–99%/.test(brafTir.note) && /ATC: terapia urgente/.test(brafTir.note), brafTir.note.slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
