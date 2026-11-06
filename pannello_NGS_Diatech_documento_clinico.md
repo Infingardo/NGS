@@ -2,7 +2,7 @@
 ## Guida all'interpretazione, alle indicazioni e ai limiti diagnostici e predittivi
 
 **Documento redatto per uso interno — SC Anatomia Patologica, ASST Fatebenefratelli-Sacco, Milano**  
-**Versione 1.5 — Febbraio 2026**  
+**Versione 2.0 — Novembre 2026**  
 **Riferimenti: AIOM 2024-2025, ESMO 2022, WHO CNS5 2021, FDA/EMA Feb 2026**  
 **Tool online: https://infingardo.github.io/NGS/**
 
