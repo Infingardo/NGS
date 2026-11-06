@@ -184,7 +184,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 ### 5.8 Carcinoma Tiroideo
 
-**BRAF V600E nel carcinoma anaplastico (ATC)**: l'ATC è la neoplasia tiroidea più aggressiva, con sopravvivenza mediana di settimane. BRAF V600E è presente in ~40-50% degli ATC. Dabrafenib+trametinib è approvato FDA per ATC BRAF V600E-mutato e la sua identificazione è un'urgenza clinica. Il referto deve segnalare questo in modo esplicito.
+**BRAF V600E nel carcinoma anaplastico (ATC)**: l'ATC è una neoplasia tiroidea estremamente aggressiva, quasi sempre letale: storicamente la mortalità a 3–6 mesi è del 90% e, con terapia multimodale, la sopravvivenza resta inferiore a 2 anni nella maggior parte dei casi (WHO). BRAF V600E è presente nel 10–50% degli ATC e la sua ricerca (IHC e/o genotipo) è ora considerata obbligatoria. Dabrafenib+trametinib è approvato FDA per ATC BRAF V600E-mutato (in EU l'indicazione tiroidea è il carcinoma differenziato refrattario a radioiodio, non l'ATC) e la sua identificazione è un'urgenza clinica. Il referto deve segnalare questo in modo esplicito.
 
 **RET nel carcinoma midollare (MTC)**: le mutazioni germinali di RET definiscono la sindrome MEN2 (MEN2A con RET C634, MEN2B con RET M918T). Lo screening germinale è obbligatorio in tutti i pazienti con MTC alla diagnosi e implica lo screening dei familiari. Le mutazioni somatiche di RET (~40% MTC sporadici) indicano selpercatinib o pralsetinib (per pralsetinib l'autorizzazione EU è stata ritirata il 24/10/2024).
 

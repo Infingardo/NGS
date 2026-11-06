@@ -249,6 +249,18 @@ check("RAS tiroide: tra le entità con RAS compare la variante follicolare incap
   /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.trappola) && /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.referto)
   && /NIFTP/.test(rasTir.trappola) && /invasione capsulare e vascolare/.test(rasTir.referto), rasTir.trappola);
 
+// BRAF tiroide: FDA per ATC; EMA solo per DTC refrattario a radioiodio (EPAR Tafinlar/Mekinist); nessun valore prognostico dimostrato del solo BRAF nel PTC (WHO 2022).
+const brafTir = entryDi("tiroide", "BRAF");
+check("BRAF tiroide: il badge EMA è limitato al DTC refrattario a radioiodio (non all'ATC)",
+  /EMA \(DTC refrattario a radioiodio\)/.test(brafTir.evidence) && /FDA \(ATC\)/.test(brafTir.evidence) && evClass(tag(brafTir, /^EMA/) || "") === "ev-EMA", brafTir.evidence);
+check("BRAF tiroide: la nota dichiara nessuna indicazione EMA nell'ATC e l'indicazione EU nel DTC; l'azione distingue FDA (ATC) ed EMA (DTC)",
+  /EMA: nessuna indicazione nell'ATC/.test(brafTir.note) && /refrattario o non idoneo a radioiodio/.test(brafTir.note) && /\(FDA\)/.test(brafTir.action) && /\(EMA\)/.test(brafTir.action), brafTir.action);
+check("BRAF tiroide: nessun «valore prognostico sfavorevole»/«comportamento aggressivo» attribuito al solo BRAF nel PTC",
+  !/valore prognostico sfavorevole|valore diagnostico di comportamento aggressivo/.test(tutto(brafTir)) && /analisi multivariata/.test(brafTir.referto_pred) && /analisi multivariata/.test(brafTir.referto_diag), tutto(brafTir).slice(0, 120));
+const rigaAtcDoc = docRiga("**BRAF V600E nel carcinoma anaplastico");
+check("documento clinico (ATC): nessuna «sopravvivenza mediana di settimane»; 10–50%, test obbligatorio, EU = DTC non ATC",
+  !/mediana di settimane|~40-50%/.test(rigaAtcDoc) && /10–50%/.test(rigaAtcDoc) && /obbligatoria/.test(rigaAtcDoc) && /non l'ATC/.test(rigaAtcDoc) && /inferiore a 2 anni/.test(rigaAtcDoc), rigaAtcDoc.slice(0, 160));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
