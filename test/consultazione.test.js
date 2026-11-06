@@ -236,6 +236,19 @@ for (const [inizio, nome] of [["**TERT nei gliomi IDH-wild type**", "riga TERT g
     /ne basta uno/.test(r) && !/due dei tre|insieme ad|Gr3 di default/.test(r), r.slice(0, 200));
 }
 
+// Tiroide (WHO Endocrine 2022, carcinoma follicolare): TERT+BRAF "doppio hit" solo nel PTC; nel FTC TERT con RAS.
+const tertTir = entryDi("tiroide", "TERT");
+check("TERT tiroide: il «doppio hit» con BRAF V600E è limitato al carcinoma papillare; nel follicolare TERT con RAS",
+  /Nel PTC, con BRAF V600E = doppio hit/.test(tertTir.note) && /PTC: TERT \+ BRAF V600E/.test(tertTir.action) && /FTC: TERT spesso con RAS/.test(tertTir.action)
+  && /Nel carcinoma papillare la co-presenza con BRAF V600E/.test(tertTir.referto) && /carcinoma follicolare TERT è spesso associato a mutazioni RAS/.test(tertTir.referto), tertTir.action);
+const rigaTertDoc = docRiga("**TERT promoter nel DTC");
+check("documento clinico (TERT nel DTC): doppio hit limitato al papillare; nel follicolare RAS, stadio, metastasi, mortalità",
+  /Nel carcinoma papillare la co-presenza/.test(rigaTertDoc) && /carcinoma follicolare TERT è spesso associato a mutazioni RAS/.test(rigaTertDoc) && !/La co-presenza di TERT promoter mutato \+ BRAF/.test(rigaTertDoc), rigaTertDoc.slice(0,160));
+const rasTir = entryDi("tiroide", "NRAS");
+check("RAS tiroide: tra le entità con RAS compare la variante follicolare incapsulata del carcinoma papillare (testo WHO FTC) in trappola e referto",
+  /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.trappola) && /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.referto)
+  && /NIFTP/.test(rasTir.trappola) && /invasione capsulare e vascolare/.test(rasTir.referto), rasTir.trappola);
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");

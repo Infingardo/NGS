@@ -188,7 +188,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **RET nel carcinoma midollare (MTC)**: le mutazioni germinali di RET definiscono la sindrome MEN2 (MEN2A con RET C634, MEN2B con RET M918T). Lo screening germinale è obbligatorio in tutti i pazienti con MTC alla diagnosi e implica lo screening dei familiari. Le mutazioni somatiche di RET (~40% MTC sporadici) indicano selpercatinib o pralsetinib (per pralsetinib l'autorizzazione EU è stata ritirata il 24/10/2024).
 
-**TERT promoter nel DTC (carcinoma differenziato)**: le mutazioni C228T e C250T del promotore TERT indicano prognosi sfavorevole nel carcinoma papillare e follicolare. La co-presenza di TERT promoter mutato + BRAF V600E ("doppio hit") identifica un sottogruppo ad alto rischio di recidiva e mortalità specifica.
+**TERT promoter nel DTC (carcinoma differenziato)**: le mutazioni C228T e C250T del promotore TERT indicano prognosi sfavorevole nel carcinoma papillare e follicolare. Nel carcinoma papillare la co-presenza di TERT promoter mutato + BRAF V600E ("doppio hit") identifica un sottogruppo ad alto rischio di recidiva e mortalità specifica; nel carcinoma follicolare TERT è spesso associato a mutazioni RAS e si lega a stadio avanzato, metastasi a distanza e maggiore mortalità.
 
 ### 5.9 Gliomi e Tumori del SNC (WHO CNS5 2021)
 
