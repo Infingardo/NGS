@@ -329,6 +329,16 @@ check("documento clinico (TERT negli IDH-mutati): dato WHO distinto dall'interpr
 check("scheda 480 non modificata sul punto TERT negli IDH-mutati (resta solo GBM IDH-wildtype)",
   !/oligodendrogliom/i.test(tertGbm.note) && !/oligodendrogliom/i.test(tertGbm.referto_diag));
 
+// Anaplastico (WHO Endocrine 2022): profilo molecolare, prognosi (associazioni), MMR ≠ MSI-H; TERT nella scheda 475.
+check("TERT tiroide (scheda 475): istotipo include ATC; nota con TERT nell'ATC (30–75%, progressione, TP53)",
+  /PTC \/ FTC \/ ATC/.test(tertTir.histotype) && /nel carcinoma anaplastico tiroideo, la mutazione del promotore TERT è un evento associato alla progressione anaplastica \(30–75%\), frequentemente accompagnato da alterazioni di TP53/i.test(tertTir.note), tertTir.note.slice(-200));
+const rigaAtc = docRiga("**BRAF V600E nel carcinoma anaplastico");
+check("documento clinico (ATC): frequenze RAS/BRAF/TP53/TERT/PIK3CA/PTEN/EIF1AX e prognosi come associazioni, non fattori indipendenti",
+  /RAS \(10–50%\) e BRAF \(10–50%\)/.test(rigaAtc) && /TP53 \(40–80%\) e mutazioni del promotore TERT \(30–75%\)/.test(rigaAtc) && /PIK3CA \(5–25%\), PTEN \(10–25%\) ed EIF1AX \(5–15%\)/.test(rigaAtc)
+  && /non di fattori prognostici indipendenti validati/.test(rigaAtc) && /Rilevanza prognostica e predittiva vanno tenute distinte/.test(rigaAtc), rigaAtc.slice(-300));
+check("documento clinico (ATC): MMR ≠ MSI-H; nessun PD-L1",
+  /non implica necessariamente deficit funzionale del sistema né instabilità microsatellitare/.test(rigaAtc) && /MSI-H è un biomarcatore potenzialmente predittivo/.test(rigaAtc) && !/PD-?L1/i.test(rigaAtc));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
