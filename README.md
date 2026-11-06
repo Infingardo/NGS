@@ -2,7 +2,7 @@
 
 **Strumento ad uso interno di reparto · ASST FBF-Sacco · SC Anatomia Patologica FBF-Melloni-Territorio**
 
-[![Versione](https://img.shields.io/badge/versione-1.5.4-green)](https://infingardo.github.io/NGS/)
+[![Versione](https://img.shields.io/badge/versione-2.0-green)](https://infingardo.github.io/NGS/)
 [![Pannello](https://img.shields.io/badge/pannello-Diatech_Pharmacogenetics-blue)](https://infingardo.github.io/NGS/)
 [![Revisione dati](https://img.shields.io/badge/dati_revisionati-marzo_2026-orange)](https://infingardo.github.io/NGS/)
 

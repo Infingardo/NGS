@@ -100,7 +100,7 @@ Un biomarcatore ha ruolo predittivo quando la sua presenza (o assenza) predice l
 
 Il problema nasce quando un biomarcatore con ruolo diagnostico primario viene letto dall'oncologo come un semplice target terapeutico. Tre scenari concreti di errore interpretativo:
 
-**Scenario A — IDH1 e vorasidenib in Gr4**: Un oncologo legge "IDH1 R132H mutato" e pensa a vorasidenib. Vorasidenib è approvato FDA per gliomi IDH-mutati di grado 1-2 (WHO 2021). Se il referto non specifica che il tumore è astrocitoma IDH-mutato WHO Gr4 (per delezione CDKN2A), l'oncologo potrebbe prescrivere vorasidenib in un contesto fuori indicazione, con potenziale danno al paziente e problemi medico-legali per il refertante.
+**Scenario A — IDH1 e vorasidenib in Gr4**: Un oncologo legge "IDH1 R132H mutato" e pensa a vorasidenib. Vorasidenib è approvato FDA (6 agosto 2024) per astrocitoma o oligodendroglioma IDH-mutati di grado 2 (WHO 2021). Se il referto non specifica che il tumore è astrocitoma IDH-mutato WHO Gr4 (per delezione CDKN2A), l'oncologo potrebbe prescrivere vorasidenib in un contesto fuori indicazione, con potenziale danno al paziente e problemi medico-legali per il refertante.
 
 **Scenario B — TERT come "target"**: Un oncologo inespert legge "mutazione TERT" e cerca un farmaco correlato. TERT non ha target approvati nel glioma. La sua presenza è un criterio classificativo. Il referto deve essere esplicito su questo, altrimenti genera confusione e richieste inappropriate.
 
@@ -118,7 +118,7 @@ Il CRC è lo scenario oncologico molecolare più consolidato. Il testing molecol
 
 **KRAS/NRAS** (esoni 2, 3, 4): test obbligatorio in tutti i CRC metastatici prima di qualsiasi decisione su anti-EGFR. La mutazione in qualsiasi esone dei due geni controindica cetuximab e panitumumab. Circa il 55-60% dei CRC è mutato in almeno uno dei due geni. Il referto deve indicare esplicitamente lo stato wild-type o mutato, e in caso di mutazione, il gene e il codone specifico — "KRAS mutato esone 2, codone 12, variante G12D".
 
-**BRAF V600E**: test obbligatorio in tutti i CRC metastatici. La presenza di V600E ha valore sia prognostico (prognosi sfavorevole) che predittivo (sensibilità a encorafenib+binimetinib in II linea, e come informazione per la strategia di I linea). La V600E nel CRC è arricchita nei tumori MSI-H sporadici con silenziamento MLH1, ma non è esclusiva: può presentarsi anche in tumori MSS. Non commettere l'errore di assumere che "BRAF V600E = MSI-H".
+**BRAF V600E**: test obbligatorio in tutti i CRC metastatici. La presenza di V600E ha valore sia prognostico (prognosi sfavorevole) che predittivo (sensibilità a encorafenib+cetuximab dopo terapia sistemica precedente, e in I linea a encorafenib+cetuximab+FOLFOX, indicata da FDA con mFOLFOX6 ed EMA con FOLFOX; encorafenib+binimetinib è lo schema del melanoma, non del CRC). La V600E nel CRC è arricchita nei tumori MSI-H sporadici con silenziamento MLH1, ma non è esclusiva: può presentarsi anche in tumori MSS. Non commettere l'errore di assumere che "BRAF V600E = MSI-H".
 
 **MSI/dMMR**: test obbligatorio in tutti i CRC, su biopsia o pezzo operatorio. MSI-H è indicazione a pembrolizumab in I linea (approvazione FDA/EMA). È anche il gateway per lo screening della sindrome di Lynch: in presenza di dMMR all'IHC, soprattutto con perdita di MLH1 isolata, è necessaria la valutazione della metilazione del promotore MLH1 e, se negativa, la consulenza genetica per test germinale. L'IHC per le quattro proteine MMR (MLH1, MSH2, MSH6, PMS2) rimane il test di screening; il pannello MSI-NGS è la conferma molecolare.
 
@@ -158,7 +158,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **ESR1**: mutazioni acquisite (D538G, Y537S/C/N) si sviluppano sotto pressione selettiva degli inibitori dell'aromatasi. Indicano resistenza agli AI e risposta a elacestrant. Il test su ctDNA in progressione è più informativo del test su tessuto primario, che precede l'esposizione agli AI.
 
-**AKT1** (E17K) e **PTEN** (loss): fanno parte del profilo PIK3CA/AKT1/PTEN altered che seleziona i pazienti per capivasertib+fulvestrant (approvazione FDA 2023).
+**AKT1** (E17K) e **PTEN** (loss): fanno parte del profilo PIK3CA/AKT1/PTEN altered che seleziona i pazienti per capivasertib+fulvestrant (approvazione FDA 2023; autorizzato anche in EU).
 
 ### 5.5 Melanoma
 
@@ -172,7 +172,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **KRAS nel PDAC**: mutato in ~90% dei PDAC. La tipizzazione esatta del codone 12 è clinicamente critica: G12C (~1%): sotorasib/adagrasib sono opzioni NCCN dopo terapia precedente (cat. 2A per PS buono/intermedio, dedotta dalla nota generale; 2B per PS scadente, esplicita; v3.2026, adattamento polacco), non un'indicazione di label FDA nel PDAC (stato EMA/AIFA non verificato; la raccomandazione non equivale ad autorizzazione o rimborsabilità in Italia); G12D (~40%) è oggetto di trial con MRTX1133; G12V (~30%) non ha target approvati. Un referto che riporta solo "KRAS mutato" senza specificare la variante è clinicamente incompleto nel 2026.
 
-**FGFR2 nel CCA intraepatico**: fusioni FGFR2 in ~10-15% dei colangiocarcinomi intraepatici. Indicano inibitori FGFR (pemigatinib, infigratinib, futibatinib), tutti approvati FDA/EMA. Sono rare nel CCA extraepatico e nel PDAC. Il testing NGS è obbligatorio in tutti i CCA intraepatici al momento della diagnosi di malattia avanzata.
+**FGFR2 nel CCA intraepatico**: fusioni FGFR2 in ~10-15% dei colangiocarcinomi intraepatici. Indicano inibitori FGFR (pemigatinib, futibatinib), approvati FDA/EMA. Infigratinib non è più disponibile: approvazione FDA ritirata il 16/05/2024 su richiesta dello sponsor, mai autorizzato in EU. Sono rare nel CCA extraepatico e nel PDAC. Il testing NGS è obbligatorio in tutti i CCA intraepatici al momento della diagnosi di malattia avanzata.
 
 **IDH1/IDH2 nel CCA intraepatico**: mutazioni in ~15-20% dei CCA intraepatici. IDH1 indica ivosidenib in mantenimento (approvato FDA). Ha anche valore diagnostico differenziale con tumori epatici primari di altra natura.
 
@@ -186,7 +186,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **BRAF V600E nel carcinoma anaplastico (ATC)**: l'ATC è la neoplasia tiroidea più aggressiva, con sopravvivenza mediana di settimane. BRAF V600E è presente in ~40-50% degli ATC. Dabrafenib+trametinib è approvato FDA per ATC BRAF V600E-mutato e la sua identificazione è un'urgenza clinica. Il referto deve segnalare questo in modo esplicito.
 
-**RET nel carcinoma midollare (MTC)**: le mutazioni germinali di RET definiscono la sindrome MEN2 (MEN2A con RET C634, MEN2B con RET M918T). Lo screening germinale è obbligatorio in tutti i pazienti con MTC alla diagnosi e implica lo screening dei familiari. Le mutazioni somatiche di RET (~40% MTC sporadici) indicano selpercatinib o pralsetinib.
+**RET nel carcinoma midollare (MTC)**: le mutazioni germinali di RET definiscono la sindrome MEN2 (MEN2A con RET C634, MEN2B con RET M918T). Lo screening germinale è obbligatorio in tutti i pazienti con MTC alla diagnosi e implica lo screening dei familiari. Le mutazioni somatiche di RET (~40% MTC sporadici) indicano selpercatinib o pralsetinib (per pralsetinib l'autorizzazione EU è stata ritirata il 24/10/2024).
 
 **TERT promoter nel DTC (carcinoma differenziato)**: le mutazioni C228T e C250T del promotore TERT indicano prognosi sfavorevole nel carcinoma papillare e follicolare. La co-presenza di TERT promoter mutato + BRAF V600E ("doppio hit") identifica un sottogruppo ad alto rischio di recidiva e mortalità specifica.
 
@@ -194,7 +194,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 Il capitolo SNC è il più complesso perché qui la distinzione diagnostico/predittivo è massima e le conseguenze di una confusione sono clinicamente rilevanti.
 
-**IDH1/IDH2 — ruolo diagnostico primario**: La mutazione IDH (R132H in IDH1, R172K in IDH2) definisce la categoria dei gliomi diffusi IDH-mutati. Senza questo dato, la classificazione WHO 2021 è incompleta. IDH1 R132H è identificabile con IHC (anticorpo anti-IDH1 R132H) come test di screening rapido su tessuto FFPE; le varianti non-R132H e IDH2 richiedono NGS. Vorasidenib è approvato FDA (2023) per gliomi IDH-mutati di basso grado (WHO Gr1-2), ma la sua applicazione richiede la conoscenza del grading completo — che a sua volta richiede 1p/19q e CDKN2A/B, non coperti da questo pannello.
+**IDH1/IDH2 — ruolo diagnostico primario**: La mutazione IDH (R132H in IDH1, R172K in IDH2) definisce la categoria dei gliomi diffusi IDH-mutati. Senza questo dato, la classificazione WHO 2021 è incompleta. IDH1 R132H è identificabile con IHC (anticorpo anti-IDH1 R132H) come test di screening rapido su tessuto FFPE; le varianti non-R132H e IDH2 richiedono NGS. Vorasidenib è approvato FDA (6 agosto 2024) per astrocitoma o oligodendroglioma IDH-mutati di grado 2 (WHO), con indicazione EU più ristretta (Gr2 prevalentemente non captante, dopo sola chirurgia), ma la sua applicazione richiede la conoscenza del grading completo — che a sua volta richiede 1p/19q e CDKN2A/B, non coperti da questo pannello.
 
 **TERT promoter — ruolo diagnostico in GBM**: In un glioma IDH-wild type, la mutazione TERT promoter è uno dei tre criteri molecolari per la diagnosi di GBM (insieme ad amplificazione EGFR e +7/-10). Non ha target terapeutici approvati nel glioma. Non va confuso con TERT nel contesto del carcinoma tiroideo differenziato, dove ha un ruolo prognostico diverso.
 
