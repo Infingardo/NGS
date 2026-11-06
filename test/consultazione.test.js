@@ -285,6 +285,9 @@ check("glioma IDH: R132H con denominatore esplicito (83–91% dei gliomi IDH-mut
   /83–91% dei gliomi IDH-mutati/.test(idhGlioma.note) && /circa il 90% delle mutazioni IDH negli astrocitomi sovratentoriali/.test(idhGlioma.note)
   && /infratentoriali circa l'80% è non-R132H/.test(idhGlioma.note) && !/~70%/.test(idhGlioma.note), idhGlioma.note.slice(0, 160));
 
+check("TERT GBM: nessuna frequenza «~80%» non supportata dalla fonte WHO; resta il criterio molecolare",
+  !/~80%/.test(tertGbm.note) && /criterio molecolare WHO 2021/.test(tertGbm.note), tertGbm.note);
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
