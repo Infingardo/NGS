@@ -249,6 +249,37 @@ check("RAS tiroide: tra le entità con RAS compare la variante follicolare incap
   /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.trappola) && /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.referto)
   && /NIFTP/.test(rasTir.trappola) && /invasione capsulare e vascolare/.test(rasTir.referto), rasTir.trappola);
 
+// BRAF tiroide: FDA per ATC; EMA solo per DTC refrattario a radioiodio (EPAR Tafinlar/Mekinist); nessun valore prognostico dimostrato del solo BRAF nel PTC (WHO 2022).
+const brafTir = entryDi("tiroide", "BRAF");
+check("BRAF tiroide: il badge EMA è limitato al DTC refrattario a radioiodio (non all'ATC)",
+  /EMA \(DTC refrattario a radioiodio\)/.test(brafTir.evidence) && /FDA \(ATC\)/.test(brafTir.evidence) && evClass(tag(brafTir, /^EMA/) || "") === "ev-EMA", brafTir.evidence);
+check("BRAF tiroide: la nota dichiara nessuna indicazione EMA nell'ATC e l'indicazione EU nel DTC; l'azione distingue FDA (ATC) ed EMA (DTC)",
+  /EMA: nessuna indicazione nell'ATC/.test(brafTir.note) && /refrattario o non idoneo a radioiodio/.test(brafTir.note) && /\(FDA\)/.test(brafTir.action) && /\(EMA\)/.test(brafTir.action), brafTir.action);
+check("BRAF tiroide: nessun «valore prognostico sfavorevole»/«comportamento aggressivo» attribuito al solo BRAF nel PTC",
+  !/valore prognostico sfavorevole|valore diagnostico di comportamento aggressivo/.test(tutto(brafTir)) && /analisi multivariata/.test(brafTir.referto_pred) && /analisi multivariata/.test(brafTir.referto_diag), tutto(brafTir).slice(0, 120));
+const rigaAtcDoc = docRiga("**BRAF V600E nel carcinoma anaplastico");
+check("documento clinico (ATC): nessuna «sopravvivenza mediana di settimane»; 10–50%, test obbligatorio, EU = DTC non ATC",
+  !/mediana di settimane|~40-50%/.test(rigaAtcDoc) && /10–50%/.test(rigaAtcDoc) && /obbligatoria/.test(rigaAtcDoc) && /non l'ATC/.test(rigaAtcDoc) && /inferiore a 2 anni/.test(rigaAtcDoc), rigaAtcDoc.slice(0, 160));
+
+// RET nel carcinoma midollare (WHO Endocrine 2022): test germinale raccomandato (non «obbligatorio»); ~metà degli sporadici; MEN2A codoni cisteinici.
+const retTir = entryDi("tiroide", "RET");
+check("RET MTC (scheda): test germinale «raccomandato» (WHO/ATA), non «obbligatorio»",
+  /test germinale di RET raccomandato in tutti i pazienti con MTC \(WHO 2022, ATA 2015\)/.test(retTir.note) && !/obbligatori/i.test(retTir.note), retTir.note);
+const rigaMtcDoc = docRiga("**RET nel carcinoma midollare");
+check("documento clinico (RET MTC): raccomandato; circa la metà degli sporadici (M918T fino all'80%); MEN2A codoni cisteinici, non solo C634",
+  /raccomandato in tutti i pazienti/.test(rigaMtcDoc) && !/obbligatori/i.test(rigaMtcDoc) && /circa la metà dei MTC sporadici/.test(rigaMtcDoc) && !/~40%/.test(rigaMtcDoc)
+  && /M918T fino all'80%/.test(rigaMtcDoc) && /codoni cisteinici di RET, in particolare C634/.test(rigaMtcDoc) && !/MEN2A con RET C634/.test(rigaMtcDoc), rigaMtcDoc.slice(0, 200));
+
+// Omissioni MTC (WHO Endocrine 2022): RAS nei RET-wildtype, prognosi per codone, riarrangiamenti isolati, grading a due livelli.
+check("RET MTC (scheda): RAS ~70% nei RET-wildtype (24% degli sporadici), esclusivo con RET; prognosi M918T; riarrangiamenti solo isolati",
+  /RAS in circa il 70%/.test(retTir.note) && /24% degli sporadici/.test(retTir.note) && /esclusive con RET/.test(retTir.note)
+  && /RET M918T \(esoni 15\/16\) = esito peggiore/.test(retTir.note) && /solo segnalazioni isolate/.test(retTir.note), retTir.note.slice(0, 160));
+check("RAS tiroide (scheda 471) e descrizione HRAS: il RAS nel carcinoma midollare non è il fenotipo RAS-like follicolare",
+  /driver alternativo a RET/.test(rasTir.note) && /RET-wildtype è la mutazione RAS più frequente/.test(GENE_DESC.HRAS), GENE_DESC.HRAS);
+check("documento clinico (MTC): RAS, prognosi per codone, riarrangiamenti isolati e grading a due livelli (mitosi ≥5/2 mm², Ki-67 ≥5%, necrosi)",
+  /circa il 70% ha mutazioni RAS/.test(rigaMtcDoc) && /M918T \(esoni 15 e 16\) = esito peggiore/.test(rigaMtcDoc) && /solo segnalazioni isolate/.test(rigaMtcDoc)
+  && /mitosi ≥5\/2 mm², Ki-67 ≥5% e necrosi/.test(rigaMtcDoc), rigaMtcDoc.slice(-200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
