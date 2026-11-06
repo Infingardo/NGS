@@ -365,6 +365,26 @@ check("README: changelog v2.0 senza dichiarare revisione completa; stato della r
   /### v2\.0 \(novembre 2026\)/.test(README) && /\*\*non\*\* una revisione completa del database/.test(README)
   && /Revisione generale: 03\/2026/.test(README) && /Aggiornamento parziale: 11\/2026/.test(README) && /versione del software\*\* \(v2\.0\) è distinta dallo stato della revisione scientifica/.test(README));
 
+// Novità terapeutiche (FDA/EMA, 06/11/2026): stati regolatori separati; «non verificato» mai «non approvato»; last_review invariato.
+const esr1 = entryDi("mammella", "ESR1"), her2L = SC.find(s => s.id === "nsclc").entries.find(e => e.genes.includes("ERBB2")), ros1 = entryDi("nsclc", "ROS1"), brafL = entryDi("nsclc", "BRAF");
+check("ESR1: imlunestrant FDA 25/09/2025 ed EMA 09/01/2026; associazione con abemaciclib solo FDA 18/09/2026, EMA non verificato; AIFA non verificato",
+  /imlunestrant/.test(esr1.drug) && /FDA 25\/09\/2025, EMA \(autorizzazione 09\/01\/2026\)/.test(esr1.note) && /imlunestrant \+ abemaciclib: FDA 18\/09\/2026; stato EMA non verificato/.test(esr1.note)
+  && /AIFA\/rimborsabilità non verificato/.test(esr1.note) && /elacestrant e a imlunestrant/.test(esr1.referto) && !/non approvat/i.test(tutto(esr1)), esr1.note.slice(-260));
+check("HER2 polmone: zongertinib (08/08/2025, estesa 26/02/2026) e sevabertinib (19/11/2025, estesa 09/09/2026) come FDA accelerata; EMA non verificato; badge FDA accel.",
+  /zongertinib/.test(her2L.drug) && /sevabertinib/.test(her2L.drug) && /08\/08\/2025/.test(her2L.note) && /26\/02\/2026/.test(her2L.note) && /19\/11\/2025/.test(her2L.note) && /09\/09\/2026/.test(her2L.note) && !/senza il requisito/.test(her2L.note) && /non solo le inserzioni dell'esone 20/.test(her2L.note) && /non limitate alle inserzioni dell'esone 20/.test(her2L.referto)
+  && /Stato EMA di zongertinib e sevabertinib non verificato/.test(her2L.note) && evClass(tag(her2L, /accel/) || "") === "ev-FDAaccel" && /T-DXd approvato FDA\/EMA/.test(her2L.note), her2L.evidence);
+check("ROS1 polmone: repotrectinib FDA 15/11/2023 ed EMA condizionata 13/01/2025; taletrectinib FDA 11/06/2025, EMA non verificato; indicazione NTRK EU distinta",
+  /repotrectinib \/ taletrectinib/.test(ros1.drug) && /FDA 15\/11\/2023/.test(ros1.note) && /popolazione di efficacia inclusi pazienti già trattati/.test(ros1.note) && /condizionata dal 13\/01\/2025/.test(ros1.note) && /FDA 11\/06\/2025/.test(ros1.note)
+  && /stato EMA non verificato/.test(ros1.note) && /fusione NTRK \(non pertinente a ROS1\)/.test(ros1.note) && /taletrectinib; per taletrectinib stato EMA non verificato/.test(ros1.referto), ros1.note.slice(-220));
+check("BRAF polmone: encorafenib+binimetinib autorizzato EMA (EPAR Braftovi/Mektovi), FDA non verificato; dabrafenib+trametinib invariato",
+  /encorafenib \+ binimetinib \(EMA\)/.test(brafL.drug) && /stato FDA non verificato/.test(brafL.note) && /dabrafenib\+trametinib oppure encorafenib\+binimetinib \(EMA\)/.test(brafL.action) && !/nessuna restrizione di linea/.test(brafL.note) && /Dabrafenib \+ trametinib/.test(brafL.drug));
+check("le quattro schede aggiornate NON ricevono last_review 2026-11 (verifica integrale della scheda non ancora fatta)",
+  [esr1, her2L, ros1, brafL].every(e => e.last_review === "2026-03") && ![esr1, her2L, ros1, brafL].some(e => /non approvat/i.test(tutto(e))), [esr1, her2L, ros1, brafL].map(e => e.last_review).join(" "));
+
+check("descrizioni dei geni (ROS1, ESR1, ERBB2, BRAF) e documento clinico allineati alle novità terapeutiche",
+  /repotrectinib, taletrectinib/.test(GENE_DESC.ROS1) && /imlunestrant/.test(GENE_DESC.ESR1) && /zongertinib\/sevabertinib/.test(GENE_DESC.ERBB2) && /encorafenib\+binimetinib \(EMA\)/.test(GENE_DESC.BRAF)
+  && /repotrectinib o taletrectinib/.test(docRiga("**ROS1**")) && /elacestrant e a imlunestrant/.test(docRiga("**ESR1**")), GENE_DESC.ROS1);
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");

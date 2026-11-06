@@ -134,7 +134,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **ALK**: test obbligatorio in ADC polmonare. Le fusioni ALK (~5% ADC) indicano inibitori ALK di II-III generazione (alectinib, brigatinib, lorlatinib). Lo screening IHC con clone D5F3 su piattaforma Ventana ha alta sensibilità e specificità; NGS è raccomandato per la conferma e per tipizzare il partner di fusione. ALK e EGFR sono mutualmente esclusivi nella quasi totalità dei casi.
 
-**ROS1**: fusioni (~1-2% NSCLC) indicano crizotinib o entrectinib. L'IHC per ROS1 ha specificità inferiore rispetto ad ALK, quindi NGS o FISH sono preferibili per la conferma. Tipico in non-fumatori giovani.
+**ROS1**: fusioni (~1-2% NSCLC) indicano crizotinib, entrectinib, repotrectinib o taletrectinib (stato EMA di taletrectinib non verificato). L'IHC per ROS1 ha specificità inferiore rispetto ad ALK, quindi NGS o FISH sono preferibili per la conferma. Tipico in non-fumatori giovani.
 
 **MET exon 14 skipping**: mutazione che elimina il sito di ubiquitinazione di MET, prevenendone la degradazione e portando ad attivazione costitutiva. ~3-4% degli ADC polmonari. Indica tepotinib o capmatinib. Distinta dall'amplificazione MET (meccanismo di resistenza acquisita ad EGFR TKI).
 
@@ -156,7 +156,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **PIK3CA**: mutazione in ~40% dei carcinomi HR+ HER2-. Indica alpelisib in combinazione con fulvestrant in II linea (dopo progressione a CDK4/6 inibitore + ormonoterapia). Le varianti più frequenti sono E545K, E542K (esone 9) e H1047R (esone 20).
 
-**ESR1**: mutazioni acquisite (D538G, Y537S/C/N) si sviluppano sotto pressione selettiva degli inibitori dell'aromatasi. Indicano resistenza agli AI e risposta a elacestrant. Il test su ctDNA in progressione è più informativo del test su tessuto primario, che precede l'esposizione agli AI.
+**ESR1**: mutazioni acquisite (D538G, Y537S/C/N) si sviluppano sotto pressione selettiva degli inibitori dell'aromatasi. Indicano resistenza agli AI e risposta a elacestrant e a imlunestrant (FDA ed EMA; l'associazione imlunestrant + abemaciclib è approvata FDA). Il test su ctDNA in progressione è più informativo del test su tessuto primario, che precede l'esposizione agli AI.
 
 **AKT1** (E17K) e **PTEN** (loss): fanno parte del profilo PIK3CA/AKT1/PTEN altered che seleziona i pazienti per capivasertib+fulvestrant (approvazione FDA 2023; autorizzato anche in EU).
 
