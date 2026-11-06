@@ -320,6 +320,15 @@ check("TERT GBM (scheda e documento): EGFR e +7/−10 negativi non escludono il 
 check("documento clinico (IDH, riga ruolo diagnostico): algoritmo di sequenziamento con le cinque condizioni di esenzione",
   /eccetto nei pazienti ≥55 anni con GBM istologicamente classico, sede non mediana, ATRX conservato e nessun precedente glioma di grado inferiore/.test(docRiga("**IDH1/IDH2 — ruolo diagnostico primario**")), docRiga("**IDH1/IDH2 — ruolo diagnostico primario**").slice(0, 200));
 
+check("documento clinico (CDKN2A negli astrocitomi): «necrosi e/o proliferazione microvascolare», nessuna «necrosi di coagulazione»",
+  /anche in assenza di necrosi e\/o proliferazione microvascolare/.test(docRiga("**CDKN2A delezione omozigote negli astrocitomi**")) && !/coagulazione/.test(docRiga("**CDKN2A delezione omozigote negli astrocitomi**")));
+const r81 = docRiga("**TERT nei gliomi IDH-wild type**");
+check("documento clinico (TERT negli IDH-mutati): dato WHO distinto dall'interpretazione; TERT/ATRX «generalmente» esclusivi; 1p/19q non sostituito",
+  /rare negli astrocitomi IDH-mutati e frequenti negli oligodendrogliomi IDH-mutati, 1p\/19q-codeleti, e nei glioblastomi IDH-wildtype \(WHO CNS5\)/.test(r81)
+  && /generalmente mutualmente esclusive con le alterazioni di ATRX/.test(r81) && /interpretazione, non dato WHO/.test(r81) && /non sostituisce la dimostrazione della codelezione 1p\/19q/.test(r81), r81.slice(-260));
+check("scheda 480 non modificata sul punto TERT negli IDH-mutati (resta solo GBM IDH-wildtype)",
+  !/oligodendrogliom/i.test(tertGbm.note) && !/oligodendrogliom/i.test(tertGbm.referto_diag));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
