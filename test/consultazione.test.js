@@ -223,6 +223,32 @@ check("documento clinico (BRAF V600E CRC): backbone encorafenib+cetuximab, binim
   /encorafenib\+cetuximab dopo terapia sistemica precedente/.test(rigaBrafDoc) && /FOLFOX/.test(rigaBrafDoc)
   && !/sensibilità a encorafenib\+binimetinib/.test(rigaBrafDoc) && /schema del melanoma, non del CRC/.test(rigaBrafDoc), rigaBrafDoc.slice(0, 200));
 
+// GBM IDH-wild type (WHO CNS5): basta UNO tra TERT, EGFR amp, +7/-10 (non servono due o tre).
+const tertGbm = entryDi("glioma", "TERT");
+check("TERT GBM: l'azione dice che ne basta uno (non «TERT + EGFR + +7/-10» come somma)",
+  /basta uno tra TERT mut, EGFR amp, \+7\/-10/.test(tertGbm.action) && !/TERT \+ EGFR amp/.test(tertGbm.action), tertGbm.action);
+check("TERT GBM: il referto diagnostico non subordina TERT a «combinazione» con EGFR o +7/-10",
+  /ne basta uno solo tra mutazione del promotore TERT, amplificazione EGFR e \+7\/-10/.test(tertGbm.referto_diag) && !/in combinazione/i.test(tertGbm.referto_diag), tertGbm.referto_diag);
+
+for (const [inizio, nome] of [["**TERT nei gliomi IDH-wild type**", "riga TERT gliomi"], ["**TERT promoter — ruolo diagnostico in GBM**", "riga TERT ruolo diagnostico"], ["**Pattern cromosomico +7/-10**", "riga +7/-10"]]) {
+  const r = docRiga(inizio);
+  check(`documento clinico (GBM, ${nome}): ne basta uno dei tre criteri; nessun «due dei tre» né «insieme ad»`,
+    /ne basta uno/.test(r) && !/due dei tre|insieme ad|Gr3 di default/.test(r), r.slice(0, 200));
+}
+
+// Tiroide (WHO Endocrine 2022, carcinoma follicolare): TERT+BRAF "doppio hit" solo nel PTC; nel FTC TERT con RAS.
+const tertTir = entryDi("tiroide", "TERT");
+check("TERT tiroide: il «doppio hit» con BRAF V600E è limitato al carcinoma papillare; nel follicolare TERT con RAS",
+  /Nel PTC, con BRAF V600E = doppio hit/.test(tertTir.note) && /PTC: TERT \+ BRAF V600E/.test(tertTir.action) && /FTC: TERT spesso con RAS/.test(tertTir.action)
+  && /Nel carcinoma papillare la co-presenza con BRAF V600E/.test(tertTir.referto) && /carcinoma follicolare TERT è spesso associato a mutazioni RAS/.test(tertTir.referto), tertTir.action);
+const rigaTertDoc = docRiga("**TERT promoter nel DTC");
+check("documento clinico (TERT nel DTC): doppio hit limitato al papillare; nel follicolare RAS, stadio, metastasi, mortalità",
+  /Nel carcinoma papillare la co-presenza/.test(rigaTertDoc) && /carcinoma follicolare TERT è spesso associato a mutazioni RAS/.test(rigaTertDoc) && !/La co-presenza di TERT promoter mutato \+ BRAF/.test(rigaTertDoc), rigaTertDoc.slice(0,160));
+const rasTir = entryDi("tiroide", "NRAS");
+check("RAS tiroide: tra le entità con RAS compare la variante follicolare incapsulata del carcinoma papillare (testo WHO FTC) in trappola e referto",
+  /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.trappola) && /variante follicolare incapsulata del carcinoma papillare/.test(rasTir.referto)
+  && /NIFTP/.test(rasTir.trappola) && /invasione capsulare e vascolare/.test(rasTir.referto), rasTir.trappola);
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");

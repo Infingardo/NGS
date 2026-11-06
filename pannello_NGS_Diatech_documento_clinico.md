@@ -2,7 +2,7 @@
 ## Guida all'interpretazione, alle indicazioni e ai limiti diagnostici e predittivi
 
 **Documento redatto per uso interno — SC Anatomia Patologica, ASST Fatebenefratelli-Sacco, Milano**  
-**Versione 1.5 — Febbraio 2026**  
+**Versione 2.0 — Novembre 2026**  
 **Riferimenti: AIOM 2024-2025, ESMO 2022, WHO CNS5 2021, FDA/EMA Feb 2026**  
 **Tool online: https://infingardo.github.io/NGS/**
 
@@ -52,7 +52,7 @@ La conoscenza dei limiti di un pannello è almeno altrettanto importante della c
 
 **1p/19q codelezione**: richiesta per la diagnosi di oligodendroglioma secondo WHO CNS5 2021. Questo test richiede FISH o array-CGH su tessuto e deve essere richiesto separatamente in tutti i casi di glioma diffuso IDH-mutato senza fenotipo chiaro da astrocitoma.
 
-**Pattern cromosomico +7/-10**: criterio molecolare per GBM IDH-wild type insieme ad amplificazione EGFR e mutazione TERT. Richiede FISH o array-CGH.
+**Pattern cromosomico +7/-10**: criterio molecolare per GBM IDH-wild type, alternativo (ne basta uno) all'amplificazione EGFR e alla mutazione TERT. Richiede FISH o array-CGH.
 
 **CDKN2A/B delezione per grading**: la delezione omozigote di CDKN2A/B è criterio WHO 2021 per upgrade a grado 4 degli astrocitomi IDH-mutati. Il pannello rileva mutazioni puntiformi di CDKN2A, ma non le delezioni estese di tipo CNV per questo gene specifico.
 
@@ -78,7 +78,7 @@ Un biomarcatore ha ruolo diagnostico quando la sua presenza (o assenza) è neces
 
 **IDH1/IDH2 nei gliomi**: La mutazione IDH1 R132H (o IDH2 R172K) definisce la categoria diagnostica "glioma IDH-mutato" secondo WHO CNS5 2021. Un glioma diffuso senza stato IDH noto non può essere correttamente classificato. La distinzione tra glioma IDH-mutato e IDH-wild type non è una raffinatezza accademica: ha implicazioni dirette sulla prognosi, sul trattamento adiuvante e sull'accesso a vorasidenib. Non si tratta di un biomarcatore accessorio testato "per vedere se c'è un target" — è la base della diagnosi stessa.
 
-**TERT nei gliomi IDH-wild type**: La mutazione del promotore TERT (C228T o C250T) è uno dei criteri molecolari che, insieme all'amplificazione EGFR e/o al pattern +7/-10, definisce un glioma IDH-wild type come glioblastoma WHO Gr4 indipendentemente dal grado istologico. Un glioma IDH-wild type con soli criteri morfologici è classificato come "astrocitoma diffuso IDH-wild type" (Gr3 di default), ma se presenta due dei tre criteri molecolari diventa glioblastoma per definizione molecolare. Questa distinzione cambia la prognosi comunicata al paziente e il trattamento.
+**TERT nei gliomi IDH-wild type**: La mutazione del promotore TERT (C228T o C250T) è uno dei tre criteri molecolari alternativi (mutazione del promotore TERT, amplificazione EGFR, pattern +7/-10) che definiscono un glioma diffuso IDH-wild type come glioblastoma WHO Gr4: ne basta uno, anche in assenza di proliferazione microvascolare e di necrosi. Questa distinzione cambia la prognosi comunicata al paziente e il trattamento.
 
 **CDKN2A delezione omozigote negli astrocitomi**: In un astrocitoma IDH-mutato, la delezione omozigote di CDKN2A/B è sufficiente per l'upgrade a WHO Gr4, anche in assenza di necrosi di coagulazione o proliferazione microvascolare all'esame istologico. Senza questo dato, un tumore che morfologicamente appare di basso grado potrebbe essere sottotrattato.
 
@@ -188,7 +188,7 @@ Nel NSCLC il testing molecolare è cambiato il paradigma terapeutico più di qua
 
 **RET nel carcinoma midollare (MTC)**: le mutazioni germinali di RET definiscono la sindrome MEN2 (MEN2A con RET C634, MEN2B con RET M918T). Lo screening germinale è obbligatorio in tutti i pazienti con MTC alla diagnosi e implica lo screening dei familiari. Le mutazioni somatiche di RET (~40% MTC sporadici) indicano selpercatinib o pralsetinib (per pralsetinib l'autorizzazione EU è stata ritirata il 24/10/2024).
 
-**TERT promoter nel DTC (carcinoma differenziato)**: le mutazioni C228T e C250T del promotore TERT indicano prognosi sfavorevole nel carcinoma papillare e follicolare. La co-presenza di TERT promoter mutato + BRAF V600E ("doppio hit") identifica un sottogruppo ad alto rischio di recidiva e mortalità specifica.
+**TERT promoter nel DTC (carcinoma differenziato)**: le mutazioni C228T e C250T del promotore TERT indicano prognosi sfavorevole nel carcinoma papillare e follicolare. Nel carcinoma papillare la co-presenza di TERT promoter mutato + BRAF V600E ("doppio hit") identifica un sottogruppo ad alto rischio di recidiva e mortalità specifica; nel carcinoma follicolare TERT è spesso associato a mutazioni RAS e si lega a stadio avanzato, metastasi a distanza e maggiore mortalità.
 
 ### 5.9 Gliomi e Tumori del SNC (WHO CNS5 2021)
 
@@ -196,7 +196,7 @@ Il capitolo SNC è il più complesso perché qui la distinzione diagnostico/pred
 
 **IDH1/IDH2 — ruolo diagnostico primario**: La mutazione IDH (R132H in IDH1, R172K in IDH2) definisce la categoria dei gliomi diffusi IDH-mutati. Senza questo dato, la classificazione WHO 2021 è incompleta. IDH1 R132H è identificabile con IHC (anticorpo anti-IDH1 R132H) come test di screening rapido su tessuto FFPE; le varianti non-R132H e IDH2 richiedono NGS. Vorasidenib è approvato FDA (6 agosto 2024) per astrocitoma o oligodendroglioma IDH-mutati di grado 2 (WHO), con indicazione EU più ristretta (Gr2 prevalentemente non captante, dopo sola chirurgia), ma la sua applicazione richiede la conoscenza del grading completo — che a sua volta richiede 1p/19q e CDKN2A/B, non coperti da questo pannello.
 
-**TERT promoter — ruolo diagnostico in GBM**: In un glioma IDH-wild type, la mutazione TERT promoter è uno dei tre criteri molecolari per la diagnosi di GBM (insieme ad amplificazione EGFR e +7/-10). Non ha target terapeutici approvati nel glioma. Non va confuso con TERT nel contesto del carcinoma tiroideo differenziato, dove ha un ruolo prognostico diverso.
+**TERT promoter — ruolo diagnostico in GBM**: In un glioma IDH-wild type, la mutazione TERT promoter è uno dei tre criteri molecolari alternativi per la diagnosi di GBM (con amplificazione EGFR e +7/-10): ne basta uno. Non ha target terapeutici approvati nel glioma. Non va confuso con TERT nel contesto del carcinoma tiroideo differenziato, dove ha un ruolo prognostico diverso.
 
 **EGFR amplificazione — ruolo diagnostico in GBM**: L'amplificazione EGFR (CNV) è criterio molecolare per GBM IDH-WT secondo WHO 2021. TKI anti-EGFR hanno mostrato risposta assente o marginale nel GBM classico a causa di eterogeneità tumorale e vie di bypass. La variante EGFRvIII (delezione esone 2-7) è rilevabile con NGS e può orientare verso trial specifici.
 
