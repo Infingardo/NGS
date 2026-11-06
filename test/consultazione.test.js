@@ -280,6 +280,11 @@ check("documento clinico (MTC): RAS, prognosi per codone, riarrangiamenti isolat
   /circa il 70% ha mutazioni RAS/.test(rigaMtcDoc) && /M918T \(esoni 15 e 16\) = esito peggiore/.test(rigaMtcDoc) && /solo segnalazioni isolate/.test(rigaMtcDoc)
   && /mitosi ≥5\/2 mm², Ki-67 ≥5% e necrosi/.test(rigaMtcDoc), rigaMtcDoc.slice(-200));
 
+// IDH1 R132H: frequenza con denominatore esplicito (WHO CNS5, Astrocytoma IDH-mutant); non il «~70%» senza denominatore.
+check("glioma IDH: R132H con denominatore esplicito (83–91% dei gliomi IDH-mutati; ~90% delle mutazioni IDH sovratentoriali), nessun «~70%»; caveat infratentoriale",
+  /83–91% dei gliomi IDH-mutati/.test(idhGlioma.note) && /circa il 90% delle mutazioni IDH negli astrocitomi sovratentoriali/.test(idhGlioma.note)
+  && /infratentoriali circa l'80% è non-R132H/.test(idhGlioma.note) && !/~70%/.test(idhGlioma.note), idhGlioma.note.slice(0, 160));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
