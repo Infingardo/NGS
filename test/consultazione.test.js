@@ -280,6 +280,138 @@ check("documento clinico (MTC): RAS, prognosi per codone, riarrangiamenti isolat
   /circa il 70% ha mutazioni RAS/.test(rigaMtcDoc) && /M918T \(esoni 15 e 16\) = esito peggiore/.test(rigaMtcDoc) && /solo segnalazioni isolate/.test(rigaMtcDoc)
   && /mitosi ≥5\/2 mm², Ki-67 ≥5% e necrosi/.test(rigaMtcDoc), rigaMtcDoc.slice(-200));
 
+// IDH1 R132H: frequenza con denominatore esplicito (WHO CNS5, Astrocytoma IDH-mutant); non il «~70%» senza denominatore.
+check("glioma IDH: R132H con denominatore esplicito (83–91% dei gliomi IDH-mutati; ~90% delle mutazioni IDH sovratentoriali), nessun «~70%»; caveat infratentoriale",
+  /83–91% dei gliomi IDH-mutati/.test(idhGlioma.note) && /circa il 90% delle mutazioni IDH negli astrocitomi sovratentoriali/.test(idhGlioma.note)
+  && /infratentoriali circa l'80% è non-R132H/.test(idhGlioma.note) && !/~70%/.test(idhGlioma.note), idhGlioma.note.slice(0, 160));
+
+check("TERT GBM: nessuna frequenza «~80%» non supportata dalla fonte WHO; resta il criterio molecolare",
+  !/~80%/.test(tertGbm.note) && /criterio molecolare WHO 2021/.test(tertGbm.note), tertGbm.note);
+
+check("BRAF PTC: ~60% come stima generale dichiarata non-WHO, con frequenze per sottotipo (cellule alte ~80%, sclerosante diffuso ~20%) e pattern follicolare RAS-like",
+  /circa il 60% dei PTC complessivamente \(stima da casistiche, variabile tra serie; non è un dato WHO\)/.test(brafTir.note) && /~80% nel sottotipo a cellule alte/.test(brafTir.note)
+  && /~20% nello sclerosante diffuso/.test(brafTir.note) && /prevalentemente RAS-like/.test(brafTir.note) && !/98–99%/.test(brafTir.note) && /ATC: terapia urgente/.test(brafTir.note), brafTir.note.slice(0, 200));
+
+check("RET PTC: nessuna percentuale complessiva «~10-20%» non supportata; frequenza variabile per area e radio-indotto, CCDC6/NCOA4 (WHO 2022)",
+  !/~10-20%/.test(retTir.note) && /variabile per area geografica e più alta nel PTC radio-indotto/.test(retTir.note)
+  && /CCDC6::RET 60–70% e NCOA4::RET 20–30% delle fusioni/.test(retTir.note) && /test germinale di RET raccomandato/.test(retTir.note), retTir.note.slice(0, 200));
+
+// Limiti del pannello nei gliomi: H3 (K27-altered, G34-mutant) e ATRX non coperti (WHO CNS5).
+const noteGlioma = SC.find(s => s.id === "glioma").notes;
+check("glioma (nota di scenario): H3 K27-altered/G34-mutant non valutabili, accertamenti mirati prima di GBM IDH-wildtype",
+  /H3 K27-altered e H3 G34-mutant non valutabili con il pannello/.test(noteGlioma) && /prima della classificazione come glioblastoma IDH-wildtype/.test(noteGlioma), noteGlioma.slice(0, 160));
+check("glioma (nota di scenario): ATRX non valutabile; perdita nucleare supporta astrocitoma senza 1p/19q; ATRX conservato → 1p/19q; ATRX = linea, non grado",
+  /ATRX non valutabile con il pannello/.test(noteGlioma) && /senza necessità routinaria di 1p\/19q/.test(noteGlioma) && /Se ATRX è conservato, è necessaria la valutazione della codelezione 1p\/19q/.test(noteGlioma)
+  && /marcatore di linea, non di grado/.test(noteGlioma), noteGlioma.slice(-200));
+check("documento clinico (1p/19q e TERT GBM): ATRX e H3 integrati; nessun «senza fenotipo chiaro»",
+  /ATRX non valutabile con il pannello/.test(docRiga("**1p/19q codelezione**")) && !/senza fenotipo chiaro/.test(docRiga("**1p/19q codelezione**"))
+  && /H3 K27-altered e H3 G34-mutant non valutabili con il pannello/.test(docRiga("**TERT nei gliomi IDH-wild type**")), docRiga("**1p/19q codelezione**").slice(0, 200));
+
+// Algoritmo di test IDH (WHO CNS5/EANO): l'età ≥55 non basta da sola per evitare il sequenziamento.
+const ihcIdh = idhGlioma.ihc.note;
+check("glioma IDH (IHC): esenzione dal sequenziamento solo con ≥55 anni + GBM classico + sede non mediana + ATRX conservato + nessun glioma precedente",
+  /eccetto nei pazienti ≥55 anni con GBM istologicamente classico, sede non mediana, ATRX conservato e nessun precedente glioma di grado inferiore/.test(ihcIdh)
+  && /sequenziare IDH1 \(codone 132\) e IDH2 \(codone 172\)/.test(ihcIdh), ihcIdh.slice(0, 200));
+check("glioma IDH (IHC): infratentoriali con denominatore corretto (astrocitomi infratentoriali IDH-mutati, ~80% non-R132H), non «tutti i gliomi infratentoriali»",
+  /negli astrocitomi infratentoriali IDH-mutati circa l'80% delle varianti è non-R132H/.test(ihcIdh) && !/NGS necessario per varianti non-R132H e IDH2/.test(ihcIdh), ihcIdh.slice(-160));
+check("TERT GBM (scheda e documento): EGFR e +7/−10 negativi non escludono il GBM; nessuna sensibilità 59%/36% nella scheda operativa",
+  /la negatività per amplificazione di EGFR e per \+7\/−10 non esclude il glioblastoma/.test(tertGbm.note) && !/59%|36%/.test(tertGbm.note)
+  && /non esclude il glioblastoma/.test(docRiga("**TERT nei gliomi IDH-wild type**")), tertGbm.note.slice(-200));
+check("documento clinico (IDH, riga ruolo diagnostico): algoritmo di sequenziamento con le cinque condizioni di esenzione",
+  /eccetto nei pazienti ≥55 anni con GBM istologicamente classico, sede non mediana, ATRX conservato e nessun precedente glioma di grado inferiore/.test(docRiga("**IDH1/IDH2 — ruolo diagnostico primario**")), docRiga("**IDH1/IDH2 — ruolo diagnostico primario**").slice(0, 200));
+
+check("documento clinico (CDKN2A negli astrocitomi): «necrosi e/o proliferazione microvascolare», nessuna «necrosi di coagulazione»",
+  /anche in assenza di necrosi e\/o proliferazione microvascolare/.test(docRiga("**CDKN2A delezione omozigote negli astrocitomi**")) && !/coagulazione/.test(docRiga("**CDKN2A delezione omozigote negli astrocitomi**")));
+const r81 = docRiga("**TERT nei gliomi IDH-wild type**");
+check("documento clinico (TERT negli IDH-mutati): dato WHO distinto dall'interpretazione; TERT/ATRX «generalmente» esclusivi; 1p/19q non sostituito",
+  /rare negli astrocitomi IDH-mutati e frequenti negli oligodendrogliomi IDH-mutati, 1p\/19q-codeleti, e nei glioblastomi IDH-wildtype \(WHO CNS5\)/.test(r81)
+  && /generalmente mutualmente esclusive con le alterazioni di ATRX/.test(r81) && /interpretazione, non dato WHO/.test(r81) && /non sostituisce la dimostrazione della codelezione 1p\/19q/.test(r81), r81.slice(-260));
+check("scheda 480 non modificata sul punto TERT negli IDH-mutati (resta solo GBM IDH-wildtype)",
+  !/oligodendrogliom/i.test(tertGbm.note) && !/oligodendrogliom/i.test(tertGbm.referto_diag));
+
+// Anaplastico (WHO Endocrine 2022): profilo molecolare, prognosi (associazioni), MMR ≠ MSI-H; TERT nella scheda 475.
+check("TERT tiroide (scheda 475): istotipo include ATC; nota con TERT nell'ATC (30–75%, progressione, TP53)",
+  /PTC \/ FTC \/ ATC/.test(tertTir.histotype) && /nel carcinoma anaplastico tiroideo, la mutazione del promotore TERT è un evento associato alla progressione anaplastica \(30–75%\), frequentemente accompagnato da alterazioni di TP53/i.test(tertTir.note), tertTir.note.slice(-200));
+const rigaAtc = docRiga("**BRAF V600E nel carcinoma anaplastico");
+check("documento clinico (ATC): frequenze RAS/BRAF/TP53/TERT/PIK3CA/PTEN/EIF1AX e prognosi come associazioni, non fattori indipendenti",
+  /RAS \(10–50%\) e BRAF \(10–50%\)/.test(rigaAtc) && /TP53 \(40–80%\) e mutazioni del promotore TERT \(30–75%\)/.test(rigaAtc) && /PIK3CA \(5–25%\), PTEN \(10–25%\) ed EIF1AX \(5–15%\)/.test(rigaAtc)
+  && /non di fattori prognostici indipendenti validati/.test(rigaAtc) && /Rilevanza prognostica e predittiva vanno tenute distinte/.test(rigaAtc), rigaAtc.slice(-300));
+check("documento clinico (ATC): MMR ≠ MSI-H; nessun PD-L1",
+  /non implica necessariamente deficit funzionale del sistema né instabilità microsatellitare/.test(rigaAtc) && /MSI-H è un biomarcatore potenzialmente predittivo/.test(rigaAtc) && !/PD-?L1/i.test(rigaAtc));
+
+// PTC (WHO Endocrine 2022): IHC VE1 come alternativa (cut-off qualificato), fusioni NTRK/ALK, varianti follicolari.
+check("BRAF tiroide (scheda 473): riga IHC VE1 «alternativa», ≥90% come criterio da letteratura (non WHO universale), VE1 negativa ≠ wild-type",
+  brafTir.ihc && brafTir.ihc.type === "alternative" && /VE1/.test(brafTir.ihc.test) && /≥90% delle cellule tumorali secondo i criteri proposti in letteratura/.test(brafTir.ihc.note)
+  && /conferma molecolare/.test(brafTir.ihc.note) && /VE1 negativa non equivale a BRAF wild-type/.test(brafTir.ihc.note), JSON.stringify(brafTir.ihc || {}).slice(0, 160));
+check("RAS tiroide (scheda 471): variante follicolare infiltrativa BRAF-like ≠ invasiva incapsulata RAS-like; nessuna IHC RAS/RET/ALK/pan-TRK",
+  /PTC follicolare infiltrativo presenta prevalentemente un profilo BRAF-like/.test(rasTir.note) && /invasivo incapsulato, descritto in una voce separata nella WHO 2022, presenta prevalentemente un profilo RAS-like/.test(rasTir.note)
+  && !rasTir.ihc, rasTir.note.slice(-260));
+const rFus = docRiga("**Fusioni nel PTC (NTRK, ALK, RET)**");
+check("documento clinico (fusioni PTC): NTRK 3–5%, ALK senza frequenza WHO, sclerosante diffuso e solido/trabecolare, indicazione RNA-based marcata non-WHO",
+  /NTRK1\/3 \(3–5%\)/.test(rFus) && /il WHO 2022 non riporta una frequenza per ALK/.test(rFus) && /sclerosante diffuso/.test(rFus) && /NCOA4::RET, CCDC6::RET ed ETV6::NTRK3/.test(rFus)
+  && /non dato WHO\): un pannello DNA/.test(rFus) && /RNA-based/.test(rFus), rFus.slice(0, 200));
+
+// Tracciabilità: last_review 2026-11 solo sulle schede verificate; revisione generale 03/2026 invariata, aggiornamento parziale 11/2026.
+const verificate = [["crc","BRAF"],["crc","ERBB2"],["nsclc","NRG1"],["mammella","AKT1"],["pancreas","NRG1"],["tiroide","NRAS"],["tiroide","PPARG"],["tiroide","BRAF"],["tiroide","RET"],["tiroide","TERT"],["glioma","IDH1"],["glioma","TERT"],["glioma","EGFR"],["glioma","CDKN2A"]];
+const nonVerificate = [["pancreas","FGFR2"],["nsclc","RET"],["agnostico","RET"],["crc","KRAS"],["nsclc","EGFR"],["gist","KIT"]];
+check("last_review 2026-11 sulle 14 schede verificate",
+  verificate.every(([sc,g]) => entryDi(sc,g).last_review === "2026-11"), verificate.filter(([sc,g]) => entryDi(sc,g).last_review !== "2026-11").join(" | "));
+check("last_review NON aggiornato sulle schede solo parzialmente o non verificate (FGFR2 iCCA, RET NSCLC, RET agnostico, KRAS/EGFR/KIT)",
+  nonVerificate.every(([sc,g]) => entryDi(sc,g).last_review !== "2026-11"), nonVerificate.map(([sc,g]) => `${sc}/${g}=${entryDi(sc,g).last_review}`).join(" "));
+check("DATA_REVIEWED resta 2026-03 (revisione generale); DATA_PARTIAL 2026-11; intestazione «rev. … · agg. parziale …»",
+  /const DATA_REVIEWED="2026-03";/.test(SOURCE) && /const DATA_PARTIAL="2026-11";/.test(SOURCE) && /rev\. \$\{DATA_REVIEWED\} · agg\. parziale \$\{DATA_PARTIAL\}/.test(SOURCE));
+const README = require("fs").readFileSync(require("path").join(__dirname, "..", "README.md"), "utf8");
+check("README: changelog v2.0 senza dichiarare revisione completa; stato della revisione con revisione generale 03/2026 e aggiornamento parziale 11/2026",
+  /### v2\.0 \(novembre 2026\)/.test(README) && /\*\*non\*\* una revisione completa del database/.test(README)
+  && /Revisione generale: 03\/2026/.test(README) && /Aggiornamento parziale: 11\/2026/.test(README) && /versione del software\*\* \(v2\.0\) è distinta dallo stato della revisione scientifica/.test(README));
+
+// Novità terapeutiche (FDA/EMA, 06/11/2026): stati regolatori separati; «non verificato» mai «non approvato»; last_review invariato.
+const esr1 = entryDi("mammella", "ESR1"), her2L = SC.find(s => s.id === "nsclc").entries.find(e => e.genes.includes("ERBB2")), ros1 = entryDi("nsclc", "ROS1"), brafL = entryDi("nsclc", "BRAF");
+check("ESR1: imlunestrant FDA 25/09/2025 ed EMA 09/01/2026; associazione con abemaciclib solo FDA 18/09/2026, EMA non verificato; AIFA non verificato",
+  /imlunestrant/.test(esr1.drug) && /FDA 25\/09\/2025, EMA \(autorizzazione 09\/01\/2026\)/.test(esr1.note) && /imlunestrant \+ abemaciclib: FDA 18\/09\/2026; stato EMA non verificato/.test(esr1.note)
+  && /AIFA\/rimborsabilità non verificato/.test(esr1.note) && /elacestrant e a imlunestrant/.test(esr1.referto) && !/non approvat/i.test(tutto(esr1)), esr1.note.slice(-260));
+check("HER2 polmone: zongertinib (08/08/2025, estesa 26/02/2026) e sevabertinib (19/11/2025, estesa 09/09/2026) come FDA accelerata; EMA non verificato; badge FDA accel.",
+  /zongertinib/.test(her2L.drug) && /sevabertinib/.test(her2L.drug) && /08\/08\/2025/.test(her2L.note) && /26\/02\/2026/.test(her2L.note) && /19\/11\/2025/.test(her2L.note) && /09\/09\/2026/.test(her2L.note) && !/senza il requisito/.test(her2L.note) && /non solo le inserzioni dell'esone 20/.test(her2L.note) && /non limitate alle inserzioni dell'esone 20/.test(her2L.referto)
+  && /Stato EMA di zongertinib e sevabertinib non verificato/.test(her2L.note) && evClass(tag(her2L, /accel/) || "") === "ev-FDAaccel" && /T-DXd: FDA, approvazione accelerata dell'11\/08\/2022/.test(her2L.note) && !/T-DXd approvato FDA\/EMA/.test(her2L.note), her2L.evidence);
+check("ROS1 polmone: repotrectinib FDA 15/11/2023 ed EMA condizionata 13/01/2025; taletrectinib FDA 11/06/2025, EMA non verificato; indicazione NTRK EU distinta",
+  /repotrectinib \/ taletrectinib/.test(ros1.drug) && /FDA 15\/11\/2023/.test(ros1.note) && /popolazione di efficacia inclusi pazienti già trattati/.test(ros1.note) && /condizionata dal 13\/01\/2025/.test(ros1.note) && /FDA 11\/06\/2025/.test(ros1.note)
+  && /stato EMA non verificato/.test(ros1.note) && /fusione NTRK \(non pertinente a ROS1\)/.test(ros1.note) && /taletrectinib; per taletrectinib stato EMA non verificato/.test(ros1.referto), ros1.note.slice(-220));
+check("BRAF polmone: encorafenib+binimetinib autorizzato EMA (EPAR Braftovi/Mektovi), FDA non verificato; dabrafenib+trametinib invariato",
+  /encorafenib \+ binimetinib \(EMA\)/.test(brafL.drug) && /stato FDA non verificato/.test(brafL.note) && /dabrafenib\+trametinib oppure encorafenib\+binimetinib \(EMA\)/.test(brafL.action) && !/nessuna restrizione di linea/.test(brafL.note) && /Dabrafenib \+ trametinib/.test(brafL.drug));
+check("le quattro schede aggiornate NON ricevono last_review 2026-11 (verifica integrale della scheda non ancora fatta)",
+  [esr1, her2L, ros1, brafL].every(e => e.last_review === "2026-03") && ![esr1, her2L, ros1, brafL].some(e => /non approvat/i.test(tutto(e))), [esr1, her2L, ros1, brafL].map(e => e.last_review).join(" "));
+
+check("descrizioni dei geni (ROS1, ESR1, ERBB2, BRAF) e documento clinico allineati alle novità terapeutiche",
+  /repotrectinib, taletrectinib/.test(GENE_DESC.ROS1) && /imlunestrant/.test(GENE_DESC.ESR1) && /zongertinib\/sevabertinib/.test(GENE_DESC.ERBB2) && /encorafenib\+binimetinib \(EMA\)/.test(GENE_DESC.BRAF)
+  && /repotrectinib o taletrectinib/.test(docRiga("**ROS1**")) && /elacestrant e a imlunestrant/.test(docRiga("**ESR1**")), GENE_DESC.ROS1);
+
+// Polmone, lotto 1 (EPAR EMA; registro FDA delle approvazioni accelerate in corso, 06/11/2026).
+const metL = entryDi("nsclc", "MET"), krasL = entryDi("nsclc", "KRAS");
+check("MET polmone: EMA limitata a dopo immunoterapia e/o chemioterapia a base di platino (tepotinib e capmatinib); FDA ordinaria (accelerata poi convertita); badge invariato",
+  /EMA: tepotinib e capmatinib indicati nel NSCLC avanzato con MET exon 14 skipping, nei pazienti che necessitano di terapia sistemica dopo precedente immunoterapia e\/o chemioterapia a base di platino/.test(metL.note)
+  && !/Indicazione FDA da verificare separatamente/.test(metL.note) && /capmatinib: accelerata 06\/05\/2020, convertita 10\/08\/2022; tepotinib: accelerata 03\/02\/2021, convertita 15\/02\/2024/.test(metL.note) && /FDA · EMA · NCCN Cat 1/.test(metL.evidence) && metL.last_review === "2026-03", metL.note.slice(-260));
+check("KRAS G12C polmone: EMA condizionata (06/01/2022, 05/01/2024) dopo ≥1 terapia; FDA accelerata (28/05/2021, 12/12/2022) in corso; badge invariato; last_review invariato",
+  /sotorasib \(06\/01\/2022\) e adagrasib \(05\/01\/2024\) autorizzati con procedura condizionata/.test(krasL.note) && /sotorasib \(28\/05\/2021\) e adagrasib \(12\/12\/2022\) con approvazione accelerata/.test(krasL.note)
+  && /FDA · EMA/.test(krasL.evidence) && krasL.last_review === "2026-03" && !/non approvat/i.test(tutto(krasL)), krasL.note.slice(-300));
+check("T-DXd HER2 polmone: FDA accelerata 11/08/2022 dopo terapia sistemica; EMA condizionata dopo platino ± immunoterapia; badge FDA · EMA conservato",
+  /EMA: autorizzazione condizionata nel NSCLC avanzato HER2-mutato dopo chemioterapia a base di platino, con o senza immunoterapia/.test(her2L.note) && /^FDA · EMA/.test(her2L.evidence), her2L.evidence);
+
+// Polmone, chiusura lotto: EGFR (amivantamab+lazertinib, osimertinib+chemio), ALK adiuvante, ROS1 entrectinib.
+const egfrL = entryDi("nsclc", "EGFR"), alkL = entryDi("nsclc", "ALK");
+check("EGFR polmone: amivantamab+lazertinib e osimertinib+platino/pemetrexed distinti per linea e biomarcatore; FDA separata; badge invariato; last_review invariato",
+  /amivantamab \+ lazertinib \(I linea\)/.test(egfrL.drug) && /osimertinib in monoterapia per le mutazioni attivanti di EGFR; osimertinib con pemetrexed e chemioterapia a base di platino per esone 19 del\/L858R \(EPAR Tagrisso\)/.test(egfrL.note) && !/osimertinib in monoterapia o con carboplatino/.test(egfrL.note) && /Rybrevant autorizzato 09\/12\/2021, Lazcluze 20\/01\/2025/.test(egfrL.note)
+  && /dopo fallimento di un TKI EGFR: amivantamab \+ carboplatino\/pemetrexed/.test(egfrL.note) && /inserzioni esone 20/.test(egfrL.note) && /approvato il 19\/08\/2024/.test(egfrL.note)
+  && /stato FDA di osimertinib \+ chemioterapia e delle indicazioni per esone 20 non verificato/.test(egfrL.note) && /^FDA I linea · EMA · NCCN Cat 1 · AIOM$/.test(egfrL.evidence) && egfrL.last_review === "2026-03", egfrL.note.slice(-300));
+check("ALK polmone: alectinib adiuvante EMA (alto rischio, RCP 5.1) e FDA 18/04/2024 con stadio della popolazione ALINA; I linea invariata",
+  /Alectinib adiuvante: EMA, dopo resezione completa in pazienti ALK-positivi ad alto rischio di recidiva/.test(alkL.note) && /FDA 18\/04\/2024/.test(alkL.note) && /stadio IB, tumori ≥4 cm, fino a IIIA, AJCC 7ª ed\./.test(alkL.note)
+  && /alectinib, brigatinib, lorlatinib/.test(alkL.referto) && alkL.last_review === "2026-03", alkL.note.slice(-260));
+check("ROS1 polmone: entrectinib EMA (condizionata) solo se non pretrattato con inibitori ROS1",
+  /Entrectinib \(EMA, autorizzazione condizionata\): ROS1-positivo avanzato solo se non precedentemente trattato con inibitori ROS1/.test(ros1.note), ros1.note.slice(0, 260));
+
+check("documento clinico (EGFR, ALK, ROS1, MET): allineato alle schede (amivantamab+lazertinib, esone 20; alectinib adiuvante; entrectinib non pretrattato; MET conversione FDA)",
+  /amivantamab \+ lazertinib/.test(docRiga("**EGFR**")) && /esone 20/.test(docRiga("**EGFR**")) && /alectinib adiuvante/i.test(docRiga("**ALK**")) && /non precedentemente trattato con inibitori ROS1/.test(docRiga("**ROS1**"))
+  && /convertit/.test(docRiga("**MET exon 14 skipping**")), docRiga("**EGFR**").slice(-220));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");

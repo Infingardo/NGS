@@ -30,12 +30,17 @@ Verificate su pagine FDA; per ciascuna decidi se aggiungere.
 |---|---|---|---|
 | ESR1 mammella (446) | Imlunestrant (monoterapia) | 25/09/2025 | [FDA](https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-imlunestrant-er-positive-her2-negative-esr1-mutated-advanced-or-metastatic-breast) |
 | HER2 mutato NSCLC (433) | Zongertinib (TKD HER2, non squamoso; dopo terapia precedente) | 08/08/2025 (accelerata) | [FDA](https://www.fda.gov/drugs/resources-information-approved-drugs/fda-grants-accelerated-approval-zongertinib-non-squamous-nsclc-her2-tkd-activating-mutations) |
-| HER2 mutato NSCLC (433) | Sevabertinib | 19/11/2025 (accelerata) | solo risultato di ricerca, pagina FDA non letta |
-| ROS1 NSCLC (427) | Repotrectinib (15/11/2023), taletrectinib (11/06/2025) | — | solo risultato di ricerca, pagine FDA non lette |
+| HER2 mutato NSCLC (433) | Sevabertinib | 19/11/2025 (accelerata); estesa 09/09/2026 | letto su FDA (aggiornato 06/11/2026) |
+| ROS1 NSCLC (427) | Repotrectinib (15/11/2023; EMA condizionata 13/01/2025), taletrectinib (11/06/2025) | — | letto su FDA ed EPAR Augtyro (aggiornato 06/11/2026) |
 | BRAF NSCLC (430) | Encorafenib + binimetinib, indicato nell'EPAR Braftovi per NSCLC BRAF V600E avanzato | EU: nell'EPAR | [EMA Braftovi](https://www.ema.europa.eu/en/medicines/human/EPAR/braftovi) |
 
-Segnalato dalla ricerca ma non verificato su pagina primaria: estensioni 2026 di zongertinib (26/02/2026) e sevabertinib (09/09/2026), imlunestrant + abemaciclib (18/09/2026), zenocutuzumab per colangiocarcinoma NRG1+ (08/05/2026). Da non usare finché non letti sulle pagine FDA.
+Aggiornamento 06/11/2026: sono state lette sulle pagine FDA ed EMA le estensioni 2026 di zongertinib (26/02/2026), sevabertinib (09/09/2026) e imlunestrant + abemaciclib (18/09/2026), e l'autorizzazione EU di imlunestrant (09/01/2026). Restano non verificati: zenocutuzumab per colangiocarcinoma NRG1+ (08/05/2026). Da non usare finché non letti sulle pagine FDA.
 
 ## D. Non verificato
 
-KRAS/NRAS e anti-EGFR CRC, EGFR, ALK, MET, KRAS G12C NSCLC, T-DXd (stato FDA/EMA), zolbetuximab, pembrolizumab MSI-H (lato EMA), larotrectinib/entrectinib, avapritinib, ripretinib, ivosidenib CCA lato EMA, dabrafenib+trametinib (glioma, tiroide, NSCLC), tebentafusp, binimetinib NRAS, imatinib/nilotinib KIT melanoma, DDR2, STK11/KEAP1, schede tiroide e gliomi diagnostiche (WHO). Le categorie NCCN (Cat 1, 2A) non sono verificabili da fonti pubbliche gratuite: servirebbero le linee guida.
+KRAS/NRAS e anti-EGFR CRC, zolbetuximab, pembrolizumab MSI-H (lato EMA), larotrectinib (lato FDA) ed entrectinib (lato FDA), avapritinib, ripretinib, ivosidenib CCA lato EMA, dabrafenib+trametinib (glioma, tiroide, NSCLC), tebentafusp, binimetinib NRAS, imatinib/nilotinib KIT melanoma, DDR2, STK11/KEAP1, schede tiroide e gliomi diagnostiche (WHO). Le categorie NCCN (Cat 1, 2A) non sono verificabili da fonti pubbliche gratuite: servirebbero le linee guida.
+
+
+## E. Aggiornamento polmone (06/11/2026)
+
+Letti su fonti primarie: EPAR EMA di Tagrisso, Rybrevant (autorizzato 09/12/2021), Lazcluze (20/01/2025), Alecensa, Alunbrig, Lorviqua, Xalkori, Tepmetko, Tabrecta, Lumykras (condizionata), Krazati (condizionata), Retsevmo, Vitrakvi, Rozlytrek (condizionata) ed Enhertu (condizionata); pagine FDA di lazertinib + amivantamab (19/08/2024) e di alectinib adiuvante (18/04/2024); registro FDA delle approvazioni accelerate in corso (sotorasib 28/05/2021, adagrasib 12/12/2022, T-DXd NSCLC HER2 11/08/2022) e di quelle con beneficio clinico verificato (capmatinib 06/05/2020 → 10/08/2022, tepotinib 03/02/2021 → 15/02/2024). Restano non verificati: stato FDA di osimertinib + chemioterapia e delle indicazioni per esone 20, categorie NCCN e AIOM.
