@@ -261,6 +261,15 @@ const rigaAtcDoc = docRiga("**BRAF V600E nel carcinoma anaplastico");
 check("documento clinico (ATC): nessuna «sopravvivenza mediana di settimane»; 10–50%, test obbligatorio, EU = DTC non ATC",
   !/mediana di settimane|~40-50%/.test(rigaAtcDoc) && /10–50%/.test(rigaAtcDoc) && /obbligatoria/.test(rigaAtcDoc) && /non l'ATC/.test(rigaAtcDoc) && /inferiore a 2 anni/.test(rigaAtcDoc), rigaAtcDoc.slice(0, 160));
 
+// RET nel carcinoma midollare (WHO Endocrine 2022): test germinale raccomandato (non «obbligatorio»); ~metà degli sporadici; MEN2A codoni cisteinici.
+const retTir = entryDi("tiroide", "RET");
+check("RET MTC (scheda): test germinale «raccomandato» (WHO/ATA), non «obbligatorio»",
+  /test germinale di RET raccomandato in tutti i pazienti con MTC \(WHO 2022, ATA 2015\)/.test(retTir.note) && !/obbligatori/i.test(retTir.note), retTir.note);
+const rigaMtcDoc = docRiga("**RET nel carcinoma midollare");
+check("documento clinico (RET MTC): raccomandato; circa la metà degli sporadici (M918T fino all'80%); MEN2A codoni cisteinici, non solo C634",
+  /raccomandato in tutti i pazienti/.test(rigaMtcDoc) && !/obbligatori/i.test(rigaMtcDoc) && /circa la metà dei MTC sporadici/.test(rigaMtcDoc) && !/~40%/.test(rigaMtcDoc)
+  && /M918T fino all'80%/.test(rigaMtcDoc) && /codoni cisteinici di RET, in particolare C634/.test(rigaMtcDoc) && !/MEN2A con RET C634/.test(rigaMtcDoc), rigaMtcDoc.slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
