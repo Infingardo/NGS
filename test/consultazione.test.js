@@ -223,6 +223,13 @@ check("documento clinico (BRAF V600E CRC): backbone encorafenib+cetuximab, binim
   /encorafenib\+cetuximab dopo terapia sistemica precedente/.test(rigaBrafDoc) && /FOLFOX/.test(rigaBrafDoc)
   && !/sensibilità a encorafenib\+binimetinib/.test(rigaBrafDoc) && /schema del melanoma, non del CRC/.test(rigaBrafDoc), rigaBrafDoc.slice(0, 200));
 
+// GBM IDH-wild type (WHO CNS5): basta UNO tra TERT, EGFR amp, +7/-10 (non servono due o tre).
+const tertGbm = entryDi("glioma", "TERT");
+check("TERT GBM: l'azione dice che ne basta uno (non «TERT + EGFR + +7/-10» come somma)",
+  /basta uno tra TERT mut, EGFR amp, \+7\/-10/.test(tertGbm.action) && !/TERT \+ EGFR amp/.test(tertGbm.action), tertGbm.action);
+check("TERT GBM: il referto diagnostico non subordina TERT a «combinazione» con EGFR o +7/-10",
+  /ne basta uno solo tra mutazione del promotore TERT, amplificazione EGFR e \+7\/-10/.test(tertGbm.referto_diag) && !/in combinazione/i.test(tertGbm.referto_diag), tertGbm.referto_diag);
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
