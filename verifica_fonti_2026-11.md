@@ -38,4 +38,9 @@ Aggiornamento 06/11/2026: sono state lette sulle pagine FDA ed EMA le estensioni
 
 ## D. Non verificato
 
-KRAS/NRAS e anti-EGFR CRC, EGFR, ALK, MET, KRAS G12C NSCLC, T-DXd (stato FDA/EMA), zolbetuximab, pembrolizumab MSI-H (lato EMA), larotrectinib/entrectinib, avapritinib, ripretinib, ivosidenib CCA lato EMA, dabrafenib+trametinib (glioma, tiroide, NSCLC), tebentafusp, binimetinib NRAS, imatinib/nilotinib KIT melanoma, DDR2, STK11/KEAP1, schede tiroide e gliomi diagnostiche (WHO). Le categorie NCCN (Cat 1, 2A) non sono verificabili da fonti pubbliche gratuite: servirebbero le linee guida.
+KRAS/NRAS e anti-EGFR CRC, zolbetuximab, pembrolizumab MSI-H (lato EMA), larotrectinib (lato FDA) ed entrectinib (lato FDA), avapritinib, ripretinib, ivosidenib CCA lato EMA, dabrafenib+trametinib (glioma, tiroide, NSCLC), tebentafusp, binimetinib NRAS, imatinib/nilotinib KIT melanoma, DDR2, STK11/KEAP1, schede tiroide e gliomi diagnostiche (WHO). Le categorie NCCN (Cat 1, 2A) non sono verificabili da fonti pubbliche gratuite: servirebbero le linee guida.
+
+
+## E. Aggiornamento polmone (06/11/2026)
+
+Letti su fonti primarie: EPAR EMA di Tagrisso, Rybrevant (autorizzato 09/12/2021), Lazcluze (20/01/2025), Alecensa, Alunbrig, Lorviqua, Xalkori, Tepmetko, Tabrecta, Lumykras (condizionata), Krazati (condizionata), Retsevmo, Vitrakvi, Rozlytrek (condizionata) ed Enhertu (condizionata); pagine FDA di lazertinib + amivantamab (19/08/2024) e di alectinib adiuvante (18/04/2024); registro FDA delle approvazioni accelerate in corso (sotorasib 28/05/2021, adagrasib 12/12/2022, T-DXd NSCLC HER2 11/08/2022) e di quelle con beneficio clinico verificato (capmatinib 06/05/2020 → 10/08/2022, tepotinib 03/02/2021 → 15/02/2024). Restano non verificati: stato FDA di osimertinib + chemioterapia e delle indicazioni per esone 20, categorie NCCN e AIOM.

@@ -387,14 +387,30 @@ check("descrizioni dei geni (ROS1, ESR1, ERBB2, BRAF) e documento clinico alline
 
 // Polmone, lotto 1 (EPAR EMA; registro FDA delle approvazioni accelerate in corso, 06/11/2026).
 const metL = entryDi("nsclc", "MET"), krasL = entryDi("nsclc", "KRAS");
-check("MET polmone: EMA limitata a dopo immunoterapia e/o chemioterapia a base di platino (tepotinib e capmatinib); FDA da verificare separatamente; badge invariato",
+check("MET polmone: EMA limitata a dopo immunoterapia e/o chemioterapia a base di platino (tepotinib e capmatinib); FDA ordinaria (accelerata poi convertita); badge invariato",
   /EMA: tepotinib e capmatinib indicati nel NSCLC avanzato con MET exon 14 skipping, nei pazienti che necessitano di terapia sistemica dopo precedente immunoterapia e\/o chemioterapia a base di platino/.test(metL.note)
-  && /Indicazione FDA da verificare separatamente/.test(metL.note) && /FDA · EMA · NCCN Cat 1/.test(metL.evidence) && metL.last_review === "2026-03", metL.note.slice(-260));
+  && !/Indicazione FDA da verificare separatamente/.test(metL.note) && /capmatinib: accelerata 06\/05\/2020, convertita 10\/08\/2022; tepotinib: accelerata 03\/02\/2021, convertita 15\/02\/2024/.test(metL.note) && /FDA · EMA · NCCN Cat 1/.test(metL.evidence) && metL.last_review === "2026-03", metL.note.slice(-260));
 check("KRAS G12C polmone: EMA condizionata (06/01/2022, 05/01/2024) dopo ≥1 terapia; FDA accelerata (28/05/2021, 12/12/2022) in corso; badge invariato; last_review invariato",
   /sotorasib \(06\/01\/2022\) e adagrasib \(05\/01\/2024\) autorizzati con procedura condizionata/.test(krasL.note) && /sotorasib \(28\/05\/2021\) e adagrasib \(12\/12\/2022\) con approvazione accelerata/.test(krasL.note)
   && /FDA · EMA/.test(krasL.evidence) && krasL.last_review === "2026-03" && !/non approvat/i.test(tutto(krasL)), krasL.note.slice(-300));
 check("T-DXd HER2 polmone: FDA accelerata 11/08/2022 dopo terapia sistemica; EMA condizionata dopo platino ± immunoterapia; badge FDA · EMA conservato",
   /EMA: autorizzazione condizionata nel NSCLC avanzato HER2-mutato dopo chemioterapia a base di platino, con o senza immunoterapia/.test(her2L.note) && /^FDA · EMA/.test(her2L.evidence), her2L.evidence);
+
+// Polmone, chiusura lotto: EGFR (amivantamab+lazertinib, osimertinib+chemio), ALK adiuvante, ROS1 entrectinib.
+const egfrL = entryDi("nsclc", "EGFR"), alkL = entryDi("nsclc", "ALK");
+check("EGFR polmone: amivantamab+lazertinib e osimertinib+platino/pemetrexed distinti per linea e biomarcatore; FDA separata; badge invariato; last_review invariato",
+  /amivantamab \+ lazertinib \(I linea\)/.test(egfrL.drug) && /osimertinib in monoterapia per le mutazioni attivanti di EGFR; osimertinib con pemetrexed e chemioterapia a base di platino per esone 19 del\/L858R \(EPAR Tagrisso\)/.test(egfrL.note) && !/osimertinib in monoterapia o con carboplatino/.test(egfrL.note) && /Rybrevant autorizzato 09\/12\/2021, Lazcluze 20\/01\/2025/.test(egfrL.note)
+  && /dopo fallimento di un TKI EGFR: amivantamab \+ carboplatino\/pemetrexed/.test(egfrL.note) && /inserzioni esone 20/.test(egfrL.note) && /approvato il 19\/08\/2024/.test(egfrL.note)
+  && /stato FDA di osimertinib \+ chemioterapia e delle indicazioni per esone 20 non verificato/.test(egfrL.note) && /^FDA I linea · EMA · NCCN Cat 1 · AIOM$/.test(egfrL.evidence) && egfrL.last_review === "2026-03", egfrL.note.slice(-300));
+check("ALK polmone: alectinib adiuvante EMA (alto rischio, RCP 5.1) e FDA 18/04/2024 con stadio della popolazione ALINA; I linea invariata",
+  /Alectinib adiuvante: EMA, dopo resezione completa in pazienti ALK-positivi ad alto rischio di recidiva/.test(alkL.note) && /FDA 18\/04\/2024/.test(alkL.note) && /stadio IB, tumori ≥4 cm, fino a IIIA, AJCC 7ª ed\./.test(alkL.note)
+  && /alectinib, brigatinib, lorlatinib/.test(alkL.referto) && alkL.last_review === "2026-03", alkL.note.slice(-260));
+check("ROS1 polmone: entrectinib EMA (condizionata) solo se non pretrattato con inibitori ROS1",
+  /Entrectinib \(EMA, autorizzazione condizionata\): ROS1-positivo avanzato solo se non precedentemente trattato con inibitori ROS1/.test(ros1.note), ros1.note.slice(0, 260));
+
+check("documento clinico (EGFR, ALK, ROS1, MET): allineato alle schede (amivantamab+lazertinib, esone 20; alectinib adiuvante; entrectinib non pretrattato; MET conversione FDA)",
+  /amivantamab \+ lazertinib/.test(docRiga("**EGFR**")) && /esone 20/.test(docRiga("**EGFR**")) && /alectinib adiuvante/i.test(docRiga("**ALK**")) && /non precedentemente trattato con inibitori ROS1/.test(docRiga("**ROS1**"))
+  && /convertit/.test(docRiga("**MET exon 14 skipping**")), docRiga("**EGFR**").slice(-220));
 
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
