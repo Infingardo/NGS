@@ -230,6 +230,12 @@ check("TERT GBM: l'azione dice che ne basta uno (non «TERT + EGFR + +7/-10» co
 check("TERT GBM: il referto diagnostico non subordina TERT a «combinazione» con EGFR o +7/-10",
   /ne basta uno solo tra mutazione del promotore TERT, amplificazione EGFR e \+7\/-10/.test(tertGbm.referto_diag) && !/in combinazione/i.test(tertGbm.referto_diag), tertGbm.referto_diag);
 
+for (const [inizio, nome] of [["**TERT nei gliomi IDH-wild type**", "riga TERT gliomi"], ["**TERT promoter — ruolo diagnostico in GBM**", "riga TERT ruolo diagnostico"], ["**Pattern cromosomico +7/-10**", "riga +7/-10"]]) {
+  const r = docRiga(inizio);
+  check(`documento clinico (GBM, ${nome}): ne basta uno dei tre criteri; nessun «due dei tre» né «insieme ad»`,
+    /ne basta uno/.test(r) && !/due dei tre|insieme ad|Gr3 di default/.test(r), r.slice(0, 200));
+}
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
