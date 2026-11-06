@@ -218,6 +218,11 @@ for (const [inizio, nome] of [["**Scenario A", "scenario A"], ["**IDH1/IDH2 — 
     /6 agosto 2024/.test(r) && !/vorasidenib[^.]*2023/i.test(r) && !/Gr1-2|grado 1-2/i.test(r), r.slice(0, 160));
 }
 
+const rigaBrafDoc = docRiga("**BRAF V600E**: test obbligatorio");
+check("documento clinico (BRAF V600E CRC): backbone encorafenib+cetuximab, binimetinib solo come schema del melanoma",
+  /encorafenib\+cetuximab dopo terapia sistemica precedente/.test(rigaBrafDoc) && /FOLFOX/.test(rigaBrafDoc)
+  && !/sensibilità a encorafenib\+binimetinib/.test(rigaBrafDoc) && /schema del melanoma, non del CRC/.test(rigaBrafDoc), rigaBrafDoc.slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
