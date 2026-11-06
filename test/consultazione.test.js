@@ -307,6 +307,19 @@ check("documento clinico (1p/19q e TERT GBM): ATRX e H3 integrati; nessun «senz
   /ATRX non valutabile con il pannello/.test(docRiga("**1p/19q codelezione**")) && !/senza fenotipo chiaro/.test(docRiga("**1p/19q codelezione**"))
   && /H3 K27-altered e H3 G34-mutant non valutabili con il pannello/.test(docRiga("**TERT nei gliomi IDH-wild type**")), docRiga("**1p/19q codelezione**").slice(0, 200));
 
+// Algoritmo di test IDH (WHO CNS5/EANO): l'età ≥55 non basta da sola per evitare il sequenziamento.
+const ihcIdh = idhGlioma.ihc.note;
+check("glioma IDH (IHC): esenzione dal sequenziamento solo con ≥55 anni + GBM classico + sede non mediana + ATRX conservato + nessun glioma precedente",
+  /eccetto nei pazienti ≥55 anni con GBM istologicamente classico, sede non mediana, ATRX conservato e nessun precedente glioma di grado inferiore/.test(ihcIdh)
+  && /sequenziare IDH1 \(codone 132\) e IDH2 \(codone 172\)/.test(ihcIdh), ihcIdh.slice(0, 200));
+check("glioma IDH (IHC): infratentoriali con denominatore corretto (astrocitomi infratentoriali IDH-mutati, ~80% non-R132H), non «tutti i gliomi infratentoriali»",
+  /negli astrocitomi infratentoriali IDH-mutati circa l'80% delle varianti è non-R132H/.test(ihcIdh) && !/NGS necessario per varianti non-R132H e IDH2/.test(ihcIdh), ihcIdh.slice(-160));
+check("TERT GBM (scheda e documento): EGFR e +7/−10 negativi non escludono il GBM; nessuna sensibilità 59%/36% nella scheda operativa",
+  /la negatività per amplificazione di EGFR e per \+7\/−10 non esclude il glioblastoma/.test(tertGbm.note) && !/59%|36%/.test(tertGbm.note)
+  && /non esclude il glioblastoma/.test(docRiga("**TERT nei gliomi IDH-wild type**")), tertGbm.note.slice(-200));
+check("documento clinico (IDH, riga ruolo diagnostico): algoritmo di sequenziamento con le cinque condizioni di esenzione",
+  /eccetto nei pazienti ≥55 anni con GBM istologicamente classico, sede non mediana, ATRX conservato e nessun precedente glioma di grado inferiore/.test(docRiga("**IDH1/IDH2 — ruolo diagnostico primario**")), docRiga("**IDH1/IDH2 — ruolo diagnostico primario**").slice(0, 200));
+
 // 5. Pralsetinib: autorizzazione EU ritirata il 24/10/2024.
 for (const [scId, nome] of [["nsclc", "NSCLC"], ["tiroide", "tiroide"]]) {
   const e = entryDi(scId, "RET");
