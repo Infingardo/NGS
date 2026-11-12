@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostica molecolare complementare · NGS FBF-Sacco</title>
+<style>
+*{box-sizing:border-box}
+body{font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f6f8;color:#172536;margin:0}
+header{background:white;border-bottom:3px solid #1565c0;padding:20px max(16px,calc((100vw - 1120px)/2))}
+h1{font-size:clamp(22px,3.5vw,29px);line-height:1.2;margin:12px 0 7px}
+header p{margin:0;color:#526579}
+nav a{color:#0d47a1;text-decoration:none;font-size:14px;font-weight:650}nav a:hover{text-decoration:underline}
+main{max-width:1120px;margin:0 auto;padding:22px 16px 50px}
+.note{background:#fff9eb;border-left:4px solid #b77916;border-radius:6px;padding:13px 16px;margin-bottom:19px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.controls button{background:white;border:1px solid #b6c4d2;border-radius:20px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;color:#18466e}
+.controls button[aria-pressed="true"]{background:#1565c0;color:white;border-color:#1565c0}
+label{display:block;color:#334d67;font-weight:650;font-size:13px;margin-bottom:6px}
+input{width:100%;padding:11px;border-radius:7px;border:1px solid #9bafc3;font:inherit;background:white}
+.count{font-size:13px;color:#647587;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,450px),1fr));gap:14px}
+article{background:white;border:1px solid #dce4ea;border-left:4px solid #1565c0;border-radius:9px;padding:17px 18px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:7px;align-items:center}
+.area{font-size:11px;text-transform:uppercase;font-weight:700;letter-spacing:.06em;color:#536b81}
+.tag{font-size:11px;color:#395065;border:1px solid #ced8e0;padding:3px 8px;border-radius:15px}
+h2{font-size:17px;margin:9px 0 12px;color:#102e49}
+.field{margin:8px 0;font-size:14px}.field b{color:#173c5f}
+.caution{background:#f5f8fc;padding:9px 11px;border-radius:5px}
+.source{font-size:13px;color:#0d47a1;font-weight:600}
+footer{margin-top:24px;font-size:12px;color:#526579}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<header>
+<nav><a href="./">← NGS Integrato · torna alla Home</a></nav>
+<h1>Diagnostica molecolare complementare</h1>
+<p>Selezione operativa di test non coperti dal pannello Diatech Pharmacogenetics v3</p>
+</header>
+<main>
+<div class="note"><strong>Attenzione:</strong> «non nel Diatech v3» NON significa automaticamente «non disponibile nel laboratorio/ASST». Verificare sempre disponibilità in house, metodica effettiva, requisiti preanalitici e possibilità di invio esterno. Sono test selezionati per utilità clinica, non una graduatoria derivata dai volumi del reparto.</div>
+<label for="q">Cerca per gene, istotipo o metodica</label>
+<input id="q" type="search" placeholder="Esempio: USP6, linfoma, FISH, MGMT" autocomplete="off">
+<div class="controls" role="group" aria-label="Filtra per ambito">
+<button type="button" data-area="Tutti" aria-pressed="true">Tutti</button>
+<button type="button" data-area="Neuropatologia" aria-pressed="false">Neuropatologia</button>
+<button type="button" data-area="Ematopatologia" aria-pressed="false">Ematopatologia</button>
+<button type="button" data-area="Tessuti molli" aria-pressed="false">Tessuti molli</button>
+<button type="button" data-area="Gastroenteropatologia" aria-pressed="false">Gastroenteropatologia</button>
+</div>
+<p class="count" id="count"></p>
+<div class="grid" id="results"></div>
+<footer>Revisione selettiva: 12 novembre 2026 · Supporto alla scelta del test, non prescrizione automatica. Fonti consultabili nelle singole schede. Le metodiche e i criteri devono essere confermati con il laboratorio esecutore.</footer>
+</main>
+<script>
+const TESTS = [{"area":"Gastroenteropatologia","priority":"Alta utilità","test":"Metilazione del promotore MLH1","indicazione":"Carcinoma colorettale o endometriale con perdita IHC di MLH1/PMS2, nell'algoritmo di triage per sospetta sindrome di Lynch.","metodo":"Analisi dedicata della metilazione MLH1 su DNA tumorale (es. pyrosequencing/MS-PCR validato).","limite":"BRAF V600E può essere impiegato come triage nel colon-retto, non nell'endometrio. La metilazione supporta un'origine sporadica ma non sostituisce la valutazione anamnestica/genetica nei casi sospetti.","fonte":"https://pmc.ncbi.nlm.nih.gov/articles/PMC12770061/"},{"area":"Neuropatologia","priority":"Alta utilità","test":"Metilazione del promotore MGMT","indicazione":"Glioblastoma e altri gliomi in cui il dato predittivo per temozolomide modifica la decisione terapeutica.","metodo":"Analisi della metilazione MGMT (pyrosequencing o altro metodo validato).","limite":"È un marcatore predittivo, non un criterio nosologico; soglia e zona grigia dipendono dal metodo.","fonte":"https://www.nature.com/articles/s41571-020-00447-z"},{"area":"Neuropatologia","priority":"Alta utilità","test":"Codelezione interi bracci 1p/19q","indicazione":"Glioma diffuso IDH-mutato con ATRX conservato e sospetto oligodendroglioma.","metodo":"Preferibile profilo di copy number dell'intero braccio (array, methylation array o analisi equivalente); FISH mirata con attenzione ai limiti.","limite":"Una delezione focale rilevata con sole sonde FISH non dimostra necessariamente la codelezione dell'intero braccio.","fonte":"https://academic.oup.com/neuro-oncology/article/25/10/1731/7189810"},{"area":"Neuropatologia","priority":"Alta utilità","test":"CDKN2A/B delezione omozigote","indicazione":"Astrocitoma IDH-mutato: criterio molecolare di CNS WHO grado 4 anche senza necrosi/proliferazione microvascolare.","metodo":"Profilo CNV validato, methylation array, FISH/MLPA o metodo equivalente per perdita omozigote.","limite":"La mutazione puntiforme di CDKN2A nel pannello DNA non equivale alla delezione omozigote CDKN2A/B.","fonte":"https://academic.oup.com/neuro-oncology/article/25/10/1731/7189810"},{"area":"Neuropatologia","priority":"Selettiva","test":"Profilo cromosomico +7/−10","indicazione":"Glioma diffuso IDH-wildtype di adulto privo di necrosi/proliferazione microvascolare, quando serve il criterio molecolare di glioblastoma.","metodo":"SNP-array, methylation array con CNV o altra piattaforma validata per whole-chromosome gain/loss.","limite":"Non confondere alterazioni focali del cromosoma 7 o 10 con il pattern combinato whole-chromosome +7/−10.","fonte":"https://academic.oup.com/neuro-oncology/article/25/10/1731/7189810"},{"area":"Ematopatologia","priority":"Alta utilità","test":"Riarrangiamenti MYC, BCL2 e BCL6","indicazione":"Linfoma B a grandi cellule: identificazione di DLBCL/HGBL con MYC e BCL2 riarrangiati (± BCL6).","metodo":"FISH MYC iniziale; BCL2 e BCL6 secondo algoritmo validato se MYC riarrangiato; eventuali sonde partner IG.","limite":"IHC double-expressor non sostituisce FISH. Amplificazione/copy gain non equivale a riarrangiamento. Il solo MYC/BCL6 non definisce la stessa entità WHO-HAEM5.","fonte":"https://onlinelibrary.wiley.com/doi/10.1002/hem3.70207"},{"area":"Tessuti molli","priority":"Alta utilità","test":"Amplificazione MDM2","indicazione":"Tumore adipocitario profondo o atipico: ALT/WDLPS e liposarcoma dedifferenziato; differenziale con lipoma e altre proliferazioni fusate.","metodo":"FISH per amplificazione MDM2 o metodo CNV quantitativo validato.","limite":"IHC MDM2/CDK4 è solo un supporto; il dato diagnostico è l'amplificazione. Il Diatech non include MDM2 CNV.","fonte":"https://pmc.ncbi.nlm.nih.gov/articles/PMC10084007/"},{"area":"Tessuti molli","priority":"Alta utilità","test":"Fusione SS18::SSX","indicazione":"Neoplasia fusocellulare/monofasica o biphasica con sospetto sarcoma sinoviale.","metodo":"IHC fusion-specific se validata; conferma con FISH SS18 e/o RNA-NGS per SS18::SSX quando necessario.","limite":"Una FISH break-apart identifica SS18 riarrangiato ma non sempre il partner; interpretare con morfologia e IHC.","fonte":"https://pmc.ncbi.nlm.nih.gov/articles/PMC10084007/"},{"area":"Tessuti molli","priority":"Selettiva","test":"Riarrangiamento DDIT3","indicazione":"Neoplasia adipocitaria mixoide sospetta per liposarcoma mixoide.","metodo":"DDIT3 FISH; in alternativa RNA-NGS mirato a FUS::DDIT3 / EWSR1::DDIT3.","limite":"La sola alterazione FUS o EWSR1 non è specifica. Attenzione ai pattern FISH atipici in lesioni con coamplificazioni.","fonte":"https://pmc.ncbi.nlm.nih.gov/articles/PMC10084007/"},{"area":"Tessuti molli","priority":"Selettiva","test":"Fusioni EWSR1::ETS (Ewing)","indicazione":"Sarcoma a piccole cellule rotonde con fenotipo e morfologia compatibili con Ewing.","metodo":"RNA-NGS per partner di fusione o combinazione FISH/RT-PCR appropriata.","limite":"EWSR1 break-apart isolato è NON specifico e può essere positivo in molte altre entità.","fonte":"https://pmc.ncbi.nlm.nih.gov/articles/PMC10084007/"},{"area":"Neuropatologia","priority":"Selettiva","test":"Fusione KIAA1549::BRAF","indicazione":"Glioma circoscritto pediatrico/giovanile con sospetto astrocitoma pilocitico.","metodo":"RNA-NGS fusioni o saggio dedicato; metodica mirata secondo piattaforma.","limite":"BRAF V600E o SNV rilevate dal Diatech non escludono né identificano questa specifica fusione.","fonte":"https://academic.oup.com/neuro-oncology/article/25/10/1731/7189810"},{"area":"Tessuti molli","priority":"Mirata (caso Bilancia)","test":"Riarrangiamento USP6","indicazione":"Fascite nodulare, fascite intravascolare o cisti ossea aneurismatica in contesto morfologico compatibile.","metodo":"FISH break-apart USP6; RNA-NGS con copertura USP6 se FISH negativa/equivoca e conferma ancora necessaria.","limite":"Un risultato negativo NON esclude fascite nodulare: sono possibili riarrangiamenti criptici e limiti tecnici.","fonte":"https://www.mayocliniclabs.com/test-catalog/overview/58104/"},{"area":"Tessuti molli","priority":"Mirata (caso Bilancia)","test":"FOS nella fascite/miosite proliferativa","indicazione":"Proliferazione miofibroblastica infiltrativa con cellule ganglion-like: fascite o miosite proliferativa.","metodo":"IHC c-FOS orientativa dove disponibile; eventualmente FISH FOS o RNA-NGS dedicato (laboratorio di riferimento).","limite":"Nel 2026 IHC FOS positiva in circa il 60% dei casi adulti; FISH e RNA-NGS possono risultare negativi anche nei casi morfologicamente tipici.","fonte":"https://pubmed.ncbi.nlm.nih.gov/41882504/"}];
+let selectedArea = "Tutti";
+const list = document.getElementById("results");
+const q = document.getElementById("q");
+function el(tag,className,txt){const e=document.createElement(tag);if(className)e.className=className;if(txt!==undefined)e.textContent=txt;return e;}
+function field(title,value,cls){const p=el("p","field"+(cls?" "+cls:""));const b=el("b","",title+" ");p.appendChild(b);p.appendChild(document.createTextNode(value));return p;}
+function draw(){
+  const key=q.value.trim().toLocaleLowerCase("it");
+  const rows=TESTS.filter(x=>(selectedArea==="Tutti"||x.area===selectedArea)&&(!key||Object.values(x).join(" ").toLocaleLowerCase("it").includes(key)));
+  list.replaceChildren();
+  for(const x of rows){
+    const a=el("article");
+    const top=el("div","top");top.appendChild(el("span","area",x.area));top.appendChild(el("span","tag",x.priority));a.appendChild(top);
+    a.appendChild(el("h2","",x.test));
+    a.appendChild(field("Quando:",x.indicazione));
+    a.appendChild(field("Come:",x.metodo));
+    a.appendChild(field("Limite:",x.limite,"caution"));
+    const src=el("a","source","Fonte e approfondimento");src.href=x.fonte;src.target="_blank";src.rel="noopener noreferrer";a.appendChild(src);
+    list.appendChild(a);
+  }
+  document.getElementById("count").textContent=rows.length+" test visualizzati su "+TESTS.length;
+}
+q.addEventListener("input",draw);
+document.querySelectorAll("[data-area]").forEach(b=>b.addEventListener("click",()=>{
+  selectedArea=b.dataset.area;
+  document.querySelectorAll("[data-area]").forEach(c=>c.setAttribute("aria-pressed",String(c===b)));
+  draw();
+}));
+draw();
+</script>
+</body>
+</html>
