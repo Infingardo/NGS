@@ -73,8 +73,6 @@ Sviluppato per uso interno — non sostituisce linee guida AIOM/ESMO/WHO né il 
 
 ---
 
----
-
 ## Funzionalità principali
 
 ### Due modalità di navigazione
