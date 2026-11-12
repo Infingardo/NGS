@@ -44,12 +44,41 @@ Sviluppato per uso interno — non sostituisce linee guida AIOM/ESMO/WHO né il 
 - PD-L1 → solo IHC (22C3/28-8/SP263)
 - CLDN18.2 → solo IHC (Ventana 43-14A RxDx)
 
+## Diagnostica molecolare complementare — invii esterni mirati
+
+**Promemoria operativo (12/11/2026).** Selezione dei test più utili nella diagnostica corrente **non eseguibili con il pannello Diatech v3**. Non è un catalogo di tutte le indagini molecolari né una dichiarazione che tali esami siano indisponibili in ogni laboratorio della rete: **verificare la disponibilità locale** e richiedere un invio esterno solo quando necessario. L'indicazione nasce sempre da **morfologia, IHC, sede e quesito diagnostico**; il pannello NGS negativo non sostituisce un test strutturale, di metilazione o germinale non previsto dal kit.
+
+| Ambito / scenario | Test complementare | Quando richiederlo | Metodica e limite interpretativo |
+|---|---|---|---|
+| **SNC — glioma IDH-mutato con ATRX conservato**, sospetto oligodendroglioma | **Codelezione completa 1p/19q** | Necessaria per la diagnosi integrata di oligodendroglioma | Preferibile profilo *whole-arm* tramite SNP-array/array-CGH o metodica CNV validata; la FISH a singoli loci può confondere delezioni parziali con codelezione completa |
+| **SNC — astrocitoma IDH-mutato** | **Delezione omozigote CDKN2A/B** | Ricerca del criterio molecolare di **CNS WHO grado 4** anche senza necrosi/proliferazione microvascolare | FISH, MLPA, array-CGH/SNP-array o CNV dedicata; distinguere delezione **omozigote** da eterozigote. La variante SNV di CDKN2A eventualmente presente nel kit non documenta la delezione |
+| **SNC — glioma diffuso IDH-wildtype dell'adulto** senza criteri istologici di grado 4 | **Profilo cromosomico +7/−10** | Se necessario per la classificazione integrata e non già risolta da **mutazione TERT** o **amplificazione EGFR** nei contesti WHO pertinenti | Profilo genomico CNV o FISH adeguatamente validata; il criterio è **gain del cromosoma 7 e loss del cromosoma 10**, non una singola alterazione focale |
+| **SNC — glioblastoma** | **Metilazione del promotore MGMT** | Biomarker **predittivo** di beneficio dagli agenti alchilanti, particolarmente rilevante nelle decisioni sulla temozolomide | Test di metilazione validato (es. pirosequenziamento); **non** definisce il tipo tumorale o il grado |
+| **Ematopatologia — linfoma B a grandi cellule/aggressivo** | **FISH MYC**, poi **BCL2/BCL6** se MYC riarrangiato | Identificazione di riarrangiamenti con impatto classificativo e clinico | FISH *break-apart* e, se indicato, partner di MYC. **MYC/BCL2 double-expressor IHC ≠ double-hit**. Nella **WHO-HAEM5**, la categoria DLBCL/HGBCL con MYC e BCL2 riarrangiati non comprende i soli MYC/BCL6 |
+| **CRC o carcinoma endometriale dMMR** con perdita IHC di **MLH1/PMS2** | **Metilazione del promotore MLH1** | Triage della possibile eziologia sporadica e del percorso per sindrome di Lynch | Metilazione su DNA tumorale. **BRAF V600E è utile come triage solo nel CRC**, non nell'endometrio; BRAF wildtype non esclude metilazione MLH1. Un risultato metilato non esclude in assoluto un rischio ereditario in presenza di forte sospetto clinico |
+| **Tessuti molli — tumore adipocitico atipico o sospetto liposarcoma dedifferenziato** | **Amplificazione MDM2** | Differenziale con lipoma, lesione adipocitica benigna e altri sarcomi | Preferire FISH/analisi CNV validata; IHC MDM2/CDK4 da sola non equivale a prova di amplificazione |
+| **Tessuti molli — sospetto sarcoma sinoviale** | **Riarrangiamento SS18 / fusione SS18::SSX** | Conferma di un'ipotesi formulata su morfologia e IHC | FISH SS18 oppure RNA-seq mirato alla fusione; privilegiare la dimostrazione del partner quando necessaria |
+| **Tessuti molli — sospetta fascite nodulare**, specie lesioni profonde, atipiche o su piccola biopsia | **Riarrangiamento USP6** | Supporto al differenziale con neoplasie fusocellulari maligne | FISH USP6 o RNA-seq mirato; la negatività non esclude la diagnosi per limiti preanalitici, analitici o eterogeneità dei partner |
+
+**Caso mirato, non test di routine:** per **fascite/miosite proliferativa dell'adulto** con cellule simil-gangliari, **FOS** (IHC e, selettivamente, FISH/RNA-seq) è più pertinente di USP6 come prima ipotesi molecolare. Il dato è ancora da integrare criticamente: una serie del 2026 ha documentato espressione nucleare diffusa di FOS in circa il 60% dei casi adulti e sensibilità non ottimale delle indagini di riarrangiamento. **Un FOS negativo non esclude la lesione**. Non estendere automaticamente il test a tutte le proliferazioni miofibroblastiche.
+
+**Prima dell'invio:** selezionare il blocco a maggior contenuto lesionale, stimare cellularità e fissazione, indicare il quesito differenziale, specificare **tipo di alterazione cercata** (fusione, amplificazione, delezione, metilazione), metodica richiesta e limite atteso di un risultato negativo. Evitare FISH generiche **EWSR1** come screening indiscriminato: il riarrangiamento, senza partner e contesto morfologico, è poco specifico.
+
+**Riferimenti selezionati:**
+- [EANO, strumenti diagnostici molecolari per WHO CNS5 (2023)](https://pmc.ncbi.nlm.nih.gov/articles/PMC10547522/): codelezione *whole-arm*, CDKN2A/B e +7/−10; [EANO, gliomi diffusi (2021)](https://pmc.ncbi.nlm.nih.gov/articles/PMC7904519/): MGMT e triage.
+- [EHA, Large B-cell lymphoma Clinical Practice Guidelines (2025)](https://onlinelibrary.wiley.com/doi/full/10.1002/hem3.70207): strategia FISH MYC → BCL2/BCL6.
+- [EMQN, best practice per MSI/dMMR (2025)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12816731/): metilazione MLH1 e limiti di BRAF.
+- [Linee guida di testing molecolare nei sarcomi (2023)](https://pmc.ncbi.nlm.nih.gov/articles/PMC10209662/): selezione morphology-based; [guideline MDM2/SS18 (2020)](https://pubmed.ncbi.nlm.nih.gov/32092619/).
+- [USP6 e fascite nodulare (2025)](https://pubmed.ncbi.nlm.nih.gov/41293881/); [FOS nella fascite/miosite proliferativa (AJSP, 2026)](https://pubmed.ncbi.nlm.nih.gov/41882504/).
+
+---
+
 ---
 
 ## Funzionalità principali
 
 ### Due modalità di navigazione
-- **Cerca per Gene** — dato un gene alterato nel referto NGS, mostra scenari clinici, farmaci, evidenze, frase per referto
+- **Cerca per Gene** — dato un gene alterato nel referto NGS, mostra scenari clinici, farmaci, evidenze e informazioni da valutare nel referto (senza generare frasi copiabili)
 - **Cerca per Istotipo** — dato l'istotipo, mostra tutti i biomarcatori rilevanti con priorità clinica
 
 ### Sistema di priorità
@@ -125,6 +154,8 @@ Il tool distingue tre livelli di copertura:
 ### v2.0 (novembre 2026)
 Versione del software 2.0. Aggiornamento parziale dei contenuti, **non** una revisione completa del database.
 
+- **README, 12/11/2026 (solo documentazione)**: aggiunta selezione di esami molecolari complementari da richiedere, se non disponibili in-house, per SNC, linfomi B aggressivi, dMMR e lesioni mesenchimali; distinti USP6 (fascite nodulare) e FOS (fascite/miosite proliferativa, uso selettivo). Nessuna modifica al database, ai badge o alla versione dell'app.
+
 - **Stato regolatorio (fonti FDA/EMA)**:
   - NRG1 PDAC: approvazione FDA accelerata il 4 dicembre 2024.
   - BRAF colon-retto: I linea con encorafenib+cetuximab+FOLFOX indicata anche dall'EMA (EPAR Braftovi).
@@ -171,7 +202,7 @@ Versione del software 2.0. Aggiornamento parziale dei contenuti, **non** una rev
 Strumento ad uso **interno di reparto**, sviluppato e revisionato da personale specialistico.  
 **Non sostituisce le linee guida AIOM, ESMO, WHO né il giudizio clinico del patologo e dell'oncologo.**  
 I contenuti terapeutici devono essere verificati rispetto alle indicazioni approvate aggiornate prima di qualunque decisione clinica.  
-I dati regolatori sono aggiornati alla revisione indicata nel badge versione; il panorama approvatorio cambia rapidamente.
+I dati regolatori sono riferiti alla revisione scientifica della singola scheda (`last_review`), non al numero di versione software; il panorama approvatorio cambia rapidamente.
 
 ---
 
