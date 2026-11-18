@@ -6,7 +6,7 @@
    2. nessuna entry dichiara una classe di alterazione che il saggio non produce;
    3. non esiste nessun modo di copiare una frase di referto da qui. */
 
-const { PANEL, GENE_DESC, SC, buildGeneIndex, makeRef, evClass, SOURCE } = require("./extract.js");
+const { PANEL, GENE_DESC, SC, buildGeneIndex, makeRef, evClass, SOURCE, DIAGNOSI, cercaDiagnosi, coperturaAlterazione, esitoDiagnosi } = require("./extract.js");
 
 let pass = 0, fail = 0;
 const failures = [];
@@ -432,6 +432,92 @@ check("RET agnostico: selpercatinib resta l'unico farmaco (EMA agnostico verific
 const akt1 = entryDi("mammella", "AKT1");
 check("AKT1: badge FDA e EMA; nota con indicazione EU PIK3CA/AKT1/PTEN",
   evClass(tag(akt1, /^FDA/) || "") === "ev-FDA" && evClass(tag(akt1, /^EMA/) || "") === "ev-EMA" && /PIK3CA\/AKT1\/PTEN/.test(akt1.note) && /EU/.test(akt1.note) && /dopo ricorrenza o progressione su terapia endocrina/.test(akt1.note), akt1.evidence);
+
+/* ─────────────────────────────────────────────────────────────── */
+group("Ricerca per diagnosi: la copertura si calcola dal pannello, l'assenza non si confonde con il 'no'");
+
+const ids = q => cercaDiagnosi(q).map(d => d.id);
+const esitoDi = id => esitoDiagnosi(DIAGNOSI.find(d => d.id === id)).esito;
+
+// esito "no": DFSP, fusione definente con nessun partner nel pannello
+check("'dermatofibrosarcoma' trova il DFSP", ids("dermatofibrosarcoma").includes("dfsp"), ids("dermatofibrosarcoma").join(","));
+check("'DFSP' (sigla, maiuscole) trova il DFSP", ids("DFSP").includes("dfsp"));
+check("diagnosi scritta per esteso con contesto trova il DFSP", ids("Dermatofibrosarcoma protuberans della cute del dorso").includes("dfsp"));
+check("DFSP: COL1A1::PDGFB non coperta, esito 'no'", esitoDi("dfsp") === "no" && coperturaAlterazione(DIAGNOSI.find(d => d.id === "dfsp").alterazioni[0]) === "non_coperta");
+
+// esito "si": GIST (KIT/PDGFRA coperti) ma SDH non coperto, conteggio esplicito
+const gist = esitoDiagnosi(DIAGNOSI.find(d => d.id === "gist"));
+check("GIST: esito 'si', 2 di 3 alterazioni rilevate (SDH fuori pannello)", gist.esito === "si" && gist.coperte === 2 && gist.totale === 3, JSON.stringify(gist));
+
+// esito "parziale": WD/DD liposarcoma (CDK4 nel pannello solo come SNV, MDM2 assente)
+const lps = esitoDiagnosi(DIAGNOSI.find(d => d.id === "lps_wd_dd"));
+check("liposarcoma WD/DD: esito 'parziale' (CDK4 solo SNV, amplificazione non rilevata)", lps.esito === "parziale" && lps.copertura.join() === "non_coperta,parziale", JSON.stringify(lps));
+
+// classi mai coperte
+check("classe 'del' (SMARCB1) mai coperta", coperturaAlterazione({ geni: ["SMARCB1"], classe: "del" }) === "non_coperta");
+check("MSI coperto come classe", coperturaAlterazione({ geni: ["MSI"], classe: "msi" }) === "coperta");
+
+// accenti e sigle corte
+check("accenti ignorati: 'adenoido-cìstico' trova il carcinoma adenoido-cistico", ids("adenoido-cìstico").includes("adenoidocistico"));
+check("sigla corta non pesca dentro altre parole ('istmica' non trova il TMI)", !ids("istmica").includes("tmi"));
+check("diagnosi non in elenco → lista vuota (non un esito 'no')", ids("carcinoma a cellule di Merkel").length === 0);
+check("query troppo corta → nessun risultato", ids("li").length === 0);
+
+// integrità dati: ogni voce ha fonte, alterazioni con classe valida; stato assente (validata) o "bozza"
+const CLASSI = ["snv", "fusions", "cnv", "msi", "del", "altro"];
+const difettose = DIAGNOSI.filter(d => !d.fonte || (d.stato!==undefined && d.stato!=="bozza") || !d.alterazioni.length || d.alterazioni.some(a => !CLASSI.includes(a.classe) || !a.geni.length || !a.ruolo));
+check("ogni diagnosi ha fonte, stato assente o «bozza» e alterazioni con classe/geni/ruolo validi", difettose.length === 0, difettose.map(d => d.id).join(", "));
+check("ogni scenario collegato esiste", DIAGNOSI.every(d => !d.scenario || SC.some(s => s.id === d.scenario)));
+check("id diagnosi univoci", new Set(DIAGNOSI.map(d => d.id)).size === DIAGNOSI.length);
+check("nessun farmaco nella tabella diagnosi (la terapia resta nelle schede revisionate)",
+  !/imatinib|larotrectinib|entrectinib|crizotinib|olaparib|erdafitinib|sirolimus|dabrafenib/i.test(JSON.stringify(DIAGNOSI)));
+// round 1 verify-agent: entità distinte con nome simile non devono fondersi
+for (const [q, id] of [["tumore a cellule della granulosa giovanile", "granulosa_adulto"], ["condrosarcoma periferico", "condrosarcoma"],
+  ["condrosarcoma mesenchimale", "condrosarcoma"], ["condrosarcoma mixoide extrascheletrico", "condrosarcoma"]])
+  check(`'${q}' NON restituisce la scheda ${id}`, !ids(q).includes(id), ids(q).join(","));
+// validazione Filippo (endometrio): istotipi non endometrioidi aprono la scheda, senza confondersi con l'ovaio
+for (const q of ["carcinoma sieroso dell'endometrio", "carcinoma sieroso di alto grado dell endometrio", "carcinosarcoma uterino", "carcinoma a cellule chiare dell endometrio"])
+  check(`'${q}' → solo endometrio`, ids(q).join(",") === "endometrio", ids(q).join(","));
+check("'carcinoma sieroso di alto grado' (senza sede) → HGSC", ids("carcinoma sieroso di alto grado").includes("hgsc"));
+for (const q of ["carcinoma sieroso tubarico", "carcinoma sieroso peritoneale"]) check(`'${q}' → HGSC`, ids(q).join(",") === "hgsc", ids(q).join(","));
+check("'carcinoma sieroso tubarico di basso grado' non apre HGSC", !ids("carcinoma sieroso tubarico di basso grado").includes("hgsc"));
+check("'sarcoma a cellule chiare' non apre l'endometrio", !ids("sarcoma a cellule chiare").includes("endometrio"));
+check("endometrio: fonte cita FIGO 2023 per l'ordine dei classificatori", /FIGO 2023/.test(DIAGNOSI.find(d => d.id === "endometrio").fonte));
+check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC", ["gist", "desmoide", "endometrio", "hgsc", "lgsc"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
+check("HGSC: nessuna fonte regolatoria segnaposto né menzione PARP", !/REG|regolatoria|PARP/i.test(JSON.stringify(DIAGNOSI.find(d => d.id === "hgsc"))));
+check("'carcinoma sieroso di alto grado' senza sede apre HGSC ed endometrio (scelta di Filippo: tenere)", ids("carcinoma sieroso di alto grado").join(",") === "endometrio,hgsc", ids("carcinoma sieroso di alto grado").join(","));
+check("'tumore a cellule della granulosa' (generico) trova la scheda adulto, etichettata come tale", ids("tumore a cellule della granulosa").includes("granulosa_adulto"));
+check("Spitz: la scheda dichiara che le alterazioni non stabiliscono il grado", /NON ne stabiliscono il grado/.test(DIAGNOSI.find(d => d.id === "spitz").avviso || ""));
+check("neoplasia NTRK: nessuna riga RAF1/BRAF tra le alterazioni dell'entità",
+  !DIAGNOSI.find(d => d.id === "ntrk_spindle").alterazioni.some(a => a.geni.includes("RAF1") || a.geni.includes("BRAF")));
+// alternative nella stessa riga: fuori dalle fusioni (dove i partner sono per forza misti)
+// tutti i geni di una riga devono avere la stessa copertura, altrimenti la riga va divisa
+const miste = [];
+DIAGNOSI.forEach(d => d.alterazioni.forEach(a => {
+  if (a.classe === "fusions") return;
+  const c = new Set(a.geni.map(g => coperturaAlterazione({ geni: [g], classe: a.classe })));
+  if (c.size > 1) miste.push(`${d.id}: ${a.alt}`);
+}));
+check("nessuna riga non-fusione mescola geni coperti e non coperti", miste.length === 0, miste.join("; "));
+check("UI: le fusioni coperte dichiarano la dipendenza dal disegno del kit nella riga", /coperta_fus:"◐ gene nel pannello fusioni/.test(SOURCE));
+check("UI: i geni cliccabili sono <button> con data-gene (niente stringhe JS interpolate)", /data-gene="\$\{esc\(g\)\}" onclick="openGenePanel\(this\.dataset\.gene\)"/.test(SOURCE));
+// round 2 verify-agent
+check("solo fusioni coperte (TMI) → esito 'fusione', non 'si'", esitoDi("tmi") === "fusione" && esitoDi("fibrosarcoma_infantile") === "fusione");
+const sec = esitoDiagnosi(DIAGNOSI.find(d => d.id === "secretorio"));
+check("le fusioni non entrano nel conteggio delle alterazioni analizzate", sec.coperte === 0 && sec.fusioni === 2, JSON.stringify(sec));
+check("granulosa: avviso che la scheda vale solo per il tipo adulto", /solo per il tipo ADULTO/.test(DIAGNOSI.find(d => d.id === "granulosa_adulto").avviso || ""));
+check("endometrio: avviso sulla gerarchia POLE → dMMR → p53", /POLE patogenetico → dMMR\/MSI → p53/.test(DIAGNOSI.find(d => d.id === "endometrio").avviso || ""));
+check("frammento interno di parola non trova diagnosi ('arcoma')", ids("arcoma").length === 0, ids("arcoma").join(","));
+check("inizio di parola sì ('sarcoma sinov')", ids("sarcoma sinov").includes("sinoviale"));
+check("UI: nessuna riga dichiara 'rilevata' per la sola presenza del gene", !/coperta:"✓ rilevata/.test(SOURCE));
+// round 3 verify-agent
+check("'condrosarcoma dedifferenziato' (entità distinta) NON restituisce la scheda del convenzionale centrale", !ids("condrosarcoma dedifferenziato").includes("condrosarcoma"));
+check("'condrosarcoma periostale' NON restituisce la scheda del convenzionale centrale", !ids("condrosarcoma periostale").includes("condrosarcoma"));
+check("'carcinoma secretorio della tiroide' NON restituisce la scheda mammella/salivari", !ids("carcinoma secretorio della tiroide").includes("secretorio"));
+check("GIST: fonte WHO Digestive System", /Digestive System/.test(DIAGNOSI.find(d => d.id === "gist").fonte));
+check("UI: con più corrispondenze si chiede di scegliere l'entità", /diagnosi in elenco corrispondono al testo: scegliere quella corretta/.test(SOURCE));
+check("UI: la ricerca per diagnosi è collegata a render() e il messaggio di assenza è esplicito",
+  /cercaDiagnosi\(_q\)/.test(SOURCE) && /L\\'assenza dall\\'elenco non significa/.test(SOURCE));
 
 /* ─────────────────────────────────────────────────────────────── */
 console.log(`\n${"─".repeat(60)}\n  ${pass} passati, ${fail} falliti`);

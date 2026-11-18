@@ -94,7 +94,9 @@ const src = [
   fn("inPanel"),
   fn("_geni"),
   fn("makeRef"), fn("makeRefDiag"), fn("makeRefPred"), fn("evClass"),
-  "module.exports={PANEL,GENE_DESC,SC,buildGeneIndex,inPanel,makeRef,makeRefDiag,makeRefPred,evClass};",
+  decl("_W", "{", "}"), decl("DIAGNOSI", "[", "]"),
+  fn("normDx"), fn("cercaDiagnosi"), fn("coperturaAlterazione"), fn("esitoDiagnosi"),
+  "module.exports={PANEL,GENE_DESC,SC,buildGeneIndex,inPanel,makeRef,makeRefDiag,makeRefPred,evClass,DIAGNOSI,cercaDiagnosi,coperturaAlterazione,esitoDiagnosi};",
 ].join("\n");
 
 module.exports = new Function("module", "exports", src + "\nreturn module.exports;")({ exports: {} }, {});
