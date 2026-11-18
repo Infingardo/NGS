@@ -449,9 +449,11 @@ check("DFSP: COL1A1::PDGFB non coperta, esito 'no'", esitoDi("dfsp") === "no" &&
 const gist = esitoDiagnosi(DIAGNOSI.find(d => d.id === "gist"));
 check("GIST: esito 'si', 2 di 3 alterazioni rilevate (SDH fuori pannello)", gist.esito === "si" && gist.coperte === 2 && gist.totale === 3, JSON.stringify(gist));
 
-// esito "parziale": WD/DD liposarcoma (CDK4 nel pannello solo come SNV, MDM2 assente)
+// WD/DD: CDK4 e' nel pannello solo come SNV, ma l'amplificazione NON e' analizzata
 const lps = esitoDiagnosi(DIAGNOSI.find(d => d.id === "lps_wd_dd"));
-check("liposarcoma WD/DD: esito 'parziale' (CDK4 solo SNV, amplificazione non rilevata)", lps.esito === "parziale" && lps.copertura.join() === "non_coperta,parziale", JSON.stringify(lps));
+check("liposarcoma WD/DD: esito 'no' con avviso sulla classe CDK4", lps.esito === "no" && lps.copertura.join() === "non_coperta,parziale", JSON.stringify(lps));
+check("liposarcoma WD/DD: 'ALT' isolato non riconosciuto (sigla ambigua)", !ids("ALT").includes("lps_wd_dd"));
+check("liposarcoma WD/DD: avviso esplicito che nessuna amplificazione e' analizzata", /nessuna amplificazione MDM2 o CDK4/i.test(DIAGNOSI.find(d => d.id === "lps_wd_dd").avviso || ""));
 
 // classi mai coperte
 check("classe 'del' (SMARCB1) mai coperta", coperturaAlterazione({ geni: ["SMARCB1"], classe: "del" }) === "non_coperta");
@@ -483,11 +485,19 @@ for (const q of ["carcinoma sieroso tubarico", "carcinoma sieroso peritoneale"])
 check("'carcinoma sieroso tubarico di basso grado' non apre HGSC", !ids("carcinoma sieroso tubarico di basso grado").includes("hgsc"));
 check("'sarcoma a cellule chiare' non apre l'endometrio", !ids("sarcoma a cellule chiare").includes("endometrio"));
 check("endometrio: fonte cita FIGO 2023 per l'ordine dei classificatori", /FIGO 2023/.test(DIAGNOSI.find(d => d.id === "endometrio").fonte));
-check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC", ["gist", "desmoide", "endometrio", "hgsc", "lgsc"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
+check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC, uroteliale, prostata, granulosa adulto, mucoepidermoide, adenoidocistico, secretorio, DFSP", ["gist", "desmoide", "endometrio", "hgsc", "lgsc", "uroteliale", "prostata", "granulosa_adulto", "mucoepidermoide", "adenoidocistico", "secretorio", "dfsp"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
+check("prostata: solo BRCA1/BRCA2 (no ATM, no AR), esito no, nessuna fonte regolatoria segnaposto", (p => p.alterazioni.length === 1 && p.alterazioni[0].geni.join() === "BRCA1,BRCA2" && esitoDiagnosi(p).esito === "no" && !/REG|regolatoria|PARP/i.test(JSON.stringify(p)))(DIAGNOSI.find(d => d.id === "prostata")));
+check("uroteliale: solo FGFR3 (mutazione e fusione), nessun FGFR2, nessuna fonte regolatoria segnaposto", (u => u.alterazioni.every(a => a.geni.join() === "FGFR3") && !/REG|regolatoria|inibitori/i.test(JSON.stringify(u)))(DIAGNOSI.find(d => d.id === "uroteliale")));
+check("'carcinoma vescicale' non apre l'uroteliale (la vescica include istotipi non uroteliali)", !ids("carcinoma vescicale").includes("uroteliale"));
 check("HGSC: nessuna fonte regolatoria segnaposto né menzione PARP", !/REG|regolatoria|PARP/i.test(JSON.stringify(DIAGNOSI.find(d => d.id === "hgsc"))));
 check("'carcinoma sieroso di alto grado' senza sede apre HGSC ed endometrio (scelta di Filippo: tenere)", ids("carcinoma sieroso di alto grado").join(",") === "endometrio,hgsc", ids("carcinoma sieroso di alto grado").join(","));
 check("'tumore a cellule della granulosa' (generico) trova la scheda adulto, etichettata come tale", ids("tumore a cellule della granulosa").includes("granulosa_adulto"));
-check("Spitz: la scheda dichiara che le alterazioni non stabiliscono il grado", /NON ne stabiliscono il grado/.test(DIAGNOSI.find(d => d.id === "spitz").avviso || ""));
+check("Spitz: scheda di famiglia, senza attribuzione del grado", /Scheda di famiglia.*NON distinguono nevo, melanocitoma e melanoma/.test(DIAGNOSI.find(d => d.id === "spitz").avviso || ""));
+check("TMI: le tre fusioni sono presentate come esempi", /non è esaustiva/.test(DIAGNOSI.find(d => d.id === "tmi").avviso || ""));
+check("WHO 2026: NTRK nel gruppo più ampio delle neoplasie con alterazioni di chinasi", /WHO 2026/.test(DIAGNOSI.find(d => d.id === "ntrk_spindle").avviso || "") && /42839882/.test(DIAGNOSI.find(d => d.id === "ntrk_spindle").fonte));
+check("WHO 2026: la scheda NTRK non esclude più RAF/RET dal gruppo", !/RAF1, BRAF o RET.*NON rientrano/.test(DIAGNOSI.find(d => d.id === "ntrk_spindle").avviso || ""));
+check("condrosarcoma generico: avviso che serve definire il sottotipo", /definirne il sottotipo/.test(DIAGNOSI.find(d => d.id === "condrosarcoma").avviso || ""));
+check("glioma: KIAA1549-BRAF è frequente ma non esclusiva, e fuori pannello", /frequente ma non esclusiva/.test(SOURCE) && !/patognomonica dell'astrocitoma pilocitico/.test(SOURCE));
 check("neoplasia NTRK: nessuna riga RAF1/BRAF tra le alterazioni dell'entità",
   !DIAGNOSI.find(d => d.id === "ntrk_spindle").alterazioni.some(a => a.geni.includes("RAF1") || a.geni.includes("BRAF")));
 // alternative nella stessa riga: fuori dalle fusioni (dove i partner sono per forza misti)
