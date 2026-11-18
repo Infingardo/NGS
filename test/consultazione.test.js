@@ -445,9 +445,22 @@ check("'DFSP' (sigla, maiuscole) trova il DFSP", ids("DFSP").includes("dfsp"));
 check("diagnosi scritta per esteso con contesto trova il DFSP", ids("Dermatofibrosarcoma protuberans della cute del dorso").includes("dfsp"));
 check("DFSP: COL1A1::PDGFB non coperta, esito 'no'", esitoDi("dfsp") === "no" && coperturaAlterazione(DIAGNOSI.find(d => d.id === "dfsp").alterazioni[0]) === "non_coperta");
 
-// esito "si": GIST (KIT/PDGFRA coperti) ma SDH non coperto, conteggio esplicito
+// esito "si": GIST convenzionale (KIT/PDGFRA coperti); SDH-deficiente è voce separata (WHO STB6 2026)
 const gist = esitoDiagnosi(DIAGNOSI.find(d => d.id === "gist"));
-check("GIST: esito 'si', 2 di 3 alterazioni rilevate (SDH fuori pannello)", gist.esito === "si" && gist.coperte === 2 && gist.totale === 3, JSON.stringify(gist));
+check("GIST: esito 'si', KIT e PDGFRA rilevati, nessuna riga SDH", gist.esito === "si" && gist.coperte === 2 && gist.totale === 2, JSON.stringify(gist));
+const gsdh = DIAGNOSI.find(d => d.id === "gist_sdh");
+check("GIST SDH-deficiente: voce separata, esito 'no' (geni SDH fuori pannello), fonte STB6", !!gsdh && esitoDiagnosi(gsdh).esito === "no" && /6ª ed\. \(2026\)/.test(gsdh.fonte));
+check("'GIST SDH-deficiente' apre solo la voce SDH; 'gist' da solo propone entrambe", ids("GIST SDH-deficiente").join(",") === "gist_sdh" && ids("gist").join(",") === "gist,gist_sdh", ids("gist").join(","));
+check("NTRK rinominata in alterazioni di chinasi, NTRK dichiarato esempio non esaustivo", (n => /alterazioni di chinasi/.test(n.label) && /NON esaustivo/.test(n.avviso) && ids("neoplasia a cellule fusate con alterazioni di chinasi").includes("ntrk_spindle"))(DIAGNOSI.find(d => d.id === "ntrk_spindle")));
+check("'tumore cartilagineo atipico' apre il condrosarcoma convenzionale centrale; la forma periferica no", ids("tumore cartilagineo atipico").join(",") === "condrosarcoma" && !ids("tumore cartilagineo atipico periferico").includes("condrosarcoma"));
+check("verify r5: GIST SDH-deficiente senza link allo scenario GIST (KIT/PDGFRA) e trovata col nome WHO esteso", !DIAGNOSI.find(d => d.id === "gist_sdh").scenario && ids("SDH-deficient gastrointestinal stromal tumor").join(",") === "gist_sdh" && ids("tumore stromale gastrointestinale SDH-deficiente").join(",") === "gist_sdh", ids("tumore stromale gastrointestinale SDH-deficiente").join(","));
+check("verify r5: condrosarcoma, avviso distingue tumore cartilagineo atipico (appendicolare) da grado 1 (assiale)", /appendicolare/.test(DIAGNOSI.find(d => d.id === "condrosarcoma").avviso) && /assiale/.test(DIAGNOSI.find(d => d.id === "condrosarcoma").avviso));
+check("verify r6: NTRK, l'esito è dichiarato valido solo per le fusioni NTRK elencate", /vale SOLO per le fusioni NTRK elencate/.test(DIAGNOSI.find(d => d.id === "ntrk_spindle").avviso));
+check("verify r6: 'tumore stromale gastrointestinale con deficit SDH' → solo GIST SDH-deficiente", ids("tumore stromale gastrointestinale con deficit SDH").join(",") === "gist_sdh", ids("tumore stromale gastrointestinale con deficit SDH").join(","));
+for (const q of ["GIST SDH-competente", "GIST SDH-intatto", "GIST SDHB conservato"]) check(`verify r7: '${q}' apre il GIST convenzionale`, ids(q).join(",") === "gist", ids(q).join(","));
+for (const q of ["GIST SDH-deficient", "gist sdh carente", "GIST con deficit di SDH", "tumore stromale gastrointestinale con deficit di SDH", "GIST con carenza di SDH"]) check(`verify r7: '${q}' → solo GIST SDH-deficiente`, ids(q).join(",") === "gist_sdh", ids(q).join(","));
+check("verify r8: nessuna formula di deficit/carenza/perdita SDH apre il GIST convenzionale", ["GIST con carenza di SDH", "GIST con perdita di SDH", "GIST con deficit SDH"].every(q => !ids(q).includes("gist")));
+check("verify r7: forma singolare 'alterazione di chinasi' trovata", ids("neoplasia a cellule fusate con alterazione di chinasi").includes("ntrk_spindle"));
 
 // WD/DD: CDK4 e' nel pannello solo come SNV, ma l'amplificazione NON e' analizzata
 const lps = esitoDiagnosi(DIAGNOSI.find(d => d.id === "lps_wd_dd"));
@@ -485,7 +498,7 @@ for (const q of ["carcinoma sieroso tubarico", "carcinoma sieroso peritoneale"])
 check("'carcinoma sieroso tubarico di basso grado' non apre HGSC", !ids("carcinoma sieroso tubarico di basso grado").includes("hgsc"));
 check("'sarcoma a cellule chiare' non apre l'endometrio", !ids("sarcoma a cellule chiare").includes("endometrio"));
 check("endometrio: fonte cita FIGO 2023 per l'ordine dei classificatori", /FIGO 2023/.test(DIAGNOSI.find(d => d.id === "endometrio").fonte));
-check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC, uroteliale, prostata, granulosa adulto, mucoepidermoide, adenoidocistico, secretorio, DFSP", ["gist", "desmoide", "endometrio", "hgsc", "lgsc", "uroteliale", "prostata", "granulosa_adulto", "mucoepidermoide", "adenoidocistico", "secretorio", "dfsp"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
+check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC, uroteliale, prostata, granulosa adulto, mucoepidermoide, adenoidocistico, secretorio, DFSP, GIST SDH-deficiente", ["gist", "desmoide", "endometrio", "hgsc", "lgsc", "uroteliale", "prostata", "granulosa_adulto", "mucoepidermoide", "adenoidocistico", "secretorio", "dfsp", "gist_sdh"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
 check("prostata: solo BRCA1/BRCA2 (no ATM, no AR), esito no, nessuna fonte regolatoria segnaposto", (p => p.alterazioni.length === 1 && p.alterazioni[0].geni.join() === "BRCA1,BRCA2" && esitoDiagnosi(p).esito === "no" && !/REG|regolatoria|PARP/i.test(JSON.stringify(p)))(DIAGNOSI.find(d => d.id === "prostata")));
 check("uroteliale: solo FGFR3 (mutazione e fusione), nessun FGFR2, nessuna fonte regolatoria segnaposto", (u => u.alterazioni.every(a => a.geni.join() === "FGFR3") && !/REG|regolatoria|inibitori/i.test(JSON.stringify(u)))(DIAGNOSI.find(d => d.id === "uroteliale")));
 check("'carcinoma vescicale' non apre l'uroteliale (la vescica include istotipi non uroteliali)", !ids("carcinoma vescicale").includes("uroteliale"));

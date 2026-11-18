@@ -1,6 +1,6 @@
 # Validazione tabella DIAGNOSI (bozza)
 
-Generato da `index.html` il 2026-11-18: 28 voci. Spuntare ogni casella; correggere direttamente in `index.html` (costante `DIAGNOSI`), poi rigenerare.
+Generato da `index.html` il 2026-11-18: 29 voci. Spuntare ogni casella; correggere direttamente in `index.html` (costante `DIAGNOSI`), poi rigenerare.
 
 Per ogni voce controllare: **(1)** alterazione definente e partner, **(2)** sinonimi ed esclusioni (non devono unire entità distinte), **(3)** ruolo, nota, test alternativo, **(4)** fonte. La colonna «Pannello» è calcolata da `PANEL` e non va validata a mano: va controllata solo la classe assegnata (snv / fusions / cnv / del).
 
@@ -22,22 +22,38 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 2. Tumore stromale gastrointestinale (GIST)  `gist`
 
-- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Digestive System Tumours, 5ª ed. (2019); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
-- Sinonimi: gist · tumore stromale gastrointestinale · tumore stromale gastro intestinale
+- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Digestive System Tumours, 5ª ed. (2019); WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882)
+- Sinonimi: gist · tumore stromale gastrointestinale · tumore stromale gastro intestinale  
+- Esclusi se il testo contiene: sdh deficien · sdh carent · deficit sdh · deficit di sdh · carenza sdh · carenza di sdh · perdita sdh · perdita di sdh
 - Collegata allo scenario: `gist`
+- Avviso: Il GIST SDH-deficiente è una categoria separata nella WHO 2026: vedere la sua scheda (cercare «GIST SDH-deficiente»).
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | KIT mutazione | snv | misto | ✓ | Driver più frequente. |  |
 | PDGFRA mutazione | snv | misto | ✓ | Include D842V (vedi scheda gene). |  |
-| Deficit SDH (SDHA/B/C/D) | snv | diagnostico | ✗ | GIST SDH-deficiente, KIT/PDGFRA wild-type. | IHC SDHB; consulenza genetica |
 
 - [x] alterazioni e partner corretti
 - [x] sinonimi/esclusioni corretti
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 3. Tumore miofibroblastico infiammatorio  `tmi`
+## 3. GIST SDH-deficiente  `gist_sdh`
+
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Digestive System Tumours, 5ª ed. (2019)
+- Sinonimi: gist sdh deficiente · gist sdh carente · sdh deficient gist · gist con deficit sdh · gist con deficit di sdh · gist con carenza di sdh · gist con carenza sdh · tumore stromale gastrointestinale con deficit di sdh · sdh deficient gastrointestinal stromal tumor · tumore stromale gastrointestinale sdh deficiente · tumore stromale gastrointestinale con deficit sdh
+- Avviso: Categoria separata dal GIST convenzionale nella WHO 2026 (patogenesi molecolare distinta, possibile associazione sindromica familiare, comportamento clinico diverso).
+
+| Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
+|---|---|---|---|---|---|
+| Deficit SDH (SDHA/B/C/D) | snv | diagnostico | ✗ | KIT/PDGFRA wild-type. | IHC SDHB; consulenza genetica |
+
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
+
+## 4. Tumore miofibroblastico infiammatorio  `tmi`
 
 - Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: tumore miofibroblastico infiammatorio · imt · tmi · inflammatory myofibroblastic tumor
@@ -54,7 +70,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 4. Fibrosarcoma infantile  `fibrosarcoma_infantile`
+## 5. Fibrosarcoma infantile  `fibrosarcoma_infantile`
 
 - Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: fibrosarcoma infantile · fibrosarcoma congenito · infantile fibrosarcoma
@@ -68,22 +84,22 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 5. Neoplasia a cellule fusate con riarrangiamento NTRK  `ntrk_spindle`
+## 6. Neoplasia a cellule fusate con alterazioni di chinasi (incluso riarrangiamento NTRK)  `ntrk_spindle`
 
-- Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); WHO STB6 (2026), PMID: 42839882
-- Sinonimi: neoplasia a cellule fusate ntrk · ntrk rearranged spindle cell neoplasm · neoplasia mesenchimale ntrk
-- Avviso: Categoria emergente nella WHO 2020, oggi compresa nello spettro più ampio delle neoplasie a cellule fusate con alterazioni di chinasi (WHO 2026). La presenza della fusione non stabilisce da sola comportamento o grado.
+- Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Sinonimi: neoplasia a cellule fusate con alterazioni di chinasi · neoplasia a cellule fusate con alterazione di chinasi · kinase altered spindle cell neoplasm · neoplasia a cellule fusate ntrk · ntrk rearranged spindle cell neoplasm · neoplasia mesenchimale ntrk
+- Avviso: WHO 2026: la categoria emergente «riarrangiamento NTRK» della 5ª ed. è stata ampliata alle neoplasie a cellule fusate con alterazioni di chinasi, che comprendono un ampio spettro di fusioni di chinasi e anche mutazioni puntiformi. Qui sono elencati solo NTRK1/2/3, come esempio NON esaustivo: le altre chinasi non sono riportate in questa scheda. L'esito mostrato vale SOLO per le fusioni NTRK elencate, non per l'intera categoria: altre fusioni o mutazioni di chinasi vanno cercate per gene. La presenza della fusione non stabilisce da sola comportamento o grado.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
-| Fusioni NTRK1/2/3 | fusions | misto | ✓ | Alterazioni del sottogruppo NTRK; integrare con la morfologia. |  |
+| Fusioni NTRK1/2/3 | fusions | misto | ✓ | Esempio non esaustivo delle alterazioni di chinasi; integrare con la morfologia. |  |
 
 - [ ] alterazioni e partner corretti
 - [ ] sinonimi/esclusioni corretti
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 6. Sarcoma sinoviale  `sinoviale`
+## 7. Sarcoma sinoviale  `sinoviale`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma sinoviale · synovial sarcoma
@@ -97,7 +113,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 7. Sarcoma di Ewing  `ewing`
+## 8. Sarcoma di Ewing  `ewing`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); CAP Ewing Sarcoma Protocol v5.0.0.1 (2025)
 - Sinonimi: sarcoma di ewing · ewing
@@ -111,7 +127,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 8. Rabdomiosarcoma alveolare  `rms_alveolare`
+## 9. Rabdomiosarcoma alveolare  `rms_alveolare`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: rabdomiosarcoma alveolare · alveolar rhabdomyosarcoma
@@ -125,7 +141,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 9. Liposarcoma mixoide  `lps_mixoide`
+## 10. Liposarcoma mixoide  `lps_mixoide`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: liposarcoma mixoide · liposarcoma a cellule rotonde · myxoid liposarcoma
@@ -139,7 +155,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 10. Liposarcoma ben differenziato / dedifferenziato (tumore lipomatoso atipico)  `lps_wd_dd`
+## 11. Liposarcoma ben differenziato / dedifferenziato (tumore lipomatoso atipico)  `lps_wd_dd`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 26146760, 27508976
 - Sinonimi: liposarcoma ben differenziato · liposarcoma dedifferenziato · tumore lipomatoso atipico · wdlps · ddlps
@@ -155,7 +171,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 11. Sarcoma a cellule chiare dei tessuti molli  `cellule_chiare`
+## 12. Sarcoma a cellule chiare dei tessuti molli  `cellule_chiare`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma a cellule chiare · clear cell sarcoma
@@ -169,7 +185,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 12. Sarcoma alveolare delle parti molli  `asps`
+## 13. Sarcoma alveolare delle parti molli  `asps`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma alveolare delle parti molli · alveolar soft part sarcoma · asps
@@ -183,7 +199,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 13. Tumore fibroso solitario  `sft`
+## 14. Tumore fibroso solitario  `sft`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: tumore fibroso solitario · emangiopericitoma · solitary fibrous tumor · sft
@@ -197,7 +213,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 14. Fibromatosi desmoide  `desmoide`
+## 15. Fibromatosi desmoide  `desmoide`
 
 - Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: fibromatosi desmoide · desmoide · tumore desmoide · fibromatosi aggressiva
@@ -212,7 +228,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 15. PEComa  `pecoma`
+## 16. PEComa  `pecoma`
 
 - Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: pecoma · tumore a cellule epitelioidi perivascolari · angiomiolipoma epitelioide
@@ -228,7 +244,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 16. Sarcoma epitelioide  `epitelioide`
+## 17. Sarcoma epitelioide  `epitelioide`
 
 - Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma epitelioide · epithelioid sarcoma
@@ -242,12 +258,12 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 17. Condrosarcoma convenzionale centrale  `condrosarcoma`
+## 18. Condrosarcoma convenzionale centrale (incluso tumore cartilagineo atipico)  `condrosarcoma`
 
-- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 33239505
-- Sinonimi: condrosarcoma · chondrosarcoma  
+- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 33239505
+- Sinonimi: condrosarcoma · chondrosarcoma · tumore cartilagineo atipico · atypical cartilaginous tumor  
 - Esclusi se il testo contiene: dedifferenziat · dedifferentiated · periferic · peripheral · periostal · periosteal · secondari · mesenchimal · mesenchymal · cellule chiare · clear cell · extrascheletric · extraskeletal · mixoide
-- Avviso: Questa scheda riguarda solo il tipo convenzionale centrale. Se è scritto soltanto «condrosarcoma», definirne il sottotipo prima di applicare l'esito. IDH1/2 non distingue encondroma e condrosarcoma.
+- Avviso: Questa scheda riguarda solo il tipo convenzionale centrale. Terminologia WHO per il basso grado: «tumore cartilagineo atipico» nello scheletro appendicolare (ossa tubulari lunghe e corte), «condrosarcoma, grado 1» nello scheletro assiale (pelvi, scapola, base cranica); i due termini non sono intercambiabili. Se è scritto soltanto «condrosarcoma», definirne il sottotipo prima di applicare l'esito. IDH1/2 non distingue encondroma e condrosarcoma.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
@@ -258,7 +274,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 18. Astrocitoma pilocitico  `pilocitico`
+## 19. Astrocitoma pilocitico  `pilocitico`
 
 - Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO CNS Tumours, 5ª ed. (2021)
 - Sinonimi: astrocitoma pilocitico · pilocytic astrocytoma
@@ -276,7 +292,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [ ] note e alternative corrette
 - [ ] fonte corretta
 
-## 19. Carcinoma secretorio (mammella / ghiandole salivari)  `secretorio`
+## 20. Carcinoma secretorio (mammella / ghiandole salivari)  `secretorio`
 
 - Stato: **confermata da Filippo** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Breast Tumours, 5ª ed. (2019); WHO Head and Neck Tumours, 5ª ed.
 - Sinonimi: carcinoma secretorio · secretory carcinoma · mammary analogue secretory carcinoma · masc  
@@ -292,7 +308,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 20. Carcinoma mucoepidermoide  `mucoepidermoide`
+## 21. Carcinoma mucoepidermoide  `mucoepidermoide`
 
 - Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Head and Neck Tumours, 5ª ed.
 - Sinonimi: carcinoma mucoepidermoide · mucoepidermoid carcinoma
@@ -306,7 +322,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 21. Carcinoma adenoido-cistico  `adenoidocistico`
+## 22. Carcinoma adenoido-cistico  `adenoidocistico`
 
 - Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Head and Neck Tumours, 5ª ed.
 - Sinonimi: carcinoma adenoido cistico · carcinoma adenoidocistico · adenoid cystic carcinoma
@@ -320,7 +336,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 22. Tumore a cellule della granulosa, tipo adulto  `granulosa_adulto`
+## 23. Tumore a cellule della granulosa, tipo adulto  `granulosa_adulto`
 
 - Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Female Genital Tumours, 5ª ed. (2020)
 - Sinonimi: tumore a cellule della granulosa · tumore della granulosa · granulosa cell tumor  
@@ -336,7 +352,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 23. Carcinoma endometriale (classificazione molecolare)  `endometrio`
+## 24. Carcinoma endometriale (classificazione molecolare)  `endometrio`
 
 - Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Female Genital Tumours, 5ª ed. (2020); FIGO 2023 (Berek et al., Int J Gynaecol Obstet 2023) per l'ordine dei classificatori
 - Sinonimi: carcinoma endometriale · carcinoma dell endometrio · adenocarcinoma endometrioide · carcinoma endometrioide · carcinoma sieroso dell endometrio · carcinoma sieroso di alto grado dell endometrio · carcinoma sieroso endometriale · carcinoma sieroso uterino · carcinoma a cellule chiare dell endometrio · carcinoma a cellule chiare endometriale · carcinosarcoma dell endometrio · carcinosarcoma endometriale · carcinosarcoma uterino
@@ -353,7 +369,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 24. Carcinoma sieroso di alto grado (ovaio / tuba / peritoneo)  `hgsc`
+## 25. Carcinoma sieroso di alto grado (ovaio / tuba / peritoneo)  `hgsc`
 
 - Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Female Genital Tumours, 5ª ed. (2020)
 - Sinonimi: carcinoma sieroso di alto grado · hgsc · carcinoma sieroso alto grado · carcinoma sieroso tubarico · carcinoma sieroso peritoneale  
@@ -369,7 +385,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 25. Carcinoma sieroso di basso grado (ovaio)  `lgsc`
+## 26. Carcinoma sieroso di basso grado (ovaio)  `lgsc`
 
 - Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Female Genital Tumours, 5ª ed. (2020)
 - Sinonimi: carcinoma sieroso di basso grado · lgsc · carcinoma sieroso basso grado
@@ -383,7 +399,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 26. Carcinoma uroteliale  `uroteliale`
+## 27. Carcinoma uroteliale  `uroteliale`
 
 - Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Urinary and Male Genital Tumours, 5ª ed. (2022)
 - Sinonimi: carcinoma uroteliale · urothelial carcinoma
@@ -398,7 +414,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 27. Adenocarcinoma prostatico  `prostata`
+## 28. Adenocarcinoma prostatico  `prostata`
 
 - Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Urinary and Male Genital Tumours, 5ª ed. (2022)
 - Sinonimi: adenocarcinoma prostatico · carcinoma prostatico · adenocarcinoma della prostata
@@ -412,7 +428,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 - [x] note e alternative corrette
 - [x] fonte corretta
 
-## 28. Neoplasie spitzoidi (nevo di Spitz, melanocitoma spitzoide, melanoma di Spitz)  `spitz`
+## 29. Neoplasie spitzoidi (nevo di Spitz, melanocitoma spitzoide, melanoma di Spitz)  `spitz`
 
 - Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Skin Tumours, 5ª ed.
 - Sinonimi: nevo di spitz · tumore di spitz · melanocitoma spitzoide · melanoma di spitz · spitz
