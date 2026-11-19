@@ -461,6 +461,11 @@ for (const q of ["GIST SDH-competente", "GIST SDH-intatto", "GIST SDHB conservat
 for (const q of ["GIST SDH-deficient", "gist sdh carente", "GIST con deficit di SDH", "tumore stromale gastrointestinale con deficit di SDH", "GIST con carenza di SDH"]) check(`verify r7: '${q}' → solo GIST SDH-deficiente`, ids(q).join(",") === "gist_sdh", ids(q).join(","));
 check("verify r8: nessuna formula di deficit/carenza/perdita SDH apre il GIST convenzionale", ["GIST con carenza di SDH", "GIST con perdita di SDH", "GIST con deficit SDH"].every(q => !ids(q).includes("gist")));
 check("verify r7: forma singolare 'alterazione di chinasi' trovata", ids("neoplasia a cellule fusate con alterazione di chinasi").includes("ntrk_spindle"));
+// entità distinte con nome simile ai sarcomi in elenco: non devono aprire la scheda sbagliata
+for (const [q, id] of [["sarcoma simil-Ewing", "ewing"], ["Ewing-like sarcoma", "ewing"], ["sarcoma CIC-riarrangiato Ewing-like", "ewing"],
+  ["sarcoma a cellule chiare del rene", "cellule_chiare"], ["clear cell sarcoma of kidney", "cellule_chiare"], ["liposarcoma mixoide pleomorfo", "lps_mixoide"]])
+  check(`'${q}' NON apre la scheda ${id}`, !ids(q).includes(id), ids(q).join(","));
+check("Ewing, sarcoma a cellule chiare e liposarcoma mixoide restano trovabili", ids("sarcoma di Ewing").includes("ewing") && ids("sarcoma a cellule chiare").includes("cellule_chiare") && ids("liposarcoma mixoide").includes("lps_mixoide"));
 
 // WD/DD: CDK4 e' nel pannello solo come SNV, ma l'amplificazione NON e' analizzata
 const lps = esitoDiagnosi(DIAGNOSI.find(d => d.id === "lps_wd_dd"));
@@ -498,7 +503,7 @@ for (const q of ["carcinoma sieroso tubarico", "carcinoma sieroso peritoneale"])
 check("'carcinoma sieroso tubarico di basso grado' non apre HGSC", !ids("carcinoma sieroso tubarico di basso grado").includes("hgsc"));
 check("'sarcoma a cellule chiare' non apre l'endometrio", !ids("sarcoma a cellule chiare").includes("endometrio"));
 check("endometrio: fonte cita FIGO 2023 per l'ordine dei classificatori", /FIGO 2023/.test(DIAGNOSI.find(d => d.id === "endometrio").fonte));
-check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC, uroteliale, prostata, granulosa adulto, mucoepidermoide, adenoidocistico, secretorio, DFSP, GIST SDH-deficiente", ["gist", "desmoide", "endometrio", "hgsc", "lgsc", "uroteliale", "prostata", "granulosa_adulto", "mucoepidermoide", "adenoidocistico", "secretorio", "dfsp", "gist_sdh"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
+check("voci validate (senza bozza): GIST, desmoide, endometrio, HGSC, LGSC, uroteliale, prostata, granulosa adulto, mucoepidermoide, adenoidocistico, secretorio, DFSP, GIST SDH-deficiente, 8 sarcomi a esito no", ["gist", "desmoide", "endometrio", "hgsc", "lgsc", "uroteliale", "prostata", "granulosa_adulto", "mucoepidermoide", "adenoidocistico", "secretorio", "dfsp", "gist_sdh", "sinoviale", "ewing", "rms_alveolare", "lps_mixoide", "cellule_chiare", "asps", "sft", "epitelioide"].every(id => DIAGNOSI.find(d => d.id === id).stato === undefined));
 check("prostata: solo BRCA1/BRCA2 (no ATM, no AR), esito no, nessuna fonte regolatoria segnaposto", (p => p.alterazioni.length === 1 && p.alterazioni[0].geni.join() === "BRCA1,BRCA2" && esitoDiagnosi(p).esito === "no" && !/REG|regolatoria|PARP/i.test(JSON.stringify(p)))(DIAGNOSI.find(d => d.id === "prostata")));
 check("uroteliale: solo FGFR3 (mutazione e fusione), nessun FGFR2, nessuna fonte regolatoria segnaposto", (u => u.alterazioni.every(a => a.geni.join() === "FGFR3") && !/REG|regolatoria|inibitori/i.test(JSON.stringify(u)))(DIAGNOSI.find(d => d.id === "uroteliale")));
 check("'carcinoma vescicale' non apre l'uroteliale (la vescica include istotipi non uroteliali)", !ids("carcinoma vescicale").includes("uroteliale"));

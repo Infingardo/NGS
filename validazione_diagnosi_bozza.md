@@ -1,6 +1,6 @@
 # Validazione tabella DIAGNOSI (bozza)
 
-Generato da `index.html` il 2026-11-18: 29 voci. Spuntare ogni casella; correggere direttamente in `index.html` (costante `DIAGNOSI`), poi rigenerare.
+Generato da `index.html` il 2026-11-19: 29 voci. Spuntare ogni casella; correggere direttamente in `index.html` (costante `DIAGNOSI`), poi rigenerare.
 
 Per ogni voce controllare: **(1)** alterazione definente e partner, **(2)** sinonimi ed esclusioni (non devono unire entità distinte), **(3)** ruolo, nota, test alternativo, **(4)** fonte. La colonna «Pannello» è calcolata da `PANEL` e non va validata a mano: va controllata solo la classe assegnata (snv / fusions / cnv / del).
 
@@ -101,59 +101,61 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 7. Sarcoma sinoviale  `sinoviale`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma sinoviale · synovial sarcoma
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | SS18::SSX1/2/4 | fusions | diagnostico | ✗ | Alterazione definente. | IHC SS18-SSX / SSX C-term; FISH SS18 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 8. Sarcoma di Ewing  `ewing`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); CAP Ewing Sarcoma Protocol v5.0.0.1 (2025)
-- Sinonimi: sarcoma di ewing · ewing
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); CAP Ewing Sarcoma Protocol v5.0.0.1 (2025)
+- Sinonimi: sarcoma di ewing · ewing  
+- Esclusi se il testo contiene: simil · like · cic · bcor
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | EWSR1 (o FUS)::FLI1/ERG | fusions | diagnostico | ✗ | Alterazione definente. | FISH EWSR1 break-apart; pannello RNA esteso |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 9. Rabdomiosarcoma alveolare  `rms_alveolare`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: rabdomiosarcoma alveolare · alveolar rhabdomyosarcoma
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | PAX3/PAX7::FOXO1 | fusions | diagnostico | ✗ | Alterazione definente. | FISH FOXO1 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 10. Liposarcoma mixoide  `lps_mixoide`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
-- Sinonimi: liposarcoma mixoide · liposarcoma a cellule rotonde · myxoid liposarcoma
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Sinonimi: liposarcoma mixoide · liposarcoma a cellule rotonde · myxoid liposarcoma  
+- Esclusi se il testo contiene: pleomorf
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | FUS (o EWSR1)::DDIT3 | fusions | diagnostico | ✗ | Alterazione definente. | FISH DDIT3 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 11. Liposarcoma ben differenziato / dedifferenziato (tumore lipomatoso atipico)  `lps_wd_dd`
 
@@ -173,45 +175,46 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 12. Sarcoma a cellule chiare dei tessuti molli  `cellule_chiare`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
-- Sinonimi: sarcoma a cellule chiare · clear cell sarcoma
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Sinonimi: sarcoma a cellule chiare · clear cell sarcoma  
+- Esclusi se il testo contiene: rene · renale · kidney
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | EWSR1::ATF1 (o CREB1) | fusions | diagnostico | ✗ | Distingue dal melanoma. | FISH EWSR1 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 13. Sarcoma alveolare delle parti molli  `asps`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma alveolare delle parti molli · alveolar soft part sarcoma · asps
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | ASPSCR1::TFE3 | fusions | diagnostico | ✗ | Alterazione definente. | IHC TFE3; FISH TFE3 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 14. Tumore fibroso solitario  `sft`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: tumore fibroso solitario · emangiopericitoma · solitary fibrous tumor · sft
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | NAB2::STAT6 | fusions | diagnostico | ✗ | Alterazione definente. | IHC STAT6 nucleare |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 15. Fibromatosi desmoide  `desmoide`
 
@@ -246,17 +249,17 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 17. Sarcoma epitelioide  `epitelioide`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: sarcoma epitelioide · epithelioid sarcoma
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | Perdita SMARCB1 (INI1) | del | diagnostico | ✗ | Inattivazione, spesso per delezione. | IHC INI1 (perdita) |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 18. Condrosarcoma convenzionale centrale (incluso tumore cartilagineo atipico)  `condrosarcoma`
 
