@@ -55,7 +55,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 4. Tumore miofibroblastico infiammatorio  `tmi`
 
-- Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: tumore miofibroblastico infiammatorio · imt · tmi · inflammatory myofibroblastic tumor
 - Avviso: Le fusioni elencate sono esempi; la lista dei riarrangiamenti possibili non è esaustiva.
 
@@ -65,28 +65,30 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 | Fusione ROS1 | fusions | misto | ✓ | Sottogruppo ALK-negativo. |  |
 | ETV6::NTRK3 | fusions | misto | ✓ | Sottogruppo ALK-negativo. |  |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
-## 5. Fibrosarcoma infantile  `fibrosarcoma_infantile`
+## 5. Fibrosarcoma infantile (nel rene: nefroma mesoblastico congenito cellulare)  `fibrosarcoma_infantile`
 
-- Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
-- Sinonimi: fibrosarcoma infantile · fibrosarcoma congenito · infantile fibrosarcoma
+- Stato: **confermata da Filippo** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882)
+- Sinonimi: fibrosarcoma infantile · fibrosarcoma congenito · infantile fibrosarcoma · nefroma mesoblastico congenito cellulare · cellular congenital mesoblastic nephroma  
+- Esclusi se il testo contiene: classic · mist · mixed
+- Avviso: Nel rene la WHO 2026 accetta il termine «nefroma mesoblastico congenito cellulare» per questa entità: la scheda NON vale per il tipo classico né per quello misto.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
 | ETV6::NTRK3 | fusions | misto | ✓ | Alterazione tipica; esistono casi con altri riarrangiamenti di NTRK o della via MAPK. |  |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 6. Neoplasia a cellule fusate con alterazioni di chinasi (incluso riarrangiamento NTRK)  `ntrk_spindle`
 
-- Stato: **bozza da verificare** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **solo fusioni (da verificare)** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: neoplasia a cellule fusate con alterazioni di chinasi · neoplasia a cellule fusate con alterazione di chinasi · kinase altered spindle cell neoplasm · neoplasia a cellule fusate ntrk · ntrk rearranged spindle cell neoplasm · neoplasia mesenchimale ntrk
 - Avviso: WHO 2026: la categoria emergente «riarrangiamento NTRK» della 5ª ed. è stata ampliata alle neoplasie a cellule fusate con alterazioni di chinasi, che comprendono un ampio spettro di fusioni di chinasi e anche mutazioni puntiformi. Qui sono elencati solo NTRK1/2/3, come esempio NON esaustivo: le altre chinasi non sono riportate in questa scheda. L'esito mostrato vale SOLO per le fusioni NTRK elencate, non per l'intera categoria: altre fusioni o mutazioni di chinasi vanno cercate per gene. La presenza della fusione non stabilisce da sola comportamento o grado.
 
@@ -94,10 +96,10 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 |---|---|---|---|---|---|
 | Fusioni NTRK1/2/3 | fusions | misto | ✓ | Esempio non esaustivo delle alterazioni di chinasi; integrare con la morfologia. |  |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 7. Sarcoma sinoviale  `sinoviale`
 
