@@ -161,7 +161,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 11. Liposarcoma ben differenziato / dedifferenziato (tumore lipomatoso atipico)  `lps_wd_dd`
 
-- Stato: **bozza da verificare** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 26146760, 27508976
+- Stato: **confermata da Filippo** · Esito attuale: **no** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 26146760, 27508976
 - Sinonimi: liposarcoma ben differenziato · liposarcoma dedifferenziato · tumore lipomatoso atipico · wdlps · ddlps
 - Avviso: Il pannello non analizza nessuna amplificazione MDM2 o CDK4. Una mutazione CDK4 non dimostra l'amplificazione: per il sospetto diagnostico usare FISH MDM2; l'IHC CDK4 è solo di supporto.
 
@@ -170,10 +170,10 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 | Amplificazione MDM2 | cnv | diagnostico | ✗ | Alterazione definente. | FISH MDM2 |
 | Amplificazione CDK4 | cnv | diagnostico | ⚠️ altra classe | Frequente co-amplificazione; la mutazione CDK4 letta dal pannello non la documenta. | FISH MDM2; IHC CDK4 solo come supporto |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 12. Sarcoma a cellule chiare dei tessuti molli  `cellule_chiare`
 
@@ -235,8 +235,9 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 16. PEComa  `pecoma`
 
-- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
+- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)
 - Sinonimi: pecoma · tumore a cellule epitelioidi perivascolari · angiomiolipoma epitelioide
+- Avviso: L'alterazione principale (inattivazione di TSC2) e le fusioni TFE3 NON sono rilevate dal pannello, che legge solo SNV/InsDel di TSC1: un risultato negativo non esclude la diagnosi.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
@@ -244,10 +245,10 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 | TSC1 mutazione | snv | misto | ✓ | Il pannello rileva SNV/InsDel di TSC1, non le delezioni. |  |
 | Fusione TFE3 | fusions | diagnostico | ✗ | Sottogruppo distinto. | IHC/FISH TFE3 |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 17. Sarcoma epitelioide  `epitelioide`
 
@@ -265,7 +266,7 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 18. Condrosarcoma convenzionale centrale (incluso tumore cartilagineo atipico)  `condrosarcoma`
 
-- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 33239505
+- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882); WHO Soft Tissue and Bone Tumours, 5ª ed. (2020); PMID: 33239505
 - Sinonimi: condrosarcoma · chondrosarcoma · tumore cartilagineo atipico · atypical cartilaginous tumor  
 - Esclusi se il testo contiene: dedifferenziat · dedifferentiated · periferic · peripheral · periostal · periosteal · secondari · mesenchimal · mesenchymal · cellule chiare · clear cell · extrascheletric · extraskeletal · mixoide
 - Avviso: Questa scheda riguarda solo il tipo convenzionale centrale. Terminologia WHO per il basso grado: «tumore cartilagineo atipico» nello scheletro appendicolare (ossa tubulari lunghe e corte), «condrosarcoma, grado 1» nello scheletro assiale (pelvi, scapola, base cranica); i due termini non sono intercambiabili. Se è scritto soltanto «condrosarcoma», definirne il sottotipo prima di applicare l'esito. IDH1/2 non distingue encondroma e condrosarcoma.
@@ -274,16 +275,17 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 |---|---|---|---|---|---|
 | IDH1 / IDH2 mutazione | snv | diagnostico | ✓ | Supporta l'origine cartilaginea. Presente anche nell'encondroma: NON distingue lesione benigna da maligna. |  |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 19. Astrocitoma pilocitico  `pilocitico`
 
-- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO CNS Tumours, 5ª ed. (2021)
+- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO CNS Tumours, 5ª ed. (2021)
 - Sinonimi: astrocitoma pilocitico · pilocytic astrocytoma
 - Collegata allo scenario: `glioma`
+- Avviso: L'alterazione principale (fusione KIAA1549::BRAF) NON è rilevata dal pannello, che legge BRAF solo come SNV: un risultato negativo non esclude la diagnosi.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
@@ -292,10 +294,10 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 | FGFR1 mutazione | snv | diagnostico | ✓ | Minoranza dei casi. |  |
 | NF1 inattivazione | snv | diagnostico | ✓ | Minoranza dei casi. |  |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
 
 ## 20. Carcinoma secretorio (mammella / ghiandole salivari)  `secretorio`
 
@@ -435,17 +437,17 @@ Le voci già confermate da Filippo non hanno `stato:"bozza"`; quelle ancora in b
 
 ## 29. Neoplasie spitzoidi (nevo di Spitz, melanocitoma spitzoide, melanoma di Spitz)  `spitz`
 
-- Stato: **bozza da verificare** · Esito attuale: **sì** · Fonte: WHO Skin Tumours, 5ª ed.
+- Stato: **confermata da Filippo** · Esito attuale: **sì** · Fonte: WHO Skin Tumours, 5ª ed.
 - Sinonimi: nevo di spitz · tumore di spitz · melanocitoma spitzoide · melanoma di spitz · spitz
 - Avviso: Scheda di famiglia, non diagnosi di grado. Le alterazioni elencate orientano verso la linea spitzoide ma NON distinguono nevo, melanocitoma e melanoma di Spitz; i partner riportati sono esempi, non una lista esaustiva.
 
 | Alterazione | Classe | Ruolo | Pannello | Nota | Alternativa |
 |---|---|---|---|---|---|
-| HRAS mutazione | snv | diagnostico | ✓ | Spesso con guadagno 11p. |  |
+| HRAS mutazione | snv | diagnostico | ✓ |  |  |
 | Fusioni ALK, ROS1, NTRK1/3, RET, MET | fusions | diagnostico | ✓ | Definiscono sottotipi spitzoidi. |  |
 | Fusioni BRAF o MAP3K8 | fusions | diagnostico | ⚠️ altra classe | BRAF è nel pannello solo come SNV. | Pannello RNA esteso |
 
-- [ ] alterazioni e partner corretti
-- [ ] sinonimi/esclusioni corretti
-- [ ] note e alternative corrette
-- [ ] fonte corretta
+- [x] alterazioni e partner corretti
+- [x] sinonimi/esclusioni corretti
+- [x] note e alternative corrette
+- [x] fonte corretta
