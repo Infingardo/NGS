@@ -104,6 +104,17 @@
   .pc-l { font-size: 11px; margin-bottom: 3px; font-weight: 700; text-transform: uppercase; }
   .pc-c { font-size: 12px; color: #37474F; font-weight: 600; }
   #no-res { color: #90A4AE; font-size: 14px; padding: 28px; text-align: center; }
+  #dx-box:empty { display:none; }
+  #dx-box { margin: 10px 0 14px; display:flex; flex-direction:column; gap:10px; }
+  .dx-card { border:1.5px solid #CFD8DC; border-left:5px solid #90A4AE; border-radius:8px; background:#fff; padding:10px 14px; }
+  .dx-card.dx-si { border-left-color:#2E7D32; } .dx-card.dx-fusione { border-left-color:#F9A825; } .dx-fusione .dx-esito { color:#8D6E00; } .dx-card.dx-parziale { border-left-color:#E65100; } .dx-card.dx-no { border-left-color:#C62828; }
+  .dx-title { font-size:15px; font-weight:700; color:#0D1B2A; }
+  .dx-esito { font-size:13px; font-weight:700; margin:4px 0 6px; }
+  .dx-si .dx-esito { color:#1B5E20; } .dx-parziale .dx-esito { color:#E65100; } .dx-no .dx-esito { color:#B71C1C; }
+  .dx-bozza { font-size:10px; font-weight:800; color:#fff; background:#E65100; border-radius:4px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
+  .dx-row { font-size:12px; color:#37474F; line-height:1.55; padding:5px 0; border-top:1px dashed #ECEFF1; }
+  .dx-alt { font-weight:700; } .dx-sub { color:#607D8B; } .dx-fonte { font-size:11px; color:#78909C; margin-top:6px; font-style:italic; }
+  .dx-gene { cursor:pointer; text-decoration:underline dotted; }
   #mo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
   #mo.open { display: flex; }
   #m-box { background: #fff; border-radius: 12px; max-width: 640px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
@@ -345,6 +356,7 @@
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <button type="button" class="back-btn" onclick="goHome()"><span class="back-arrow">←</span> Torna alla Home</button>
     </div>
+    <div id="dx-box"></div>
     <div id="sc-hdr"></div>
     <div id="filters"></div>
     <div id="cards"></div>
@@ -486,7 +498,7 @@ const SC=[
     {genes:["TERT"],histotype:"GBM IDH-wild type",type:["snv"],role:"diagnostico",priority:"DIAGNOSTICO",prio:"D",evidence:"Diag WHO 2021",drug:"Nessun target approvato",note:"TERT promoter mut in GBM IDH-WT = criterio molecolare WHO 2021. +7/-10 richiede FISH/CGH separato. Nel glioma diffuso IDH-wildtype, la negatività per amplificazione di EGFR e per +7/−10 non esclude il glioblastoma; la diagnosi WHO CNS5 richiede almeno uno dei criteri istologici o molecolari definenti.",action:"Glioma diffuso IDH-wild type: basta uno tra TERT mut, EGFR amp, +7/-10 (FISH separato) → GBM IDH-WT",referto_diag:"[RUOLO DIAGNOSTICO] La mutazione del promotore di {GENI} (C228T/C250T) è criterio molecolare WHO CNS5 2021 per GBM IDH-wild type; ne basta uno solo tra mutazione del promotore TERT, amplificazione EGFR e +7/-10 (quest'ultimo con FISH separato).",referto_pred:"[RUOLO PREDITTIVO] Non esistono terapie approvate che targetano TERT nel glioma. Ha esclusivo valore diagnostico/classificativo.",last_review:"2026-11"},
     {genes:["EGFR"],histotype:"Glioblastoma IDH-wild type (GBM WHO Gr4)",type:["snv","cnv"],role:"diagnostico",priority:"DIAGNOSTICO",prio:"D",evidence:"Diag WHO 2021",drug:"TKI EGFR (scarsa risposta in GBM — trial)",note:"Amplificazione EGFR (CNV) ~40% GBM = criterio molecolare WHO 2021.",action:"EGFR amplificazione → criterio molecolare GBM IDH-WT",referto_diag:"[RUOLO DIAGNOSTICO] L'amplificazione di {GENI} (CNV) in glioma diffuso IDH-wild type è criterio molecolare WHO CNS5 2021 per la diagnosi di GBM.",referto_pred:"[RUOLO PREDITTIVO] I TKI anti-EGFR hanno risposta scarsa nel GBM. L'amplificazione EGFR non costituisce indicazione a gefitinib/erlotinib fuori da trial.",last_review:"2026-11"},
     {genes:["CDKN2A"],histotype:"Astrocitoma IDH-mutato (upgrade a Gr4)",type:["snv"],role:"diagnostico",priority:"DIAGNOSTICO",prio:"D",evidence:"Diag WHO 2021",drug:"CDK4/6 inibitori (trial)",panel_coverage_warning:"⚠️ LIMITE PANNELLO: il pannello rileva SNV di CDKN2A ma NON la delezione omozigote (CNV/del), che è l'alterazione classificativamente rilevante per WHO CNS5. Richiedere FISH o array-CGH dedicato.",note:"Delezione omozigote CDKN2A/B = upgrade obbligatorio a WHO Gr4 in astrocitomi IDH-mut. Questo pannello rileva SNV, NON la delezione omozigote.",action:"Delezione omozigote → upgrade Gr4 — richiedere FISH/CGH, non affidarsi solo a questo pannello",referto_diag:"[RUOLO DIAGNOSTICO] La delezione omozigote di {GENI}/B è criterio WHO CNS5 2021 per astrocitoma IDH-mutato WHO Gr4. ATTENZIONE: questo pannello rileva SNV di CDKN2A, NON la delezione omozigote. Richiedere FISH o array-CGH.",referto_pred:"[RUOLO PREDITTIVO] CDK4/6 inibitori nel glioma sono sperimentali. La delezione CDKN2A/B non costituisce indicazione a palbociclib fuori da protocollo.",last_review:"2026-11"},
-    {genes:["BRAF"],histotype:"Glioma pediatrico basso grado / Astrocitoma pilocitico / PXA",type:["snv","fusions"],role:"misto",priority:"REFERTUALE",prio:"R",evidence:"FDA (V600E glioma Gr1-2) · EMA",drug:"Dabrafenib + trametinib",panel_coverage_warning:"⚠️ LIMITE PANNELLO: BRAF V600E (SNV) è coperto. La fusione KIAA1549-BRAF — patognomonica dell'astrocitoma pilocitico — NON è rilevabile con questo pannello NGS-DNA. Richiedere FISH o RNA fusion panel.",note:"BRAF V600E in gliomi pediatrici e PXA. KIAA1549-BRAF NON coperta da questo pannello.",action:"BRAF V600E pediatrico/PXA → dabrafenib+trametinib (approvato FDA/EMA)",referto_diag:"[RUOLO DIAGNOSTICO] BRAF V600E orienta verso PXA o glioma pediatrico di basso grado. KIAA1549-BRAF (astrocitoma pilocitico) non rilevabile con questo pannello — richiedere FISH o RNA panel.",referto_pred:"[RUOLO PREDITTIVO] BRAF V600E in glioma pediatrico WHO Gr1-2: indicazione approvata FDA/EMA a dabrafenib+trametinib.",last_review:"2026-03"}
+    {genes:["BRAF"],histotype:"Glioma pediatrico basso grado / Astrocitoma pilocitico / PXA",type:["snv","fusions"],role:"misto",priority:"REFERTUALE",prio:"R",evidence:"FDA (V600E glioma Gr1-2) · EMA",drug:"Dabrafenib + trametinib",panel_coverage_warning:"⚠️ LIMITE PANNELLO: BRAF V600E (SNV) è coperto. La fusione KIAA1549-BRAF — frequente ma non esclusiva dell'astrocitoma pilocitico — NON è rilevabile con questo pannello NGS-DNA. Richiedere FISH o RNA fusion panel.",note:"BRAF V600E in gliomi pediatrici e PXA. KIAA1549-BRAF NON coperta da questo pannello.",action:"BRAF V600E pediatrico/PXA → dabrafenib+trametinib (approvato FDA/EMA)",referto_diag:"[RUOLO DIAGNOSTICO] BRAF V600E orienta verso PXA o glioma pediatrico di basso grado. KIAA1549-BRAF (astrocitoma pilocitico) non rilevabile con questo pannello — richiedere FISH o RNA panel.",referto_pred:"[RUOLO PREDITTIVO] BRAF V600E in glioma pediatrico WHO Gr1-2: indicazione approvata FDA/EMA a dabrafenib+trametinib.",last_review:"2026-03"}
   ]},
   {id:"agnostico",label:"Test Tumore-Agnostico",icon:"🎯",subtitle:"Biomarker indipendenti dalla sede",notes:null,entries:[
     {genes:["NTRK1","NTRK2","NTRK3"],histotype:"Qualsiasi tumore — frequente in carcinoma secretorio, fibrosarcoma infantile",type:["snv","fusions"],role:"predittivo",priority:"TERAPEUTICO",prio:"T",evidence:"FDA · EMA",drug:"Larotrectinib / entrectinib",note:"Risposta ~75-80%. Approvazione agnostica.",action:"NTRK fusione → TRK inibitore OVUNQUE",referto:"Identificata fusione di {GENI}. È predittiva di risposta a TRK inibitori (larotrectinib, entrectinib) con approvazione FDA/EMA tumor-agnostica.",last_review:"2026-03"},
@@ -558,6 +570,139 @@ const GENE_DESC={
   "PD-L1":"Solo IHC. Clone: 22C3 (pembrolizumab), 28-8 (nivolumab), SP263 (durvalumab).",
   CLDN18:"Solo IHC. VENTANA CLDN18 43-14A RxDx. Target: zolbetuximab in gastrico/GEJ HER2-negativo."
 };
+
+// ── Ricerca per diagnosi ────────────────────────────────────────────────────
+// Domanda: "con questa diagnosi, il pannello rileva qualcosa di utile?"
+// STATO: BOZZA redatta da Claude (11/2026) sulla base delle classificazioni WHO
+// citate in `fonte`, NON ancora validata da Filippo. Nessun farmaco qui: la parte
+// terapeutica resta nelle schede gene/scenario, già revisionate.
+// La copertura NON è scritta a mano: la calcola coperturaAlterazione() da PANEL.
+// classe: snv | fusions | cnv | msi | del (perdita/delezione) | altro → del/altro mai coperte.
+// `geni` = i geni su cui si valuta la copertura (per le fusioni: entrambi i partner).
+const _W={
+  STB:"WHO Soft Tissue and Bone Tumours, 5ª ed. (2020)",
+  STB6:"WHO Soft Tissue and Bone Tumours, 6ª ed. (2026), sintesi in Hornick et al., Am J Surg Pathol 2026 (PMID 42839882)",
+  DIG:"WHO Digestive System Tumours, 5ª ed. (2019)",
+  CNS:"WHO CNS Tumours, 5ª ed. (2021)",
+  FGT:"WHO Female Genital Tumours, 5ª ed. (2020)",
+  HN:"WHO Head and Neck Tumours, 5ª ed.",
+  BR:"WHO Breast Tumours, 5ª ed. (2019)",
+  THO:"WHO Thoracic Tumours, 5ª ed. (2021)",
+  UMG:"WHO Urinary and Male Genital Tumours, 5ª ed. (2022)",
+  SKIN:"WHO Skin Tumours, 5ª ed.",
+  HAEM:"WHO-HAEM5 (2022)"
+};
+const DIAGNOSI=[
+  {id:"dfsp",label:"Dermatofibrosarcoma protuberans",sinonimi:["dermatofibrosarcoma","dfsp","tumore di bednar","dfsp fibrosarcomatoso"],fonte:_W.STB,alterazioni:[
+    {alt:"COL1A1::PDGFB",geni:["COL1A1","PDGFB"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente nella grande maggioranza dei casi (rari partner alternativi, es. COL6A3::PDGFD).",alternativa:"FISH break-apart PDGFB o pannello RNA esteso"}]},
+  {id:"gist",label:"Tumore stromale gastrointestinale (GIST)",avviso:"Il GIST SDH-deficiente è una categoria separata nella WHO 2026: vedere la sua scheda (cercare «GIST SDH-deficiente»).",sinonimi:["gist","tumore stromale gastrointestinale","tumore stromale gastro intestinale"],escludi:["sdh deficien","sdh carent","deficit sdh","deficit di sdh","carenza sdh","carenza di sdh","perdita sdh","perdita di sdh"],fonte:_W.DIG+"; "+_W.STB6,scenario:"gist",alterazioni:[
+    {alt:"KIT mutazione",geni:["KIT"],classe:"snv",ruolo:"misto",nota:"Driver più frequente."},
+    {alt:"PDGFRA mutazione",geni:["PDGFRA"],classe:"snv",ruolo:"misto",nota:"Include D842V (vedi scheda gene)."}]},
+  {id:"gist_sdh",label:"GIST SDH-deficiente",avviso:"Categoria separata dal GIST convenzionale nella WHO 2026 (patogenesi molecolare distinta, possibile associazione sindromica familiare, comportamento clinico diverso).",sinonimi:["gist sdh deficiente","gist sdh carente","sdh deficient gist","gist con deficit sdh","gist con deficit di sdh","gist con carenza di sdh","gist con carenza sdh","tumore stromale gastrointestinale con deficit di sdh","sdh deficient gastrointestinal stromal tumor","tumore stromale gastrointestinale sdh deficiente","tumore stromale gastrointestinale con deficit sdh"],fonte:_W.STB6+"; "+_W.DIG,alterazioni:[
+    {alt:"Deficit SDH (SDHA/B/C/D)",geni:["SDHA","SDHB","SDHC","SDHD"],classe:"snv",ruolo:"diagnostico",nota:"KIT/PDGFRA wild-type.",alternativa:"IHC SDHB; consulenza genetica"}]},
+  {id:"tmi",label:"Tumore miofibroblastico infiammatorio",avviso:"Le fusioni elencate sono esempi; la lista dei riarrangiamenti possibili non è esaustiva.",sinonimi:["tumore miofibroblastico infiammatorio","imt","tmi","inflammatory myofibroblastic tumor"],fonte:_W.STB,alterazioni:[
+    {alt:"Fusione ALK",geni:["ALK"],classe:"fusions",ruolo:"misto",nota:"Sottogruppo ALK-riarrangiato.",alternativa:"IHC ALK"},
+    {alt:"Fusione ROS1",geni:["ROS1"],classe:"fusions",ruolo:"misto",nota:"Sottogruppo ALK-negativo."},
+    {alt:"ETV6::NTRK3",geni:["ETV6","NTRK3"],classe:"fusions",ruolo:"misto",nota:"Sottogruppo ALK-negativo."}]},
+  {id:"fibrosarcoma_infantile",label:"Fibrosarcoma infantile (nel rene: nefroma mesoblastico congenito cellulare)",avviso:"Nel rene la WHO 2026 accetta il termine «nefroma mesoblastico congenito cellulare» per questa entità: la scheda NON vale per il tipo classico né per quello misto.",sinonimi:["fibrosarcoma infantile","fibrosarcoma congenito","infantile fibrosarcoma","nefroma mesoblastico congenito cellulare","cellular congenital mesoblastic nephroma"],escludi:["classic","mist","mixed"],fonte:_W.STB+"; "+_W.STB6,alterazioni:[
+    {alt:"ETV6::NTRK3",geni:["ETV6","NTRK3"],classe:"fusions",ruolo:"misto",nota:"Alterazione tipica; esistono casi con altri riarrangiamenti di NTRK o della via MAPK."}]},
+  {id:"ntrk_spindle",label:"Neoplasia a cellule fusate con alterazioni di chinasi (incluso riarrangiamento NTRK)",avviso:"WHO 2026: la categoria emergente «riarrangiamento NTRK» della 5ª ed. è stata ampliata alle neoplasie a cellule fusate con alterazioni di chinasi, che comprendono un ampio spettro di fusioni di chinasi e anche mutazioni puntiformi. Qui sono elencati solo NTRK1/2/3, come esempio NON esaustivo: le altre chinasi non sono riportate in questa scheda. L'esito mostrato vale SOLO per le fusioni NTRK elencate, non per l'intera categoria: altre fusioni o mutazioni di chinasi vanno cercate per gene. La presenza della fusione non stabilisce da sola comportamento o grado.",sinonimi:["neoplasia a cellule fusate con alterazioni di chinasi","neoplasia a cellule fusate con alterazione di chinasi","kinase altered spindle cell neoplasm","neoplasia a cellule fusate ntrk","ntrk rearranged spindle cell neoplasm","neoplasia mesenchimale ntrk"],fonte:_W.STB6+"; "+_W.STB,alterazioni:[
+    {alt:"Fusioni NTRK1/2/3",geni:["NTRK1","NTRK2","NTRK3"],classe:"fusions",ruolo:"misto",nota:"Esempio non esaustivo delle alterazioni di chinasi; integrare con la morfologia."}]},
+  {id:"sinoviale",label:"Sarcoma sinoviale",sinonimi:["sarcoma sinoviale","synovial sarcoma"],fonte:_W.STB,alterazioni:[
+    {alt:"SS18::SSX1/2/4",geni:["SS18","SSX1","SSX2","SSX4"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"IHC SS18-SSX / SSX C-term; FISH SS18"}]},
+  {id:"ewing",label:"Sarcoma di Ewing",sinonimi:["sarcoma di ewing","ewing"],escludi:["simil","like","cic","bcor"],fonte:_W.STB+"; CAP Ewing Sarcoma Protocol v5.0.0.1 (2025)",alterazioni:[
+    {alt:"EWSR1 (o FUS)::FLI1/ERG",geni:["EWSR1","FUS","FLI1","ERG"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"FISH EWSR1 break-apart; pannello RNA esteso"}]},
+  {id:"rms_alveolare",label:"Rabdomiosarcoma alveolare",sinonimi:["rabdomiosarcoma alveolare","alveolar rhabdomyosarcoma"],fonte:_W.STB,alterazioni:[
+    {alt:"PAX3/PAX7::FOXO1",geni:["PAX3","PAX7","FOXO1"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"FISH FOXO1"}]},
+  {id:"lps_mixoide",label:"Liposarcoma mixoide",sinonimi:["liposarcoma mixoide","liposarcoma a cellule rotonde","myxoid liposarcoma"],escludi:["pleomorf"],fonte:_W.STB,alterazioni:[
+    {alt:"FUS (o EWSR1)::DDIT3",geni:["FUS","EWSR1","DDIT3"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"FISH DDIT3"}]},
+  {id:"lps_wd_dd",label:"Liposarcoma ben differenziato / dedifferenziato (tumore lipomatoso atipico)",avviso:"Il pannello non analizza nessuna amplificazione MDM2 o CDK4. Una mutazione CDK4 non dimostra l'amplificazione: per il sospetto diagnostico usare FISH MDM2; l'IHC CDK4 è solo di supporto.",sinonimi:["liposarcoma ben differenziato","liposarcoma dedifferenziato","tumore lipomatoso atipico","wdlps","ddlps"],fonte:_W.STB+"; PMID: 26146760, 27508976",alterazioni:[
+    {alt:"Amplificazione MDM2",geni:["MDM2"],classe:"cnv",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"FISH MDM2"},
+    {alt:"Amplificazione CDK4",geni:["CDK4"],classe:"cnv",ruolo:"diagnostico",nota:"Frequente co-amplificazione; la mutazione CDK4 letta dal pannello non la documenta.",alternativa:"FISH MDM2; IHC CDK4 solo come supporto"}]},
+  {id:"cellule_chiare",label:"Sarcoma a cellule chiare dei tessuti molli",sinonimi:["sarcoma a cellule chiare","clear cell sarcoma"],escludi:["rene","renale","kidney"],fonte:_W.STB,alterazioni:[
+    {alt:"EWSR1::ATF1 (o CREB1)",geni:["EWSR1","ATF1","CREB1"],classe:"fusions",ruolo:"diagnostico",nota:"Distingue dal melanoma.",alternativa:"FISH EWSR1"}]},
+  {id:"asps",label:"Sarcoma alveolare delle parti molli",sinonimi:["sarcoma alveolare delle parti molli","alveolar soft part sarcoma","asps"],fonte:_W.STB,alterazioni:[
+    {alt:"ASPSCR1::TFE3",geni:["ASPSCR1","TFE3"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"IHC TFE3; FISH TFE3"}]},
+  {id:"sft",label:"Tumore fibroso solitario",sinonimi:["tumore fibroso solitario","emangiopericitoma","solitary fibrous tumor","sft"],fonte:_W.STB,alterazioni:[
+    {alt:"NAB2::STAT6",geni:["NAB2","STAT6"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione definente.",alternativa:"IHC STAT6 nucleare"}]},
+  {id:"desmoide",label:"Fibromatosi desmoide",sinonimi:["fibromatosi desmoide","desmoide","tumore desmoide","fibromatosi aggressiva"],fonte:_W.STB,alterazioni:[
+    {alt:"CTNNB1 mutazione",geni:["CTNNB1"],classe:"snv",ruolo:"diagnostico",nota:"Forme sporadiche."},
+    {alt:"APC (forme associate a FAP)",geni:["APC"],classe:"snv",ruolo:"diagnostico",nota:"Forme sindromiche.",alternativa:"Test germinale APC se sospetto clinico"}]},
+  {id:"pecoma",label:"PEComa",avviso:"L'alterazione principale (inattivazione di TSC2) e le fusioni TFE3 NON sono rilevate dal pannello, che legge solo SNV/InsDel di TSC1: un risultato negativo non esclude la diagnosi.",sinonimi:["pecoma","tumore a cellule epitelioidi perivascolari","angiomiolipoma epitelioide"],fonte:_W.STB,alterazioni:[
+    {alt:"TSC2 inattivazione",geni:["TSC2"],classe:"snv",ruolo:"misto",nota:"Via TSC/mTOR."},
+    {alt:"TSC1 mutazione",geni:["TSC1"],classe:"snv",ruolo:"misto",nota:"Il pannello rileva SNV/InsDel di TSC1, non le delezioni."},
+    {alt:"Fusione TFE3",geni:["TFE3"],classe:"fusions",ruolo:"diagnostico",nota:"Sottogruppo distinto.",alternativa:"IHC/FISH TFE3"}]},
+  {id:"epitelioide",label:"Sarcoma epitelioide",sinonimi:["sarcoma epitelioide","epithelioid sarcoma"],fonte:_W.STB,alterazioni:[
+    {alt:"Perdita SMARCB1 (INI1)",geni:["SMARCB1"],classe:"del",ruolo:"diagnostico",nota:"Inattivazione, spesso per delezione.",alternativa:"IHC INI1 (perdita)"}]},
+  {id:"condrosarcoma",label:"Condrosarcoma convenzionale centrale (incluso tumore cartilagineo atipico)",avviso:"Questa scheda riguarda solo il tipo convenzionale centrale. Terminologia WHO per il basso grado: «tumore cartilagineo atipico» nello scheletro appendicolare (ossa tubulari lunghe e corte), «condrosarcoma, grado 1» nello scheletro assiale (pelvi, scapola, base cranica); i due termini non sono intercambiabili. Se è scritto soltanto «condrosarcoma», definirne il sottotipo prima di applicare l'esito. IDH1/2 non distingue encondroma e condrosarcoma.",sinonimi:["condrosarcoma","chondrosarcoma","tumore cartilagineo atipico","atypical cartilaginous tumor"],escludi:["dedifferenziat","dedifferentiated","periferic","peripheral","periostal","periosteal","secondari","mesenchimal","mesenchymal","cellule chiare","clear cell","extrascheletric","extraskeletal","mixoide"],fonte:_W.STB6+"; "+_W.STB+"; PMID: 33239505",alterazioni:[
+    {alt:"IDH1 / IDH2 mutazione",geni:["IDH1","IDH2"],classe:"snv",ruolo:"diagnostico",nota:"Supporta l'origine cartilaginea. Presente anche nell'encondroma: NON distingue lesione benigna da maligna."}]},
+  {id:"pilocitico",label:"Astrocitoma pilocitico",avviso:"L'alterazione principale (fusione KIAA1549::BRAF) NON è rilevata dal pannello, che legge BRAF solo come SNV: un risultato negativo non esclude la diagnosi.",sinonimi:["astrocitoma pilocitico","pilocytic astrocytoma"],fonte:_W.CNS,scenario:"glioma",alterazioni:[
+    {alt:"KIAA1549::BRAF",geni:["KIAA1549","BRAF"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione più frequente; BRAF è nel pannello solo come SNV.",alternativa:"Pannello RNA esteso / FISH"},
+    {alt:"BRAF V600E",geni:["BRAF"],classe:"snv",ruolo:"misto",nota:"Minoranza dei casi.",alternativa:"IHC VE1"},
+    {alt:"FGFR1 mutazione",geni:["FGFR1"],classe:"snv",ruolo:"diagnostico",nota:"Minoranza dei casi."},
+    {alt:"NF1 inattivazione",geni:["NF1"],classe:"snv",ruolo:"diagnostico",nota:"Minoranza dei casi."}]},
+  {id:"secretorio",label:"Carcinoma secretorio (mammella / ghiandole salivari)",sinonimi:["carcinoma secretorio","secretory carcinoma","mammary analogue secretory carcinoma","masc"],escludi:["tiroid","thyroid"],fonte:_W.BR+"; "+_W.HN,alterazioni:[
+    {alt:"ETV6::NTRK3",geni:["ETV6","NTRK3"],classe:"fusions",ruolo:"misto",nota:"Alterazione tipica."},
+    {alt:"ETV6::RET (salivari, minoranza)",geni:["ETV6","RET"],classe:"fusions",ruolo:"misto",nota:"Minoranza dei casi salivari."}]},
+  {id:"mucoepidermoide",label:"Carcinoma mucoepidermoide",sinonimi:["carcinoma mucoepidermoide","mucoepidermoid carcinoma"],fonte:_W.HN,alterazioni:[
+    {alt:"CRTC1 (o CRTC3)::MAML2",geni:["CRTC1","CRTC3","MAML2"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione tipica.",alternativa:"FISH MAML2"}]},
+  {id:"adenoidocistico",label:"Carcinoma adenoido-cistico",sinonimi:["carcinoma adenoido cistico","carcinoma adenoidocistico","adenoid cystic carcinoma"],fonte:_W.HN,alterazioni:[
+    {alt:"MYB (o MYBL1)::NFIB",geni:["MYB","MYBL1","NFIB"],classe:"fusions",ruolo:"diagnostico",nota:"Alterazione tipica.",alternativa:"FISH MYB; IHC MYB (non specifica)"}]},
+  {id:"granulosa_adulto",label:"Tumore a cellule della granulosa, tipo adulto",avviso:"Scheda valida solo per il tipo ADULTO. Il tumore a cellule della granulosa giovanile è un'entità distinta, in cui FOXL2 p.C134W non è l'alterazione tipica: stabilire il tipo prima di usare questa scheda.",sinonimi:["tumore a cellule della granulosa","tumore della granulosa","granulosa cell tumor"],escludi:["giovanile","juvenile"],fonte:_W.FGT,alterazioni:[
+    {alt:"FOXL2 c.402C>G (p.C134W)",geni:["FOXL2"],classe:"snv",ruolo:"diagnostico",nota:"Alterazione definente della forma adulta.",alternativa:"Test mutazionale mirato FOXL2"}]},
+  {id:"endometrio",label:"Carcinoma endometriale (classificazione molecolare)",avviso:"I tre classificatori non sono equivalenti: con più alterazioni coesistenti l'ordine è POLE patogenetico → dMMR/MSI → p53. Una mutazione TP53 non assegna il sottogruppo p53-abnormal se coesistono POLE patogenetico o dMMR; il sottogruppo p53 si definisce per IHC.",sinonimi:["carcinoma endometriale","carcinoma dell endometrio","adenocarcinoma endometrioide","carcinoma endometrioide","carcinoma sieroso dell endometrio","carcinoma sieroso di alto grado dell endometrio","carcinoma sieroso endometriale","carcinoma sieroso uterino","carcinoma a cellule chiare dell endometrio","carcinoma a cellule chiare endometriale","carcinosarcoma dell endometrio","carcinosarcoma endometriale","carcinosarcoma uterino"],fonte:_W.FGT+"; FIGO 2023 (Berek et al., Int J Gynaecol Obstet 2023) per l'ordine dei classificatori",alterazioni:[
+    {alt:"POLE mutazione patogenetica (dominio esonucleasico)",geni:["POLE"],classe:"snv",ruolo:"misto",nota:"Sottogruppo POLE-mutato; le VUS non classificano."},
+    {alt:"MSI (surrogato di dMMR)",geni:["MSI"],classe:"msi",ruolo:"misto",nota:"Lo standard per il sottogruppo è l'IHC MMR; MSI è complementare.",alternativa:"IHC MLH1/PMS2/MSH2/MSH6"},
+    {alt:"TP53 mutazione",geni:["TP53"],classe:"snv",ruolo:"diagnostico",nota:"Il sottogruppo p53-abnormal si definisce per IHC (WT / iperespressione / null); la mutazione NGS è di supporto, non sostitutiva.",alternativa:"IHC p53"}]},
+  {id:"hgsc",label:"Carcinoma sieroso di alto grado (ovaio / tuba / peritoneo)",sinonimi:["carcinoma sieroso di alto grado","hgsc","carcinoma sieroso alto grado","carcinoma sieroso tubarico","carcinoma sieroso peritoneale"],escludi:["endometrio","endometriale","utero","uterino","basso grado"],fonte:_W.FGT,alterazioni:[
+    {alt:"TP53 mutazione",geni:["TP53"],classe:"snv",ruolo:"diagnostico",nota:"Quasi costante; supporto diagnostico (vs basso grado).",alternativa:"IHC p53"},
+    {alt:"BRCA1 / BRCA2 / HRD",geni:["BRCA1","BRCA2"],classe:"snv",ruolo:"predittivo",nota:"Non nel pannello: richiedere test BRCA tumorale/germinale e HRD.",alternativa:"Test BRCA tumorale/germinale; test HRD"}]},
+  {id:"lgsc",label:"Carcinoma sieroso di basso grado (ovaio)",sinonimi:["carcinoma sieroso di basso grado","lgsc","carcinoma sieroso basso grado"],fonte:_W.FGT,alterazioni:[
+    {alt:"KRAS / BRAF / NRAS mutazione",geni:["KRAS","BRAF","NRAS"],classe:"snv",ruolo:"misto",nota:"Via MAPK."}]},
+  {id:"uroteliale",label:"Carcinoma uroteliale",sinonimi:["carcinoma uroteliale","urothelial carcinoma"],fonte:_W.UMG,alterazioni:[
+    {alt:"FGFR3 mutazione",geni:["FGFR3"],classe:"snv",ruolo:"predittivo",nota:"Bersaglio terapeutico: farmaci ed evidenze nella scheda del gene FGFR3."},
+    {alt:"FGFR3 fusione",geni:["FGFR3"],classe:"fusions",ruolo:"predittivo",nota:"Bersaglio terapeutico: farmaci ed evidenze nella scheda del gene FGFR3."}]},
+  {id:"prostata",label:"Adenocarcinoma prostatico",sinonimi:["adenocarcinoma prostatico","carcinoma prostatico","adenocarcinoma della prostata"],fonte:_W.UMG,alterazioni:[
+    {alt:"BRCA1 / BRCA2",geni:["BRCA1","BRCA2"],classe:"snv",ruolo:"predittivo",nota:"Non nel pannello: richiedere test BRCA tumorale/germinale.",alternativa:"Test BRCA1/BRCA2 tumorale/germinale"}]},
+  {id:"spitz",label:"Neoplasie spitzoidi (nevo di Spitz, melanocitoma spitzoide, melanoma di Spitz)",avviso:"Scheda di famiglia, non diagnosi di grado. Le alterazioni elencate orientano verso la linea spitzoide ma NON distinguono nevo, melanocitoma e melanoma di Spitz; i partner riportati sono esempi, non una lista esaustiva.",sinonimi:["nevo di spitz","tumore di spitz","melanocitoma spitzoide","melanoma di spitz","spitz"],fonte:_W.SKIN,alterazioni:[
+    {alt:"HRAS mutazione",geni:["HRAS"],classe:"snv",ruolo:"diagnostico",nota:""},
+    {alt:"Fusioni ALK, ROS1, NTRK1/3, RET, MET",geni:["ALK","ROS1","NTRK1","NTRK3","RET","MET"],classe:"fusions",ruolo:"diagnostico",nota:"Definiscono sottotipi spitzoidi."},
+    {alt:"Fusioni BRAF o MAP3K8",geni:["BRAF","MAP3K8"],classe:"fusions",ruolo:"diagnostico",nota:"BRAF è nel pannello solo come SNV.",alternativa:"Pannello RNA esteso"}]}
+];
+function normDx(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim();}
+// Sinonimi corti (sigle: gist, lch, dfsp) solo come parola intera, per evitare
+// che "tmi" peschi "istmica". Sinonimi lunghi: inclusione in entrambe le direzioni,
+// così "dermatofibrosarcoma" trova "…protuberans" e una diagnosi scritta per esteso
+// ("dermatofibrosarcoma protuberans della cute") trova il sinonimo.
+function cercaDiagnosi(q){
+  const n=normDx(q);if(n.length<3)return[];
+  const tok=n.split(" ");
+  // `escludi`: qualificatori che indicano un'entità DIVERSA con nome simile
+  // (granulosa giovanile, condrosarcoma periferico/mesenchimale/extrascheletrico).
+  return DIAGNOSI.filter(d=>!(d.escludi||[]).some(x=>n.includes(normDx(x)))&&[d.label,...d.sinonimi].map(normDx).some(s=>
+    s.length<5?tok.includes(s):((" "+s).includes(" "+n)&&n.length>=4)||(" "+n+" ").includes(" "+s+" ")));
+}
+// coperta: il gene è nel pannello per la classe di questa alterazione.
+// parziale: il gene è nel pannello ma per un'altra classe → questa alterazione NON è rilevata.
+// non_coperta: nessun gene dell'alterazione è nel pannello.
+function coperturaAlterazione(a){
+  if(a.classe==="msi")return PANEL.msi.length?"coperta":"non_coperta";
+  const lista=PANEL[a.classe]||[];
+  if(a.geni.some(g=>lista.includes(g)))return"coperta";
+  return a.geni.some(g=>PANEL.snv.includes(g)||PANEL.fusions.includes(g)||PANEL.cnv.includes(g))?"parziale":"non_coperta";
+}
+// esito "si" se almeno un'alterazione elencata è rilevata — non significa che lo siano tutte.
+// Le fusioni "coperte" sono contate a parte: il gene è nel pannello fusioni, ma la
+// rilevazione dipende da partner e breakpoint nel disegno del kit (non noto qui).
+// esito: si (almeno una non-fusione coperta) | fusione (solo fusioni, da verificare)
+//        | no (nessuna alterazione coperta, anche se un gene è presente per altra classe).
+function esitoDiagnosi(d){
+  const c=d.alterazioni.map(coperturaAlterazione);
+  const certe=c.filter((x,i)=>x==="coperta"&&d.alterazioni[i].classe!=="fusions").length;
+  const fus=c.filter((x,i)=>x==="coperta"&&d.alterazioni[i].classe==="fusions").length;
+  return{esito:certe?"si":fus?"fusione":"no",
+    coperte:certe,fusioni:fus,totale:c.length,copertura:c};
+}
 
 let state={selected:"crc",filter:"ALL",expanded:null,geneTypeFilter:null,searchScope:"local"};
 
@@ -775,6 +920,35 @@ function renderIHCBox(e){
   return`<div class="${c.cls}"><div class="ihc-title">${c.icon} ${c.label}</div><div class="ihc-test">${esc(e.ihc.test)}</div><div class="ihc-note">${esc(e.ihc.note)}</div></div>`;
 }
 const ROLE_ICON={diagnostico:"🔬",predittivo:"💊",prognostico:"📊",misto:"🔀"};
+const COP_LBL={coperta:"✓ analizzato dal pannello per questa classe (quali varianti: vedi scheda gene)",coperta_fus:"◐ gene nel pannello fusioni: rilevata solo se partner e breakpoint rientrano nel disegno del kit (verificare sul manuale Diatech)",parziale:"⚠️ gene nel pannello, ma non per questa classe di alterazione: NON rilevata",non_coperta:"✗ non nel pannello"};
+const COP_CLS={coperta:"g-ok",parziale:"g-warn",non_coperta:"g-ko"};
+const CLASSE_LBL={snv:"SNV/InsDel",fusions:"fusione",cnv:"amplificazione/CNV",msi:"MSI",del:"perdita/delezione",altro:"altro"};
+function renderDiagnosi(lista){
+  if(!lista.length)return"";
+  const idx=getGeneIndex();
+  const multi=lista.length>1?`<div class="dx-fonte" style="font-size:12px;font-style:normal;color:#37474F">${lista.length} diagnosi in elenco corrispondono al testo: scegliere quella corretta. Ogni scheda vale solo per l'entità nel suo titolo.</div>`:"";
+  return multi+lista.map(d=>{
+    const r=esitoDiagnosi(d);
+    const fusTxt=r.fusioni?`${r.fusioni} fusion${r.fusioni===1?"e":"i"} con gene nel pannello: rilevazione da verificare sul disegno del kit`:"";
+    const testo=r.esito==="si"?`Il pannello analizza ${r.coperte} di ${r.totale} alterazioni elencate`+(fusTxt?`; inoltre ${fusTxt}`:"")
+      :r.esito==="fusione"?`Su ${r.totale} alterazion${r.totale===1?"e":"i"} elencat${r.totale===1?"a":"e"}: ${fusTxt}`
+      :r.copertura.includes("parziale")?"Il pannello non analizza le alterazioni elencate: uno o più geni sono presenti solo per un'altra classe di alterazione"
+      :"Il pannello non rileva le alterazioni elencate per questa diagnosi";
+    const righe=d.alterazioni.map((a,i)=>{
+      const c=r.copertura[i];
+      // colore per singolo gene: in una fusione il partner fuori pannello resta rosso
+      const geni=a.geni.map(g=>{const cg=coperturaAlterazione({geni:[g],classe:a.classe});
+        return idx[g]&&cg==="coperta"?`<button type="button" class="${COP_CLS[cg]} dx-gene" data-gene="${esc(g)}" onclick="openGenePanel(this.dataset.gene)">${esc(g)}</button>`:`<span class="${COP_CLS[cg]}">${esc(g)}</span>`;}).join(" ");
+      const lbl=c==="coperta"&&a.classe==="fusions"?COP_LBL.coperta_fus:COP_LBL[c];
+      return`<div class="dx-row"><span class="dx-alt">${esc(a.alt)}</span> <span class="dx-sub">· ${esc(CLASSE_LBL[a.classe]||a.classe)} · ${ROLE_ICON[a.ruolo]||""} ${esc(RL[a.ruolo]||a.ruolo)}</span><br>${geni} <span class="dx-sub">${esc(lbl)}</span><br>${esc(a.nota||"")}${a.alternativa?`<br><b>Alternativa:</b> ${esc(a.alternativa)}`:""}</div>`;
+    }).join("");
+    const scen=d.scenario&&SC.find(s=>s.id===d.scenario);
+    const link=scen?` <button type="button" class="scope-btn" data-sc="${esc(scen.id)}" onclick="goIstotipo(this.dataset.sc)">Apri scenario ${esc(scen.label)} →</button>`:"";
+    const fus=d.avviso?`<div class="dx-esito" style="color:#4E342E;font-weight:600">⚠️ ${esc(d.avviso)}</div>`:"";
+    const haGeneApribile=d.alterazioni.some(a=>a.geni.some(g=>idx[g]&&coperturaAlterazione({geni:[g],classe:a.classe})==="coperta"));
+    return`<div class="dx-card dx-${r.esito}"><div class="dx-title">🩺 ${esc(d.label)}${d.stato==="bozza"?'<span class="dx-bozza">BOZZA non validata</span>':""}${link}</div><div class="dx-esito">${esc(testo)}</div>${fus}${righe}<div class="dx-fonte">Fonte: ${esc(d.fonte)}.${haGeneApribile?" Per farmaci ed evidenze aprire la scheda del gene (clic sul gene).":""}</div></div>`;
+  }).join("");
+}
 function render(){
   const sc=SC.find(s=>s.id===state.selected);
   document.getElementById("sidebar").innerHTML=SC.map(s=>`<button type="button" class="sb-btn ${s.id===state.selected?"active":""}" onclick="selectSC('${s.id}')"><span style="margin-right:7px;font-size:14px">${s.icon}</span>${esc(s.label)}</button>`).join("");
@@ -790,7 +964,13 @@ function render(){
   const entryScenarios=isCross?crossResults.map(r=>r.sc):null;
   if(isCross){document.getElementById("sc-hdr").innerHTML=`<div style="display:flex;align-items:center;gap:11px;margin-bottom:3px"><span style="font-size:24px">🔍</span><div><div style="font-size:18px;font-weight:700;color:#0D1B2A">Risultati per "${esc(document.getElementById("search").value)}"</div><div style="font-size:12px;color:#546E7A;font-style:italic">${entries.length} risultat${entries.length===1?"o":"i"} in tutti gli scenari</div></div></div>`;}
   else{document.getElementById("sc-hdr").innerHTML=`<div style="display:flex;align-items:center;gap:11px;margin-bottom:3px"><span style="font-size:24px">${sc.icon}</span><div><div style="font-size:18px;font-weight:700;color:#0D1B2A">${esc(sc.label)}</div><div style="font-size:12px;color:#546E7A;font-style:italic">${esc(sc.subtitle)}</div></div></div>${sc.notes?`<div id="sc-note">${esc(sc.notes)}</div>`:""}`.trim();}
-  if(!entries.length){document.getElementById("cards").innerHTML='<div id="no-res">Nessun risultato — prova a cercare per gene (es. KRAS), farmaco, o istotipo</div>';return;}
+  const _q=document.getElementById("search").value;
+  const _dx=cercaDiagnosi(_q);
+  document.getElementById("dx-box").innerHTML=renderDiagnosi(_dx);
+  if(!entries.length&&_dx.length){document.getElementById("sc-hdr").innerHTML="";document.getElementById("filters").innerHTML="";}
+  if(!entries.length){document.getElementById("cards").innerHTML=_dx.length?"":(_q.trim().length>=4
+    ?'<div id="no-res">Nessuna scheda e nessuna diagnosi in elenco per questo testo. <b>L\'assenza dall\'elenco non significa che il pannello non abbia nulla di utile</b>: l\'elenco delle diagnosi è parziale. Prova a cercare per gene (es. KRAS).</div>'
+    :'<div id="no-res">Nessun risultato — prova a cercare per gene (es. KRAS), farmaco, o istotipo</div>');return;}
   document.getElementById("cards").innerHTML=entries.map((e,i)=>{
     const _sc=entryScenarios?entryScenarios[i]:sc;
     const scenBadge=isCross?`<div style="font-size:10px;font-weight:700;color:#546E7A;background:#ECEFF1;border-radius:4px;padding:2px 8px;margin-bottom:4px;display:inline-block">${_sc.icon} ${esc(_sc.label)}</div>`:"";
